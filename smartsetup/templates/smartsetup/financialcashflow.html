@@ -1,0 +1,363 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<section class="invoice">
+    <!-- title row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-globe"></i> <b>Consolidated Statement of Cash Flows</b>
+                <small class="pull-right">
+                    <p id="date">Date: </p>
+                </small>
+            </h2>
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- info row -->
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+            <address>
+                <strong>Sample Company, ltd.</strong><br>
+                Akindele Avenue<br>
+                Ikeja Lagos, Nigeria<br>
+            </address>
+        </div>
+
+
+    </div>
+    <!-- /.row -->
+    <!-- Table row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <col width="490">
+                        <col width="120">
+                        <col width="120">
+                        <col width="120">
+
+                        <thead>
+                            <tr>
+                                <th><b>Cash Flow From Operating Activities</b></th>
+                                <th>Notes</th>
+                                <th>Year 1</th>
+                                <th>Year 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b><u>Receipts</u></b></td>
+                            </tr>
+                            {% for cat in revenues.all %}
+                            <tr>
+                                <td>
+                                    {{cat.sub_category_name}}
+                                </td>
+                                <td>
+                                    {{cat.notes}}
+                                </td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>$0.00</b></td>
+                                <td><b>$0.00</b></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><b><u> Payments</u></b></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% for cat in expenses.all %}
+                            <tr>
+                                <td>
+                                    {{cat.sub_category_name}}
+                                </td>
+                                <td>
+                                    {{cat.notes}}
+                                </td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>$0.00</b></td>
+                                <td><b>$0.00</b></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <div class="box">
+                <!-- <div class="box-body"> -->
+                <table class="table table-striped">
+                    <col width="490">
+                    <col width="120">
+                    <col width="120">
+                    <col width="120">
+
+                    <tfoot>
+                        <tr>
+                            <td><b>Net Cash Flows from Operating Activities</b></td>
+                            <td></td>
+                            <td><b>$0.00</b></td>
+                            <td><b>$0.00</b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!-- </div> -->
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <col width="490">
+                        <col width="120">
+                        <col width="120">
+                        <col width="120">
+
+                        <thead>
+                            <tr>
+                                <th><b>LIABILITIES</b></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b><u>Current Liabilities</u></b></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% for cat in curr_liabilities.all %}
+                            <tr>
+                                <td>
+                                    {{cat.sub_category_name}}
+                                </td>
+                                <td>
+                                    {{cat.notes}}
+                                </td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>$0.00</b></td>
+                                <td><b>$0.00</b></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><b><u> Non-Current Liabilities</u></b></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% for cat in noncurr_liabilities.all %}
+                            <tr>
+                                <td>
+                                    {{cat.sub_category_name}}
+                                </td>
+                                <td>
+                                    {{cat.notes}}
+                                </td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>$0.00</b></td>
+                                <td><b>$0.00</b></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <div class="box">
+                <!-- <div class="box-body"> -->
+                <table class="table table-striped">
+                    <col width="490">
+                    <col width="120">
+                    <col width="120">
+                    <col width="120">
+
+                    <tfoot>
+                        <tr>
+                            <td><b>Total Liabilities</b></td>
+                            <td></td>
+                            <td><b>$0.00</b></td>
+                            <td><b>$0.00</b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!-- </div> -->
+                <!-- /.box-body -->
+            </div>
+
+            <div class="box">
+                <!-- <div class="box-body"> -->
+                <table class="table table-striped">
+                    <col width="490">
+                    <col width="120">
+                    <col width="120">
+                    <col width="120">
+
+                    <tfoot>
+                        <tr>
+                            <td><b>Net assets</b></td>
+                            <td></td>
+                            <td><b>$0.00</b></td>
+                            <td><b>$0.00</b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!-- </div> -->
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <col width="490">
+                        <col width="120">
+                        <col width="120">
+                        <col width="120">
+
+                        <thead>
+                            <tr>
+                                <th><b>NET ASSETS / EQUITY</b></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Reserves
+                                </td>
+                                <td></td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Accumulated Surplus / Deficit
+                                </td>
+                                <td></td>
+                                <td>$0.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <div class="box">
+                <!-- <div class="box-body"> -->
+                <table class="table table-striped">
+                    <col width="490">
+                    <col width="120">
+                    <col width="120">
+                    <col width="120">
+
+                    <tfoot>
+                        <tr>
+                            <td><b>Total Net Assets / Equity</b></td>
+                            <td></td>
+                            <td><b>$0.00</b></td>
+                            <td><b>$0.00</b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!-- </div> -->
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+
+
+
+
+    <!-- jjjjj -->
+    <!-- this row will not appear when printing -->
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <a href="#" class="btn btn-success pull-right" onclick="window.print();"><i class="fa fa-print"></i> Print
+                Report</a>
+
+            <!-- <button type="button" class="btn btn-success pull-right"><i class="fa fa-print"></i> Print Report
+      </button>
+      <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+        <i class="fa fa-download"></i> Generate PDF
+      </button> -->
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+    n = new Date();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+</script>
+
+{% endblock %}

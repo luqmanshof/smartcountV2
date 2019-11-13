@@ -1,0 +1,40 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Record Delete Page
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+  <div class="box box-primary">
+          <div class="box-body" style="padding-top:15px">
+              <div class="container col-md-6">
+                <h3>Are you sure you want to delete this Account Item?</h3>
+                <form method="post">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+
+                  <br>
+
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <a href="{% url 'setupinventoryitems_list' %}"  class="btn btn-primary">Back to List</a>
+                </form>
+
+              </div>
+              <div class="container col-md-6">
+                  <h2><a href="{% url 'setupinventoryitems_detail' setupinventoryitems.id %}">{{ setupinventoryitems.inventory_category_code }}</a></h2>
+                  <h4><a href="{% url 'setupinventoryitems_detail' setupinventoryitems.id %}">{{ setupinventoryitems.inventory_code }} - {{ setupinventoryitems.inventory_name }}</a></h4>
+              </div>
+          </div>
+
+  </div>
+
+
+
+
+{% endblock %}

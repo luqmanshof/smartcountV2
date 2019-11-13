@@ -1,0 +1,45 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Create User Account
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+              <!-- <h2>Login</h2> -->
+              <form method="post">
+                {% csrf_token %}
+                <div class="col-md-6">
+                  {{ form|crispy }}
+                </div>
+                <div class="col-md-6">
+                  {{ userprofile_form|crispy }}
+                </div>
+                <!-- {% for field in form %}
+                  <p>
+                    {{ field|as_crispy_field }}
+
+                    {% for error in field.errors %}
+                      <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                  </p>
+                {% endfor %} -->
+                <div class="col-md-12">
+                  <button type="submit"  class="btn btn-primary">Create Account</button>                  
+                </div>
+              </form>
+
+
+
+        </div>
+</div>
+{% endblock %}

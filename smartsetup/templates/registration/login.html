@@ -1,0 +1,41 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Login
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-md-6">
+              <!-- <h2>Login</h2> -->
+              <form class="" action="" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <button type="submit" class="btn btn-primary">Login</button>
+              </form>
+
+            </div>
+        </div>
+</div>
+
+<div class="box-footer">
+    <div class="col-xs-6">
+        <p>
+          <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            <!-- @Html.ActionLink("Forgot your password?", "ForgotPassword") -->
+        </p>
+
+    </div>
+</div>
+
+
+{% endblock %}

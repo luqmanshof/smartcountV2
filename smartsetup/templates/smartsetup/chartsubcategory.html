@@ -1,0 +1,54 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        {{ title }}
+        <small>...</small>
+    </h1>
+    <br />
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-md-6">
+                <!-- <h2>Login</h2> -->
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+            </div>
+        </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $("#id_notes").change(function () {
+        var notes = $(this).val();
+        //console.log($(this).val());
+
+        $.ajax({
+            url: '{% url "validate_noteno" %}',
+            data: {
+                'notes': notes
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.is_taken) {
+                    alert("An account with this note number already exists.");
+                    $('#id_notes').val('');
+                }
+            }
+        });
+
+    });
+</script>
+{% endblock %}

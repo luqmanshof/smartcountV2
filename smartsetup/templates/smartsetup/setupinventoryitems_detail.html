@@ -1,0 +1,29 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Record Details Page
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+  <div class="box box-primary">
+          <div class="box-body" style="padding-top:15px">
+              <div class="col-md-6">
+                <h1><a href="#">{{setupinventoryitems.inventory_category_code}}</a></h1>
+                <h3>{{setupinventoryitems.inventory_code}} - {{setupinventoryitems.inventory_name}}</h3>
+              </div>
+          </div>
+
+  </div>
+
+
+<div class="container">
+  <a href="{% url 'setupinventoryitems_list' %}"  class="btn btn-primary">Back to List</a>
+</div>
+
+{% endblock %}

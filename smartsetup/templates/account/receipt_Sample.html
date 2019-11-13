@@ -1,0 +1,190 @@
+{% extends 'smartapp/base.html' %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        Receipt
+        <small>...</small>
+    </h1>
+
+</section>
+
+<section>
+    <div class="col-xs-12">
+        <form id="receiptMainForm">
+            <!-- {% csrf_token %} -->
+            <div class="row">
+                <div class="col-xs-6 col-md-2 form-group">
+                    <label for="">Receipt Date</label>
+                    <input class="form-control" type="date" onload="getDate()" name="receipt_date" id="date" required>
+                    <input class="form-control" id="main-id" type="hidden" name="mainId" />
+                </div>
+
+                <div class="col-xs-6 col-md-2 form-group">
+                    <label for="">Receipt Number</label>
+                    <input class="form-control" type="text" id="receipt_no" name="receipt_number"
+                        value="{{max_receipt.max_val|add:1}}" required>
+                </div>
+                <div class="col-xs-12 col-md-4 form-group">
+                    <label for="">Client Name</label>
+                    <select name="client_name" id="client" class="form-control">
+                        {% for item in client_name %}
+                        <option value="{{ item.client_name }}">{{ item.client_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-xs-12 col-md-4 form-group">
+                    <label for="">Received From:</label>
+                    <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder="Name" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-md-4 form-group">
+                    <label for="">Debit Category</label>
+                    <select name="cash_account" id="cash" class="form-control">
+                        {% for item in cash_acct %}
+                        <option value="{{ item.sub_category_code }}">{{ item.sub_category_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-xs-12 col-md-4 form-group">
+                    <label for="">Debit Account</label>
+                    <select name="debit_account" id="debit_account" class="form-control"></select>
+                </div>
+
+                <div class="col-xs-12 col-md-4 form-group">
+                    <div class="col-xs-6 col-md-6 form-group">
+                        <label for="">Payment Mode</label>
+                        <select name="pay_mode" id="client" class="form-control">
+                            <option value="Cash">Cash</option>
+                            <option value="Cash">Cheque</option>
+                            <option value="Cash">Transfer</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6 col-md-6 form-group">
+                        <label for="">Total Amount:</label>
+                        <input class="form-control" type="text" name="total_amount" id="total_amt" placeholder="0.00"
+                            required>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- <button type="submit">Save</button> -->
+
+            <div class="form-group">
+                <input class="form-control" type="text" name="description" placeholder="description" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="amount" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+                <label for="">Revenue Category</label>
+                <select name="revenue_account" id="revenue" class="form-control">
+                    {% for item in revenue_acct %}
+                    <option value="{{ item.sub_category_code }}">{{ item.sub_category_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
+            </div>
+            <div class="form-group">
+                <label for="">Credit Account</label>
+                <select name="credit_account" id="credit_account" class="form-control"></select>
+            </div>
+            <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+            <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
+        </form>
+    </div>
+
+
+</section>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    var CategoryCode, CategoryCode2, CategoryId;
+    var trans_date, amountInput;
+
+    $(document).ready(function () {
+        $("select#revenue").change(function () {
+            CategoryCode2 = $(this).children("option:selected").val();
+
+            accountID = 'credit_account';
+            // call Ajax function
+            populate_account_items(CategoryCode2, accountID);
+
+        });
+
+        function populate_account_items(CatCode, acctId) {
+            $.ajax({
+                url: '{% url "populate_noteitems" %}',
+                data: {
+                    'sub_category': CatCode
+                },
+                dataType: 'json',
+                success: function (result) {
+                    console.log(result);
+                    $("#" + acctId + " option").remove();
+                    for (var i = result.length - 1; i >= 0; i--) {
+                        //$("#" + acctId).append('<option>' + result[i].item + '</option>');
+                        $("#" + acctId).append('<option value="' + result[i].itemID + '">' + result[i].item + '</option>');
+
+                    };
+                },
+            });
+
+        }
+    })
+
+    $("#receiptMainForm").submit(function () {
+        alert("It is working...");
+
+        trans_date = $('input[name="receipt_date"]').val().trim();
+        receipt_no = $('input[name="receipt_number"]').val().trim();
+        received_from = $('input[name="bill_to"]').val().trim();
+        //client = $('input[name="client"]').val().trim();
+        //debit_account = $('input[name="debit_account"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+
+        alert("values assigned...");
+
+        console.log(trans_date);
+        console.log(receipt_no);
+        console.log(amountInput);
+        console.log(received_from);
+        if (trans_date && receipt_no && received_from) {
+            // Create Ajax Call
+            $.ajax({
+                url: '{% url "receipt_ajax_create" %}',
+                data: {
+                    'receipt_date': trans_date,
+                    'receipt_number': receipt_no,
+                    'client_name': client,
+                    'bill_to': received_from,
+                    'cash_account': CategoryCode,
+                    'Debit_account': Debit_account,
+                    'mainID': mainID
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.item) {
+                        alert('Success!!!')
+                        //appendToItemTable(data.item);
+                    }
+                }
+            });
+        } else {
+            alert("All fields must have a valid value.");
+        }
+        //$('form#receiptSub').trigger("reset");
+        return false;
+
+
+    });
+
+</script>
+{% endblock %}

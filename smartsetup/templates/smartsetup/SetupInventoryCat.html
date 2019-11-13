@@ -1,0 +1,29 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Setup Inventory Category
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-md-6">
+              <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <button type="submit" class="btn btn-primary">Save</button>
+              </form>
+
+            </div>
+        </div>
+</div>
+{% endblock %}

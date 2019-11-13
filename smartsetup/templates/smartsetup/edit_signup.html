@@ -1,0 +1,48 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+  <h1>
+    Edit Personal Profile
+    <small>...</small>
+  </h1>
+  <br/>
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-md-6">
+              <!-- <h2>Login</h2> -->
+              <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                {{ userprofile_form|crispy }}
+                <!-- {% for field in form %}
+                  <p>
+                    {{ field|as_crispy_field }}
+
+                    {% for error in field.errors %}
+                      <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                  </p>
+                {% endfor %} -->
+                <button type="submit">Save</button>
+              </form>
+
+              <!-- <div class="">
+                <h4>Others</h4>
+                {% for userprofile in userprofiles %}
+                <p>{{ userprofile.description }}</p>
+
+                {% endfor %}
+
+              </div> -->
+
+            </div>
+        </div>
+</div>
+{% endblock %}
