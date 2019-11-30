@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from smartsetup.models import (
     UserProfile, ChartCategory, ChartSubCategory, ChartNoteItems, SetupInventoryItems,
     SetupClients, SetupVendors, ReceiptMain, ReceiptDetails, ExpenseMain,
-    ExpenseDetails, GJournalMain, GJournalDetails
+    ExpenseDetails, GJournalMain, GJournalDetails, EmployeeProfile
 )
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .widgets import BootstrapDateTimePickerInput
@@ -79,6 +79,12 @@ class SetupInventoryItemsForm(forms.ModelForm):
         model = SetupInventoryItems
         fields = ('inventory_category_code', 'inventory_code',
                   'inventory_name', 'description')
+
+
+class EmployeeProfileForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeProfile
+        exclude = ['hire_date']
 
 
 class SetupClientsForm(forms.ModelForm):

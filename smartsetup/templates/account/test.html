@@ -1,0 +1,185 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+
+    <div class="col-xs-12 col-md-2">
+        <label>
+            EXPENSE MODULE
+            <small>...</small>
+        </label>
+    </div>
+
+    <div class="col-xs-12 col-md-10 pull-right">
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <a href="{% url 'expense_list' %}"><button class="btn btn-danger form-control"
+                    type="submit">EXIT</button></a>
+        </div>
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
+                data-target="#journalModal">JOURNAL</button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section>
+    <div class="box box-primary col-xs-12">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-xs-12">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+
+                        <div class="col-xs-6 col-md-2">
+                            {{ expensemain_form.date|as_crispy_field }}
+                        </div>
+
+                        <div class="col-xs-6 col-md-2">
+                            {{ expensemain_form.voucher_number|as_crispy_field }}
+                        </div>
+
+                        <div class="col-xs-12 col-md-8">
+                            {{ expensemain_form.payee|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            {{ expensemain_form.cash_account|as_crispy_field }}
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            {{ expensemain_form.pay_mode|as_crispy_field }}
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            {{ expensemain_form.total_amount|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <!-- {{ receiptmain_form|crispy }}
+                  {{ receiptdetails_form|crispy }} -->
+
+                    <button type="submit">Save</button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<section style="margin-top:0px">
+    <div class="box box-primary col-xs-12">
+
+        <div class="box-body">
+            <div class="col-md-4">
+                <h4>Enter Details</h4>
+                <!-- /.box -->
+                <div class="box">
+                    <div class="box-body">
+                        <!-- <h3>ADD USER</h3> -->
+                        <form id="addUser" action="">
+                            <div class="form-group">
+                                {{ expensedetails_form.description|as_crispy_field }}
+                                <!-- <input class="form-control" type="text" name="description" placeholder="description" required> -->
+                            </div>
+                            <div class="form-group">
+                                {{ expensedetails_form.amount|as_crispy_field }}
+                                <!-- <input class="form-control" type="text" name="amount" placeholder="0.00" required> -->
+                            </div>
+                            <div class="form-group">
+                                <!-- {{ expensedetails_form.expense_account|as_crispy_field }} -->
+                                <label for="">Expense Account</label>
+                                <select id="revenue" class="form-control">
+                                    {% for item in expense_acct %}
+                                    <option value="{{ item.sub_category_name }}">{{ item.sub_category_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                            <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+                        </form>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-8">
+                <h4>...</h4>
+                <!-- /.box -->
+                <div class="box">
+                    <div class="box-body">
+                        <table id="example2" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    {% for fieldCol in fieldCols %}
+                                    <th>{{ fieldCol }}</th>
+                                    {% endfor %}
+                                    <th width=50%>Description</th>
+                                    <th width=25%>Amount</th>
+                                    <th width=25%>Expense Account</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                {% for field, value in fields.Items %}
+                                <tr>
+                                    <!-- {% for value in users.Items %} -->
+                                    <td>
+                                        {{ value }}
+                                    </td>
+                                    <!-- {% endfor %} -->
+
+                                    <td style="text-align:left">
+                                        <a href="{% url 'edit_signup_with_pk' pk=user.pk %}"
+                                            class="fa fa-edit text-green"> Edit</a> |
+                                        <a href="#" class="fa fa-trash text-red"> Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    {% for field in fields %}
+                                    <th>{{ field }}</th>
+                                    {% endfor %}
+                                    <!-- <th>Event/Actions</th> -->
+                                </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+
+        </div>
+
+
+
+
+    </div>
+
+</section>
+
+<script type="text/javascript">
+    $(function () {
+        $(".select-placeholder").prepend("<option value='' disabled selected>Select an option...</option>");
+        // This will make every element with the class "date-picker" into a DatePicker element
+        $('.date-picker').datepicker();
+    })
+
+</script>
+
+{% endblock %}

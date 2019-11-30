@@ -4,68 +4,190 @@
 
 {% block content %}
 <section class="content-header">
-    <h1>
-        Expense Voucher
-        <small>...</small>
-    </h1>
 
-</section>
+    <div class="col-xs-12 col-md-2">
+        <label>
+            EXPENSE MODULE
+            <small>...</small>
+        </label>
+    </div>
 
-<section>
-    <div class="box box-primary col-xs-12">
-        <div class="box-body" style="padding-top:15px">
-            <div class="col-xs-12">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="row">
-                        <!-- <div class="input-group date col-xs-6 col-md-3">
-              <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-              </div>
-              <input type="text" class="form-control pull-right" id="datepicker">
-            </div> -->
-                        <div class="col-xs-6 col-md-2">
-                            {{ expensemain_form.date|as_crispy_field }}
-                        </div>
+    <div class="col-xs-12 col-md-10 pull-right">
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <a href="{% url 'expense_list' %}"><button class="btn btn-danger form-control"
+                    type="submit">EXIT</button></a>
+        </div>
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
+                data-target="#journalModal">JOURNAL</button>
 
-                        <div class="col-xs-6 col-md-2">
-                            {{ expensemain_form.voucher_number|as_crispy_field }}
-                        </div>
-
-                        <div class="col-xs-12 col-md-8">
-                            {{ expensemain_form.payee|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 col-md-4">
-                            {{ expensemain_form.cash_account|as_crispy_field }}
-                        </div>
-                        <div class="col-xs-12 col-md-4">
-                            {{ expensemain_form.pay_mode|as_crispy_field }}
-                        </div>
-                        <div class="col-xs-12 col-md-4">
-                            {{ expensemain_form.total_amount|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <!-- {{ receiptmain_form|crispy }}
-                  {{ receiptdetails_form|crispy }} -->
-
-                    <button type="submit">Save</button>
-                </form>
-                <!-- <p>Latest Receipt: {{ latest_receiptno }}</p> -->
-
-                <!-- <br> -->
-
-            </div>
         </div>
 
     </div>
 
 </section>
 
-<section style="margin-top:0px">
+
+<section>
+
+    <div class="box box-primary col-xs-12 col-md-12">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-xs-12">
+                <form id="receiptMainForm">
+                    {% if expensemain %}
+                    <div class="row">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Date</label>
+                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
+                                name="trans_date" id="date" required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId"
+                                value="{{expensemain.id}}" />
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{expensemain.voucher_number}}" required>
+
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Payee</label>
+                            <select name="client_name" id="client" class="form-control">
+                                {% for item in staff_name %}
+                                <option value="{{ item.id }}"
+                                    {% if expensemain.payee_id == item.id %}selected{% endif %}>
+                                    {{ item.first_name|add:" "|add:item.last_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Narrative:</label>
+                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
+                                value="{{expensemain.description}}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Credit Category</label>
+                            <select name="cash_account" id="cash" class="form-control">
+                                {% for item in cash_acct %}
+                                <option value="{{ item.id }}"
+                                    {% if expensemain.cash_account_id == item.id %}selected{% endif %}>
+                                    {{ item.sub_category_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Credit Account</label>
+                            <select name="debit_account" id="debit_account" class="form-control">
+                                {% for item in note_acct %}
+                                <option value="{{ item.id }}"
+                                    {% if expensemain.credit_account_id == item.id %}selected{% endif %}>
+                                    {{ item.item_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <div class="col-xs-6 col-md-6 form-group">
+                                <label for="">Payment Mode</label>
+                                <select name="pay_mode" id="pMode" class="form-control">
+                                    <option value="Cash" {% if expensemain.pay_mode == 'Cash' %}selected{% endif %}>Cash
+                                    </option>
+                                    <option value="Cash" {% if expensemain.pay_mode == 'Cheque' %}selected{% endif %}>
+                                        Cheque</option>
+                                    <option value="Cash" {% if expensemain.pay_mode == 'Transfer' %}selected{% endif %}>
+                                        Transfer</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-6 col-md-6 form-group">
+                                <label for="">Total Amount:</label>
+                                <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                    placeholder="0.00" value="{{total_sum}}" required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <div class="row">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Receipt Date</label>
+                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
+                                required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId" />
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{max_expense.max_val|add:1}}" required>
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Payee</label>
+                            <select name="client_name" id="client" class="form-control">
+                                {% for item in staff_name %}
+                                <option value="{{ item.id }}">{{ item.first_name|add:" "|add:item.last_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Narrative:</label>
+                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder="" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Credit Category</label>
+                            <select name="cash_account" id="cash" class="form-control">
+                                {% for item in cash_acct %}
+                                <option value="{{ item.id }}">{{ item.sub_category_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Credit Account</label>
+                            <select name="debit_account" id="debit_account" class="form-control"></select>
+                        </div>
+
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <div class="col-xs-6 col-md-6 form-group">
+                                <label for="">Payment Mode</label>
+                                <select name="pay_mode" id="pMode" class="form-control">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cash">Cheque</option>
+                                    <option value="Cash">Transfer</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-6 col-md-6 form-group">
+                                <label for="">Total Amount:</label>
+                                <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                    placeholder="0.00" required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+                    <!-- <button type="submit">Save</button> -->
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
     <div class="box box-primary col-xs-12">
 
         <div class="box-body">
@@ -75,27 +197,31 @@
                 <div class="box">
                     <div class="box-body">
                         <!-- <h3>ADD USER</h3> -->
-                        <form id="addUser" action="">
+                        <form id="receiptSub" action="">
                             <div class="form-group">
-                                {{ expensedetails_form.description|as_crispy_field }}
-                                <!-- <input class="form-control" type="text" name="description" placeholder="description" required> -->
+                                <input class="form-control" type="text" name="description" placeholder="description"
+                                    required>
                             </div>
                             <div class="form-group">
-                                {{ expensedetails_form.amount|as_crispy_field }}
-                                <!-- <input class="form-control" type="text" name="amount" placeholder="0.00" required> -->
+                                <input class="form-control" type="text" name="amount" placeholder="0.00" required>
                             </div>
                             <div class="form-group">
-                                <!-- {{ expensedetails_form.expense_account|as_crispy_field }} -->
-                                <label for="">Expense Account</label>
-                                <select id="revenue" class="form-control">
+                                <label for="">Expense Category</label>
+                                <select name="expense_account" id="expense" class="form-control" required>
                                     {% for item in expense_acct %}
-                                    <option value="{{ item.sub_category_name }}">{{ item.sub_category_name }}
+                                    <option value="{{ item.id }}">{{ item.sub_category_name }}
                                     </option>
                                     {% endfor %}
                                 </select>
-
+                                <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                             </div>
-                            <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+                            <div class="form-group">
+                                <label for="">Debit Account</label>
+                                <select name="credit_account" id="credit_account" class="form-control"
+                                    required></select>
+                            </div>
+                            <button class="btn btn-primary form-control" type="submit">ADD RECORD</button>
+                            <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
                         </form>
 
                     </div>
@@ -109,49 +235,43 @@
                 <!-- /.box -->
                 <div class="box">
                     <div class="box-body">
-                        <table id="example2" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    {% for fieldCol in fieldCols %}
-                                    <th>{{ fieldCol }}</th>
-                                    {% endfor %}
-                                    <th width=50%>Description</th>
-                                    <th width=25%>Amount</th>
-                                    <th width=25%>Expense Account</th>
-                                </tr>
-
-                            </thead>
-                            <tbody>
-                                {% for field, value in fields.Items %}
-                                <tr>
-                                    <!-- {% for value in users.Items %} -->
-                                    <td>
-                                        {{ value }}
-                                    </td>
-                                    <!-- {% endfor %} -->
-
-                                    <td style="text-align:left">
-                                        <a href="{% url 'edit_signup_with_pk' pk=user.pk %}"
-                                            class="fa fa-edit text-green"> Edit</a> |
-                                        <a href="#" class="fa fa-trash text-red"> Delete</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    {% for field in fields %}
-                                    <th>{{ field }}</th>
-                                    {% endfor %}
-                                    <!-- <th>Event/Actions</th> -->
-                                </tr>
-
-                            </tfoot>
+                        <table id="itemTable" class="table table-striped">
+                            <tr>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Debit Account</th>
+                                <th colspan="3">Amount</th>
+                            </tr>
+                            <!-- table_list -->
+                            {% if expenseitems %}
+                            {% for item in expenseitems %}
+                            <tr id="item-{{item.id}}">
+                                <td class="itemDescription itemData" name="description">{{item.description}}</td>
+                                <td class="itemExpenseAcct itemData" name="expense">{{item.expense_account}}</td>
+                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account}}</td>
+                                <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                    {{item.amount|floatformat:2}}
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
+                                        data-toggle="modal" data-target="#myModal">EDIT</button>
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-danger form-control"
+                                        onClick="deleteItem({{item.id}})">DELETE</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <!-- No Item Listed -->
+                            {% endif %}
                         </table>
                     </div>
                     <!-- /.box-body -->
                 </div>
+
+                <label for="">...</label>
+
                 <!-- /.box -->
             </div>
             <!-- /.col -->
@@ -165,12 +285,445 @@
 
 </section>
 
-<script type="text/javascript">
+<!-- Edit Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myModalLabel">Edit Details</h4>
+            </div>
+            <!-- /.box -->
+            <div class="box">
+                <div class="box-body">
+                    <form id="updateReceiptSub" action="">
+                        <input class="form-control" id="form-id" type="hidden" name="formId" />
+                        <div class="form-group">
+                            <input class="form-control" type="text" id="form-description" name="formdescription"
+                                placeholder="description" required>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" id="form-amount" name="formamount"
+                                placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Expense Category</label>
+                            <select name="formexpense_account" id="form-expense" class="form-control" required>
+                                {% for item in expense_acct %}
+                                <option value="{{ item.id }}">{{ item.sub_category_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
+                        </div>
+                        <div class="form-group">
+                            <label for="">Debit Account</label>
+                            <select name="formcredit_account" id="form-credit_account" class="form-control" required>
+                                {% for item in note_acct %}
+                                <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary form-control" type="submit">UPDATE RECORD</button>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-danger form-control"
+                                data-dismiss="modal">CLOSE</button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END Edit Modal -->
+
+<!-- View Journal Modal -->
+<div class="modal fade" id="journalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+
+                <div class="col-xs-6 pull-left">
+                    <h4 class="modal-title" id="myModalLabel"><b><u> Cash Disbursement Journal</u></b></h4>
+                </div>
+                <div class="col-xs-6">
+                    <h5 class="modal-title pull-right" id=""><b>Ref No: {{expensemain.voucher_number}}</b></h5>
+                </div>
+            </div>
+            <!-- /.box -->
+            <div class="box">
+                <div class="box-body">
+                    <table id="journalTable" class="table table-striped">
+                        <tr>
+                            <th>Category</th>
+                            <th>Account</th>
+                            <th>Description</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                        <!-- table_list -->
+                        {% if journal_list %}
+                        {% for item in journal_list %}
+                        <tr id="item-{{item.id}}">
+                            <td class="itemCategory itemData" name="category">{{item.sub_category}}</td>
+                            <td class="itemExpenseAcct itemData" name="account">{{item.account_id}}</td>
+                            <td class="itemDescription itemData" name="description">{{item.description}}</td>
+                            <td class="itemDebitAcct itemData pull-right" name="debit">{{item.debit|floatformat:2}}</td>
+                            <td class="itemCreditAcct itemData" style="text-align: right;" name="credit">
+                                {{item.credit|floatformat:2}}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        No Item Listed
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END Journal Modal -->
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    var CategoryCode, CategoryCode2, CategoryId;
+    var trans_date, amountInput, debit_acct, credit_acct, clientID, totalAmount;
+    $(document).ready(function () {
+
+        $("select#cash").change(function () {
+            CategoryCode = $(this).children("option:selected").val();
+            populate_account_items(CategoryCode, 'debit_account');
+        });
+
+        $("select#expense,select#form-expense").change(function () {
+            CategoryCode2 = $(this).children("option:selected").val();
+            populate_account_items(CategoryCode2, 'credit_account');
+            populate_account_items(CategoryCode2, 'form-credit_account');
+        });
+
+
+        $("select#debit_account").change(function () {
+            debit_acct = $(this).children("option:selected").val();
+            console.log(debit_acct)
+        });
+
+        $("select#credit_account").change(function () {
+            credit_acct = $(this).children("option:selected").val();
+            console.log(credit_acct)
+        });
+
+        $("select#client").change(function () {
+            clientID = $(this).children("option:selected").val();
+            console.log(clientID)
+        });
+
+
+
+
+        //DATE PICKER
+        $.fn.setNow = function (onlyBlank) {
+            var now = new Date($.now())
+                , year
+                , month
+                , date
+                , hours
+                , minutes
+                , seconds
+                , formattedDateTime
+                ;
+
+            year = now.getFullYear();
+            month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+            date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
+            hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
+            minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
+            seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
+
+            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+
+            if (onlyBlank === true && $(this).val()) {
+                return this;
+            }
+
+            $(this).val(formattedDateTime);
+
+            return this;
+        }
+
+        $(function () {
+            // Handler for .ready() called.
+            $('input[type="datetime-local"]').setNow();
+
+        });
+
+        //DEFAULTS
+        if ($('#main-id').val()) {
+            CategoryCode = $('#cash').children("option:selected").val();
+            CategoryCode2 = $('#expense').children("option:selected").val();
+            debit_acct = $('#debit_account').children("option:selected").val();
+            credit_acct = $('#credit_account').children("option:selected").val();
+            clientID = $('#client').children("option:selected").val();
+
+        }
+        else {
+            $('#client, #cash, #expense, #debit_acct').val('');
+            $('#total_amt').val('0.00');
+        }
+
+    });
+
+
+    function populate_account_items(CatCode, acctId) {
+        $.ajax({
+            url: '{% url "populate_noteitems" %}',
+            data: {
+                'sub_category': CatCode
+            },
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                $("#" + acctId + " option").remove();
+                for (var i = result.length - 1; i >= 0; i--) {
+                    //$("#" + acctId).append('<option>' + result[i].item + '</option>');
+                    $("#" + acctId).append('<option value="' + result[i].itemID + '">' + result[i].item + '</option>');
+                };
+                $("#" + acctId).val('');
+            },
+        });
+
+    }
+
+
+    // Create Django Ajax Call
+    $("#receiptSub").submit(function () {
+        //alert("Stage 1...");
+
+        trans_date = $('input[name="trans_date"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+        received_from = $('input[name="bill_to"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        description = $('input[name="description"]').val().trim();
+        amountInput = $('input[name="amount"]').val().trim();
+        totalAmount = $('input[name="total_amount"]').val().trim();
+
+        //alert("Stage 2...");
+
+        console.log(trans_date);
+        console.log(voucher_no);
+        console.log(amountInput);
+        console.log(received_from);
+        console.log(CategoryCode);
+        if (trans_date && voucher_no && CategoryCode && received_from) {
+            // Create Ajax Call
+            //alert("Stage 3...");
+            $.ajax({
+                url: '{% url "expense_ajax_create" %}',
+                data: {
+                    'trans_date': trans_date,
+                    'voucher_number': voucher_no,
+                    'client_name': clientID,
+                    'bill_to': received_from,
+                    'cash_account': CategoryCode,
+                    'Debit_account': debit_acct,
+                    'mainID': mainID,
+                    'description': description,
+                    'expense_account': CategoryCode2,
+                    'credit_account': credit_acct,
+                    'amount': amountInput,
+                    'total_amount': totalAmount,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.expense_main) {
+                        alert('Success!!!')
+                        //clearList();
+                        console.log(data.expense_sub)
+                        console.log(data.expense_main.Mainid)
+                        $('#main-id').val(data.expense_main.Mainid);
+                        $('#total_amt').val(data.total_sum);
+                        rec = data.expense_sub
+                        $("#itemTable > tbody:last-child").append(`
+                <tr id="item-${rec.Subid}">
+                    <td class="itemDescription" name="description">${rec.description}</td>
+                    '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
+                    '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
+                    '<td class="itemAmount" name="amount">${rec.amount}</td>
+                    '<td align="center">
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.id})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.id})">DELETE</button>
+                    </td>
+                </tr>
+              `);
+
+                    }
+
+                    if (data.journal_list) {
+                        console.log(data.journal_list)
+                        populateJournalList(data.journal_list);
+                    }
+                }
+            });
+        } else {
+            alert("All fields must have a valid value.");
+        }
+        $('form#receiptSub').trigger("reset");
+        return false;
+    });
+
+    $('#client').change(function () {
+        $('#bill_to').val($(this).find('option:selected').text());
+    });
+
     $(function () {
         $(".select-placeholder").prepend("<option value='' disabled selected>Select an option...</option>");
         // This will make every element with the class "date-picker" into a DatePicker element
         $('.date-picker').datepicker();
     })
+
+    function clearList() {
+        console.log('CLEAR LIST');
+        $('#itemTable tr').each(function () {
+            //console.log(this.id)
+            var str = this.id;
+            var res = str.split("-").pop()
+            //var res = this.id.slice(5, 6);
+            console.log(res);
+            $("#itemTable #item-" + res).remove();
+
+        })
+    }
+
+    function clearJournalList() {
+        console.log('CLEAR JOURNAL LIST');
+        $('#journalTable tr').each(function () {
+            //console.log(this.id)
+            var str = this.id;
+            var res = str.split("-").pop()
+            //var res = this.id.slice(5, 6);
+            console.log(res);
+            $("#journalTable #item-" + res).remove();
+
+        })
+    }
+
+    function populateJournalList(journal_list) {
+        var count = 0;
+        var ref_id, sub_category, account_id, description, debit, credit;
+
+        clearJournalList();
+
+        console.log('POPULATE LIST');
+        $.each(JSON.parse(journal_list), function () {
+            $.each(this, function (k, v) {
+                /// do stuff
+                console.log(v);
+                if (count == 1) {
+                    ref_id = v;
+                } else if (count == 2) {
+                    sub_category = v['sub_category'];
+                    account_id = v['account_id'];
+                    description = v['description'];
+                    debit = v['debit'];
+                    credit = v['credit'];
+                } else {
+
+                }
+
+                count = count + 1;
+            });
+
+            count = 0;
+            console.log(ref_id, '-', sub_category, '-', account_id, '-', description, '-', debit, '-', credit);
+
+            $("#journalTable > tbody:last-child").append(`
+        <tr id="item-${ref_id}">
+            <td class="itemCategory" name="category">${sub_category}</td>
+            '<td class="itemExpenseAcct" name="account">${account_id}</td>
+            '<td class="itemDescription itemData" name="description">${description}</td>
+            '<td class="itemDebitAcct itemData pull-right" name="debit">${debit}</td>
+            '<td class="itemCreditAcct itemData" style="text-align: right;" name="credit">${credit}</td>
+        </tr>
+    `);
+
+
+            console.log('###');
+        });
+
+    }
+
+
+    function deleteItem(id) {
+        var action = confirm("Are you sure you want to delete this item?");
+        mainID = $('input[name="mainId"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+
+        if (action != false) {
+            $.ajax({
+                url: '{% url "expense_ajax_delete" %}',
+                data: {
+                    'id': id,
+                    'mainID': mainID,
+                    'voucher_number': voucher_no
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.deleted) {
+                        alert('Item deleted Successfully')
+                        console.log(id);
+                        $("#itemTable #item-" + id).remove();
+                        $('#total_amt').val(data.total_sum);
+                        //$("#itemTable).remove();
+                    }
+                    if (data.journal_list) {
+                        populateJournalList(data.journal_list);
+                    }
+                }
+            });
+        }
+    }
+
+    function editItem(id) {
+        if (id) {
+            tr_id = "#item-" + id;
+            description = $(tr_id).find(".itemDescription").text();
+            ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text();
+            creditAcct = $(tr_id).find(".itemCreditAcct").text();
+            amount = $(tr_id).find(".itemAmount").text();
+
+            $.ajax({
+                url: '{% url "ajax_getacctID" %}',
+                data: {
+                    'creditAcct': creditAcct,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    //alert('SUCCESS!!!');
+
+                    $('#form-id').val(id);
+                    $('#form-description').val(description);
+                    $('#form-expense').val(data.cat_id);
+                    $('#form-credit_account').val(data.note_id);
+                    $('#form-amount').val(amount);
+
+                }
+            });
+
+        }
+    }
 
 </script>
 

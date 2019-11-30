@@ -16,7 +16,7 @@
 
         </div>
         <div class="col-xs-2">
-            <a href="{% url 'expense' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
+            <a href="{% url 'expense_new' %}"><button type="button" class="btn btn-primary btn-md">New
                     Expense</button></a>
         </div>
     </div>
@@ -52,25 +52,16 @@
                                 {{ cat.description }}
                             </td>
                             <td style="text-align:left">
-                                <a href="{% url 'chartcategory' pk=cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
-                                <a href="{% url 'chartcategory_detail' pk=cat.pk %}" class="fa fa-eye text-blue">
-                                    View</a> |
-                                <a href="{% url 'chartcategory_delete' pk=cat.pk %}" class="fa fa-trash text-red">
-                                    Delete</a>
+                                <a href="{% url 'expense_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
+                                |
+                                <a href="#" class="fa fa-trash text-red" onclick="deleteItem({{cat.id}})"> Delete</a>
+
                             </td>
                         </tr>
                         {% endfor %}
 
                     </tbody>
-                    <!-- <tfoot>
-                        <tr>
-                          {% for fieldCol in fieldCols %}
-                            <th>{{ fieldCol }}</th>
-                          {% endfor %}
-                          <th>Event/Actions</th>
-                        </tr>
 
-                    </tfoot> -->
                 </table>
             </div>
             <!-- /.box-body -->
@@ -80,9 +71,40 @@
     <!-- /.col -->
 </div>
 
-
 <br>
 
-
-
 {% endblock %}
+{% block javascript %}
+<script>
+
+    function deleteItem(id) {
+        console.log(id);
+        var action = confirm("Are you sure you want to delete this expense voucher?");
+        if (action != false) {
+            $.ajax({
+                url: '{% url "expense_delete" %}',
+                data: {
+                    'id': id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.deleted) {
+                        console.log(id);
+                        $("#itemTable #item-" + id).remove();
+                        //$("#itemTable).remove();
+                    }
+
+                    if (data.success == true) { // if true (1)
+                        setTimeout(function () {// wait for 5 secs(2)
+                            location.reload(); // then reload the page.(3)
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+
+</script>
+
+{% endblock javascript %}

@@ -52,13 +52,13 @@
                                 {{ cat.bill_to }}
                             </td>
                             <td style="text-align:left">
-                                <!-- <a href="{% url 'receipt_new' %}" class="fa fa-edit text-green" onclick="editReceipt({{cat.id}})"> Edit</a> -->
-                                <a href="{% url 'receipt_edit' pk=cat.pk %}" class="btn btn-success form-control">
-                                    EDIT</a>
+                                <a href="{% url 'receipt_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
+                                <!-- <a href="{% url 'receipt_edit' pk=cat.pk %}" class="btn btn-success form-control">
+                                    EDIT</a> -->
                                 |
-                                <!-- <a href="#" class="fa fa-trash text-red" onclick="deleteReceipt({{cat.id}})"> Delete</a> -->
-                                <button class="btn btn-danger form-control"
-                                    onClick="deleteReceipt({{cat.id}})">DELETE</button>
+                                <a href="#" class="fa fa-trash text-red" onclick="deleteReceipt({{cat.id}})"> Delete</a>
+                                <!-- <button class="deletebtn btn btn-danger form-control"
+                                    onClick="deleteReceipt({{cat.id}})">DELETE</button> -->
 
                             </td>
                         </tr>
@@ -80,23 +80,6 @@
 {% endblock %}
 {% block javascript %}
 <script>
-    function editReceipt(receiptID) {
-        var action = confirm("Are you sure you want to edit this Receipt?");
-        if (action != false) {
-            console.log('Receipt ID = ' + receiptID)
-            $.ajax({
-                url: '{% url "receipt_ajax_edit" %}',
-                data: {
-                    'RcptId': receiptID,
-                },
-                dataType: 'json',
-                success: function (data) {
-                    alert('Sucess!!!')
-                }
-            });
-
-        }
-    }
 
     function deleteReceipt(id) {
         console.log(id);

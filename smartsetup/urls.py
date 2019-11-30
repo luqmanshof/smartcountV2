@@ -83,6 +83,14 @@ urlpatterns = [
     path('setupinventoryitems/(<int:pk>)/delete',
          views.SetupInventoryItemsDelete.as_view(), name='setupinventoryitems_delete'),
 
+    # SETUP EMPLOYEES
+    path('employees_list', views.employees_list, name='employees_list'),
+    path('employees/(<int:pk>)', views.employees, name='employees'),
+    path('employees/(<int:pk>)/detail',
+         views.EmployeesDetail.as_view(), name='employees_detail'),
+    path('employees/(<int:pk>)/delete',
+         views.EmployeesDelete.as_view(), name='employees_delete'),
+
     # SETUP CLIENT
     path('setupclients_list', views.setupclients_list, name='setupclients_list'),
     path('setupclients/(<int:pk>)', views.setupclients, name='setupclients'),
@@ -104,17 +112,26 @@ urlpatterns = [
     path('receipt_new', views.ReceiptClass.as_view(), name='receipt_new'),
     path('ajax/receipt/create/',  views.CreateReceipt.as_view(),
          name='receipt_ajax_create'),
-    path('receipt_ajax_edit', views.ReceiptEditClass.as_view(),
-         name='receipt_ajax_edit'),
     path('receipt_edit/(<int:pk>)', views.receiptedit, name='receipt_edit'),
     path('ajax/receipt_items/delete/',  views_ajax.DeleteRececiptItem.as_view(),
          name='receipt_ajax_delete'),
     path('ajax/receipt/delete/',  views_ajax.DeleteRececipt.as_view(),
          name='receipt_delete'),
 
+    path('ajax/getacctID/',  views.GetAcctIDs.as_view(),
+         name='ajax_getacctID'),
+
+
     # EXPENSES
     path('expense_list', views.expense_list, name='expense_list'),
-    path('expense/(<int:pk>)', views.expense, name='expense'),
+    path('expense_new', views.ExpenseClass.as_view(), name='expense_new'),
+    path('expense_edit/(<int:pk>)', views.expenseedit, name='expense_edit'),
+    path('ajax/expense/create/',  views.CreateExpense.as_view(),
+         name='expense_ajax_create'),
+    path('ajax/expense_items/delete/',  views_ajax.DeleteExpenseItem.as_view(),
+         name='expense_ajax_delete'),
+    path('ajax/expense/delete/',  views_ajax.DeleteExpense.as_view(),
+         name='expense_delete'),
 
     # Reports
     path('financialperformance', views.financialperformance,
