@@ -122,8 +122,12 @@
               <label for="">Client Name</label>
               <select name="client_name" id="client" class="form-control">
                 {% for item in client_name %}
-                <option value="{{ item.id }}">{{ item.client_name }}
+                <option value="{{ item.id }}" {% if item.id == 1 %}selected{% endif %}>
+                  {{ item.client_name }}
                 </option>
+
+                <!-- <option value="{{ item.id }}">{{ item.client_name }}
+                </option> -->
                 {% endfor %}
               </select>
             </div>
@@ -460,7 +464,8 @@
 
     }
     else {
-      $('#client, #cash, #revenue, #debit_acct').val('');
+      $('#cash, #revenue, #debit_acct').val('');
+      //$('#client').val('Nill');
       $('#total_amt').val('0.00');
     }
 
@@ -507,6 +512,10 @@
     console.log(amountInput);
     console.log(received_from);
     console.log(CategoryCode);
+    console.log(CategoryCode);
+
+    if (clientID) { } else { clientID = 1; }
+
     if (trans_date && receipt_no && CategoryCode && received_from) {
       // Create Ajax Call
       //alert("Stage 3...");

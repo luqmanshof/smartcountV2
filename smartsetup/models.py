@@ -179,7 +179,7 @@ class ReceiptMain(models.Model):
     date = models.DateTimeField(verbose_name='Receipt Date/Time')
     receipt_number = models.PositiveIntegerField(default=100)
     client = models.ForeignKey(SetupClients, on_delete=models.SET_NULL,
-                               null=True, blank=True, verbose_name='Client Name')
+                               null=True, blank=True, verbose_name='Client Name', default=1)
     bill_to = models.CharField(
         max_length=256, default='', blank=True, verbose_name='Received from')
     description = models.TextField(default='')

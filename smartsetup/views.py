@@ -513,7 +513,7 @@ class CreateReceipt(View):
             obj3.account_id = ChartNoteItems.objects.get(id = Debit_account1)
             obj3.sub_category = ChartSubCategory.objects.get(id = cash_account1)
             obj3.description = bill_to1
-            obj3.credit = total_amount + amount2
+            obj3.debit = total_amount + amount2
             obj3.save()
        
         else:
