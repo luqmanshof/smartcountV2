@@ -208,7 +208,7 @@
                 <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
               </div>
               <div class="form-group">
-                <label for="">Credit Account</label>
+                <label for="">Revenue Account</label>
                 <select name="credit_account" id="credit_account" class="form-control" required></select>
               </div>
               <button class="btn btn-primary form-control" type="submit">ADD RECORD</button>
@@ -230,7 +230,7 @@
               <tr>
                 <th>Description</th>
                 <th>Category</th>
-                <th>Credit Account</th>
+                <th>Revenue Account</th>
                 <th colspan="3">Amount</th>
               </tr>
               <!-- table_list -->
@@ -306,7 +306,7 @@
               <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
             </div>
             <div class="form-group">
-              <label for="">Credit Account</label>
+              <label for="">Revenue Account</label>
               <select name="formcredit_account" id="form-credit_account" class="form-control" required>
                 {% for item in note_acct %}
                 <option value="{{ item.id }}">{{ item.item_name }}</option>

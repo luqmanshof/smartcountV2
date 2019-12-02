@@ -489,8 +489,10 @@ class CreateReceipt(View):
 
         ClientID = SetupClients.objects.get(id = client_name1).id
         cashAccount = ChartSubCategory.objects.get(id = cash_account1).sub_category_name
+        cashCategoryID = ChartSubCategory.objects.get(id = cash_account1).category_code_id
         DebitAccount = ChartNoteItems.objects.get(id = Debit_account1).item_name
         revenueAccount = ChartSubCategory.objects.get(id = revenue_account1).sub_category_name
+        revenueCategoryID = ChartSubCategory.objects.get(id = revenue_account1).category_code_id
         creditAccount = ChartNoteItems.objects.get(id = credit_account1).item_name
         
         
@@ -512,6 +514,7 @@ class CreateReceipt(View):
             obj3.journal_type = 'CRJ'
             obj3.account_id = ChartNoteItems.objects.get(id = Debit_account1)
             obj3.sub_category = ChartSubCategory.objects.get(id = cash_account1)
+            obj3.category = ChartCategory.objects.get(id = cashCategoryID)
             obj3.description = bill_to1
             obj3.debit = total_amount + amount2
             obj3.save()
@@ -537,6 +540,7 @@ class CreateReceipt(View):
             journal_type = 'CRJ',
             account_id = ChartNoteItems.objects.get(id = Debit_account1),
             sub_category = ChartSubCategory.objects.get(id = cash_account1),
+            category = ChartCategory.objects.get(id = cashCategoryID),
             description = bill_to1,
             debit = total_amount + amount2,
             main_Trans = True
@@ -556,6 +560,7 @@ class CreateReceipt(View):
             journal_type = 'CRJ',
             account_id = ChartNoteItems.objects.get(id = credit_account1),
             sub_category = ChartSubCategory.objects.get(id = revenue_account1),
+            category = ChartCategory.objects.get(id = revenueCategoryID),
             description = description,
             credit = amount2,
             )
@@ -679,8 +684,10 @@ class CreateExpense(View):
 
         ClientID = EmployeeProfile.objects.get(id = client_name1).id
         cashAccount = ChartSubCategory.objects.get(id = cash_account1).sub_category_name
+        cashCategoryID = ChartSubCategory.objects.get(id = cash_account1).category_code_id
         DebitAccount = ChartNoteItems.objects.get(id = Debit_account1).item_name
         expenseAccount = ChartSubCategory.objects.get(id = expense_account1).sub_category_name
+        expenseCategoryID = ChartSubCategory.objects.get(id = expense_account1).category_code_id
         creditAccount = ChartNoteItems.objects.get(id = credit_account1).item_name
         
         
@@ -702,6 +709,7 @@ class CreateExpense(View):
             obj3.journal_type = 'CDJ'
             obj3.account_id = ChartNoteItems.objects.get(id = credit_account1)
             obj3.sub_category = ChartSubCategory.objects.get(id = cash_account1)
+            obj3.category = ChartCategory.objects.get(id = cashCategoryID)
             obj3.description = bill_to1
             obj3.credit = total_amount + amount2
             obj3.save()
@@ -724,6 +732,7 @@ class CreateExpense(View):
             journal_type = 'CDJ',
             account_id = ChartNoteItems.objects.get(id = Debit_account1),
             sub_category = ChartSubCategory.objects.get(id = cash_account1),
+            category = ChartCategory.objects.get(id = cashCategoryID),
             description = bill_to1,
             credit = total_amount + amount2,
             main_Trans = True
@@ -743,6 +752,7 @@ class CreateExpense(View):
             journal_type = 'CDJ',
             account_id = ChartNoteItems.objects.get(id = Debit_account1),
             sub_category = ChartSubCategory.objects.get(id = expense_account1),
+            category = ChartCategory.objects.get(id = expenseCategoryID),
             description = description,
             debit = amount2,
             )
@@ -768,12 +778,41 @@ class CreateExpense(View):
         return JsonResponse(data)
 
 
+#GENERAL JOURNAL TRANSACTION
+@login_required
+def gjournal_list(request, pk=None):
+    gjournal = GJournalMain.objects
+    fieldCols = ['Date','Journal No.','Description']
+    args ={'fieldCols':fieldCols,'gjournal':gjournal}
+    return render(request, 'account/gjournal_list.html',args)
+
+class GJournalClass(ListView):
+    model = GJournalDetails
+    template_name = 'account/gjournal.html'
+           
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the Sub Category
+
+        context['max_expense']  = GJournalMain.objects.aggregate(max_val=Coalesce(Max(Cast('ref_number', output_field=PositiveIntegerField())), Value(1000)))
+        context['staff_name'] = EmployeeProfile.objects.all()
+        context['cash_acct'] = ChartSubCategory.objects.filter(category_code_id='3')
+        context['expense_acct'] = ChartSubCategory.objects.all()
+        context['note_acct'] = ChartNoteItems.objects.all()
+
+        return context
+
 
 #REPORTS
 @login_required
 def financialperformance(request):
-    revenues = ChartSubCategory.objects.filter(category_code_id=1)
+    # revenues = ChartSubCategory.objects.filter(category_code_id=1)
     expenses = ChartSubCategory.objects.filter(category_code_id=2)
+
+    # revenues = GeneralLedger.objects.filter(category_id=1)
+    revenues = GeneralLedger.objects.filter(category_id=1).values('sub_category').annotate(credit=Sum('credit'))
+    # total_sum = ReceiptDetails.objects.filter(receipt_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
 
     args = {'revenues':revenues,'expenses':expenses}
     return render (request, 'smartsetup/financialperformance.html',args)

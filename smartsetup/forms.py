@@ -177,5 +177,5 @@ class GJournalDetailsForm(forms.ModelForm):
     class Meta:
         model = GJournalDetails
         fields = (
-            'description', 'account', 'debit', 'credit', 'journal_main_id'
+            'description', 'sub_category', 'account', 'debit', 'credit', 'journal_main_id'
         )

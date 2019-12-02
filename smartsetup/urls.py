@@ -133,6 +133,10 @@ urlpatterns = [
     path('ajax/expense/delete/',  views_ajax.DeleteExpense.as_view(),
          name='expense_delete'),
 
+    # JOURNAL POSTINGS
+    path('gjournal_list', views.gjournal_list, name='gjournal_list'),
+    path('gjournal_new', views.GJournalClass.as_view(), name='gjournal_new'),
+
     # Reports
     path('financialperformance', views.financialperformance,
          name='financialperformance'),

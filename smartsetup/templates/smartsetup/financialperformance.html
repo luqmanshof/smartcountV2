@@ -1,6 +1,6 @@
 {% extends 'smartapp/base.html' %}
 {% load crispy_forms_tags %}
-
+{% load humanize %}
 
 {% block content %}
 
@@ -58,12 +58,12 @@
               {% for cat in revenues.all %}
               <tr>
                 <td>
-                  {{cat.sub_category_name}}
+                  {{cat.sub_category}}
                 </td>
                 <td>
                   {{cat.notes}}
                 </td>
-                <td>$0.00</td>
+                <td>${{cat.credit|floatformat:2|intcomma}}</td>
                 <td>$0.00</td>
               </tr>
               {% endfor %}

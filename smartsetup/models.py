@@ -89,6 +89,9 @@ class ChartSubCategory(models.Model):
     sub_category_name = models.CharField(max_length=256)
     notes = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ["sub_category_name"]
+
     def __str__(self):
         return self.sub_category_name
 
@@ -98,6 +101,9 @@ class ChartNoteItems(models.Model):
     sub_category = models.ForeignKey(
         ChartSubCategory, on_delete=models.CASCADE, default='', related_name='noteitems')
     item_name = models.CharField(max_length=256)
+
+    class Meta:
+        ordering = ["-item_name"]
 
     def __str__(self):
         return self.item_name
@@ -158,6 +164,8 @@ class GeneralLedger(models.Model):
         ChartNoteItems, on_delete=models.SET_NULL, null=True)
     sub_category = models.ForeignKey(
         ChartSubCategory, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(
+        ChartCategory, on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=256, default='')
     debit = models.FloatField(default=0)
     credit = models.FloatField(default=0)
@@ -262,8 +270,11 @@ class GJournalMain(models.Model):
 
 class GJournalDetails(models.Model):
     description = models.CharField(max_length=256, default='')
-    account = models.ForeignKey(
+    sub_category = models.ForeignKey(
         ChartSubCategory, on_delete=models.SET_NULL, null=True)
+    account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    description = models.CharField(max_length=256, default='')
     debit = models.FloatField(default=0)
     credit = models.FloatField(default=0)
     journal_main_id = models.ForeignKey(

@@ -1,0 +1,110 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<section class="content-header">
+    <div class="row">
+        <div class="col-xs-10">
+            <div class="nav-tabs-custom">
+                <!-- Tabs within a box -->
+                <ul class="nav nav-tabs pull-right">
+                    <li class="pull-left header"><i class="fa fa-address-card"></i> List Journal Transactions</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-xs-2">
+            <a href="{% url 'gjournal_new' %}"><button type="button" class="btn btn-primary btn-sm">New
+                    Entry</button></a>
+        </div>
+    </div>
+
+</section>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- /.box -->
+        <div class="box">
+            <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% for fieldCol in fieldCols %}
+                            <th>{{ fieldCol }}</th>
+                            {% endfor %}
+                            <th>Event/Actions</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        {% for cat in gjournal.all %}
+                        <tr>
+                            <td>
+                                {{ cat.date }}
+                            </td>
+                            <td>
+                                {{ cat.voucher_number }}
+                            </td>
+                            <td>
+                                {{ cat.description }}
+                            </td>
+                            <td style="text-align:left">
+                                <a href="{% url 'expense_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
+                                |
+                                <a href="#" class="fa fa-trash text-red" onclick="deleteItem({{cat.id}})"> Delete</a>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<br>
+
+{% endblock %}
+{% block javascript %}
+<script>
+
+    function deleteItem(id) {
+        console.log(id);
+        var action = confirm("Are you sure you want to delete this Journal?");
+        if (action != false) {
+            $.ajax({
+                url: '{% url "expense_delete" %}',
+                data: {
+                    'id': id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.deleted) {
+                        console.log(id);
+                        $("#itemTable #item-" + id).remove();
+                        //$("#itemTable).remove();
+                    }
+
+                    if (data.success == true) { // if true (1)
+                        setTimeout(function () {// wait for 5 secs(2)
+                            location.reload(); // then reload the page.(3)
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+
+</script>
+
+{% endblock javascript %}
