@@ -1,7 +1,8 @@
 {% extends 'smartapp/base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
-
+{% block title %}Statement of Financial Position{% endblock title %}
 {% block content %}
 
 <!-- Content Header (Page header) -->
@@ -27,7 +28,6 @@
     <div class="col-sm-4 invoice-col">
       <address>
         <strong>Sample Company, ltd.</strong><br>
-        Akindele Avenue<br>
         Ikeja Lagos, Nigeria<br>
       </address>
     </div>
@@ -61,20 +61,20 @@
               {% for cat in curr_assets.all %}
               <tr>
                 <td>
-                  {{cat.sub_category_name}}
+                  {{cat.sub_category__sub_category_name}}
                 </td>
                 <td>
                   {{cat.notes}}
                 </td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td><b>$0.00</b></td>
-                <td><b>$0.00</b></td>
+                <td style="text-align: right;"><b>${{total_curr_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -96,15 +96,15 @@
                 <td>
                   {{cat.notes}}
                 </td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td><b>$0.00</b></td>
-                <td><b>$0.00</b></td>
+                <td style="text-align: right;"><b>${{total_Ncurr_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -119,23 +119,23 @@
         <!-- /.box-body -->
       </div>
       <div class="box">
-        <!-- <div class="box-body"> -->
-        <table class="table table-striped">
-          <col width="490">
-          <col width="120">
-          <col width="120">
-          <col width="120">
+        <div class="box-body">
+          <table class="table table-striped">
+            <col width="490">
+            <col width="120">
+            <col width="120">
+            <col width="120">
 
-          <tfoot>
-            <tr>
-              <td><b>Total Assets</b></td>
-              <td></td>
-              <td><b>$0.00</b></td>
-              <td><b>$0.00</b></td>
-            </tr>
-          </tfoot>
-        </table>
-        <!-- </div> -->
+            <tfoot>
+              <tr>
+                <td><b>Total Assets</b></td>
+                <td></td>
+                <td style="text-align: right;"><b>${{total_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         <!-- /.box-body -->
       </div>
     </div>
@@ -175,15 +175,15 @@
                 <td>
                   {{cat.notes}}
                 </td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td><b>$0.00</b></td>
-                <td><b>$0.00</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -205,15 +205,15 @@
                 <td>
                   {{cat.notes}}
                 </td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td><b>$0.00</b></td>
-                <td><b>$0.00</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
 
             </tbody>
@@ -222,44 +222,44 @@
         <!-- /.box-body -->
       </div>
       <div class="box">
-        <!-- <div class="box-body"> -->
-        <table class="table table-striped">
-          <col width="490">
-          <col width="120">
-          <col width="120">
-          <col width="120">
+        <div class="box-body">
+          <table class="table table-striped">
+            <col width="490">
+            <col width="120">
+            <col width="120">
+            <col width="120">
 
-          <tfoot>
-            <tr>
-              <td><b>Total Liabilities</b></td>
-              <td></td>
-              <td><b>$0.00</b></td>
-              <td><b>$0.00</b></td>
-            </tr>
-          </tfoot>
-        </table>
-        <!-- </div> -->
+            <tfoot>
+              <tr>
+                <td><b>Total Liabilities</b></td>
+                <td></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         <!-- /.box-body -->
       </div>
 
       <div class="box">
-        <!-- <div class="box-body"> -->
-        <table class="table table-striped">
-          <col width="490">
-          <col width="120">
-          <col width="120">
-          <col width="120">
+        <div class="box-body">
+          <table class="table table-striped">
+            <col width="490">
+            <col width="120">
+            <col width="120">
+            <col width="120">
 
-          <tfoot>
-            <tr>
-              <td><b>Net assets</b></td>
-              <td></td>
-              <td><b>$0.00</b></td>
-              <td><b>$0.00</b></td>
-            </tr>
-          </tfoot>
-        </table>
-        <!-- </div> -->
+            <tfoot>
+              <tr>
+                <td><b>Net assets</b></td>
+                <td></td>
+                <td style="text-align: right;"><b>${{net_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         <!-- /.box-body -->
       </div>
     </div>
@@ -290,16 +290,16 @@
                   Reserves
                 </td>
                 <td></td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
               <tr>
                 <td>
                   Accumulated Surplus / Deficit
                 </td>
                 <td></td>
-                <td>$0.00</td>
-                <td>$0.00</td>
+                <td style="text-align: right;">${{accum_supplus|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">$0.00</td>
               </tr>
             </tbody>
           </table>
@@ -307,23 +307,23 @@
         <!-- /.box-body -->
       </div>
       <div class="box">
-        <!-- <div class="box-body"> -->
-        <table class="table table-striped">
-          <col width="490">
-          <col width="120">
-          <col width="120">
-          <col width="120">
+        <div class="box-body">
+          <table class="table table-striped">
+            <col width="490">
+            <col width="120">
+            <col width="120">
+            <col width="120">
 
-          <tfoot>
-            <tr>
-              <td><b>Total Net Assets / Equity</b></td>
-              <td></td>
-              <td><b>$0.00</b></td>
-              <td><b>$0.00</b></td>
-            </tr>
-          </tfoot>
-        </table>
-        <!-- </div> -->
+            <tfoot>
+              <tr>
+                <td><b>Total Net Assets / Equity</b></td>
+                <td></td>
+                <td style="text-align: right;"><b>${{total_net_assetEq|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>$0.00</b></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         <!-- /.box-body -->
       </div>
     </div>

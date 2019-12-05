@@ -20,7 +20,7 @@ from django.views import generic
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import View, ListView
-from django.db.models import Max, PositiveIntegerField, Value, Sum
+from django.db.models import Max, PositiveIntegerField, Value, Sum, F
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 from django.core import serializers
@@ -808,32 +808,73 @@ class GJournalClass(ListView):
 @login_required
 def financialperformance(request):
     # revenues = ChartSubCategory.objects.filter(category_code_id=1)
-    expenses = ChartSubCategory.objects.filter(category_code_id=2)
+    # expenses = ChartSubCategory.objects.filter(category_code_id=2)
 
     # revenues = GeneralLedger.objects.filter(category_id=1)
-    revenues = GeneralLedger.objects.filter(category_id=1).values('sub_category').annotate(credit=Sum('credit'))
-    # total_sum = ReceiptDetails.objects.filter(receipt_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
-
-    args = {'revenues':revenues,'expenses':expenses}
+    revenues = GeneralLedger.objects.filter(category_id=1).values('sub_category','sub_category__sub_category_name').annotate(credit=Sum('credit'))
+    expenses = GeneralLedger.objects.filter(category_id=2).values('sub_category','sub_category__sub_category_name').annotate(debit=Sum('debit'))
+    total_revenue = GeneralLedger.objects.filter(category_id=1).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_expense = GeneralLedger.objects.filter(category_id=2).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_balance = (total_revenue - total_expense)
+    print('RETURNED REVENUE : ', revenues)
+    print('TOTAL REVENUE : ', total_revenue)
+    print('RETURNED EXPENSES : ', expenses)
+    args = {'revenues':revenues,'expenses':expenses,'total_revenue':total_revenue,
+            'total_expense':total_expense,'total_balance':total_balance}
     return render (request, 'smartsetup/financialperformance.html',args)
-# 
-# @login_required
-# def financialperformanceprint(request):
-#     revenues = ChartSubCategory.objects.filter(category_code_id=1)
-#     expenses = ChartSubCategory.objects.filter(category_code_id=2)
-#
-#     args = {'revenues':revenues,'expenses':expenses}
-#     return render (request, 'smartsetup/financialperformance_print.html',args)
+
 
 @login_required
 def financialposition(request, pk=None):
-    curr_assets = ChartSubCategory.objects.filter(category_code_id=3)
-    curr_liabilities = ChartSubCategory.objects.filter(category_code_id=5)
-    noncurr_assets = ChartSubCategory.objects.filter(category_code_id=4)
-    noncurr_liabilities = ChartSubCategory.objects.filter(category_code_id=6)
+    # curr_assets = ChartSubCategory.objects.filter(category_code_id=3)
+    # curr_liabilities = ChartSubCategory.objects.filter(category_code_id=5)
+    # noncurr_assets = ChartSubCategory.objects.filter(category_code_id=4)
+    # noncurr_liabilities = ChartSubCategory.objects.filter(category_code_id=6)
 
-    args = {'curr_assets':curr_assets,'curr_liabilities':curr_liabilities,
-            'noncurr_assets':noncurr_assets,'noncurr_liabilities':noncurr_liabilities}
+    # ASSETS
+    curr_assets = GeneralLedger.objects.filter(category_id=3).values('sub_category','sub_category__sub_category_name').annotate(debit=Sum('debit'),credit=-Sum('credit'))
+    noncurr_assets = GeneralLedger.objects.filter(category_id=4).values('sub_category','sub_category__sub_category_name').annotate(debit=Sum('debit'),credit=-Sum('credit'))
+
+    total_curr_assets_debit = GeneralLedger.objects.filter(category_id=3).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_curr_assets_credit = GeneralLedger.objects.filter(category_id=3).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_curr_assets = total_curr_assets_debit - total_curr_assets_credit
+
+    total_Ncurr_assets_debit = GeneralLedger.objects.filter(category_id=4).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_Ncurr_assets_credit = GeneralLedger.objects.filter(category_id=4).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_Ncurr_assets = total_Ncurr_assets_debit - total_Ncurr_assets_credit
+
+    total_assets = total_curr_assets + total_Ncurr_assets
+
+    # LIABITILIES
+    curr_liab = GeneralLedger.objects.filter(category_id=5).values('sub_category','sub_category__sub_category_name').annotate(credit=Sum('credit'),debit=-Sum('debit'))
+    noncurr_liab = GeneralLedger.objects.filter(category_id=6).values('sub_category','sub_category__sub_category_name').annotate(credit=Sum('credit'),debit=-Sum('debit'))
+
+    total_curr_liab_debit = GeneralLedger.objects.filter(category_id=5).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_curr_liab_credit = GeneralLedger.objects.filter(category_id=5).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_curr_liab = total_curr_liab_credit - total_curr_liab_debit
+
+    total_Ncurr_liab_debit = GeneralLedger.objects.filter(category_id=6).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_Ncurr_liab_credit = GeneralLedger.objects.filter(category_id=6).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_Ncurr_liab = total_Ncurr_liab_credit - total_Ncurr_liab_debit
+
+    total_liabilities = total_curr_liab + total_Ncurr_liab
+
+    # NET ASSET
+    net_assets = total_assets - total_liabilities
+
+    total_revenue = GeneralLedger.objects.filter(category_id=1).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_expense = GeneralLedger.objects.filter(category_id=2).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    accum_supplus = (total_revenue - total_expense)
+    reserves = 0.00
+    total_net_assetEq = reserves + accum_supplus
+
+    print('TOTAL REVENUE : ', total_curr_assets)
+
+    args = {'curr_assets':curr_assets,'noncurr_assets':noncurr_assets,'total_assets':total_assets,
+            'total_curr_assets':total_curr_assets,'total_Ncurr_assets':total_Ncurr_assets,
+            'curr_liab':curr_liab,'noncurr_liab':noncurr_liab,'total_liabilities':total_liabilities,
+            'total_curr_liab':total_curr_liab,'total_Ncurr_liab':total_Ncurr_liab,
+            'net_assets':net_assets,'accum_supplus':accum_supplus,'total_net_assetEq':total_net_assetEq}
     return render (request, 'smartsetup/financialposition.html',args)
 
 @login_required
