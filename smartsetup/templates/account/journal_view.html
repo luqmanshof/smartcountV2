@@ -1,0 +1,48 @@
+<div class="modal fade" id="journalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+
+                <div class="col-xs-6 pull-left">
+                    <h4 class="modal-title" id="myModalLabel"><b><u> {{journal_title}}</u></b></h4>
+                </div>
+                <div class="col-xs-6">
+                    <h5 class="modal-title pull-right" id=""><b>Ref No: {{ref_num}}</b></h5>
+                </div>
+            </div>
+            <!-- /.box -->
+            <div class="box">
+                <div class="box-body">
+                    <table id="journalTable" class="table table-striped">
+                        <tr>
+                            <th>Category</th>
+                            <th>Account</th>
+                            <th>Description</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                        <!-- table_list -->
+                        {% if journal_list %}
+                        {% for item in journal_list %}
+                        <tr id="item-{{item.id}}">
+                            <td class="itemCategory itemData" name="category">{{item.sub_category}}</td>
+                            <td class="itemExpenseAcct itemData" name="account">{{item.account_id}}</td>
+                            <td class="itemDescription itemData" name="description">{{item.description}}</td>
+                            <td class="itemDebitAcct itemData pull-right" name="debit">{{item.debit|floatformat:2}}</td>
+                            <td class="itemCreditAcct itemData" style="text-align: right;" name="credit">
+                                {{item.credit|floatformat:2}}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        No Item Listed
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

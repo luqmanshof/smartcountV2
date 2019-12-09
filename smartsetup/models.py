@@ -103,7 +103,7 @@ class ChartNoteItems(models.Model):
     item_name = models.CharField(max_length=256)
 
     class Meta:
-        ordering = ["-item_name"]
+        ordering = ["item_name"]
 
     def __str__(self):
         return self.item_name
@@ -269,13 +269,12 @@ class GJournalMain(models.Model):
 
 
 class GJournalDetails(models.Model):
-    description = models.CharField(max_length=256, default='')
     sub_category = models.ForeignKey(
         ChartSubCategory, on_delete=models.SET_NULL, null=True)
     account = models.ForeignKey(
         ChartNoteItems, on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=256, default='')
-    debit = models.FloatField(default=0)
-    credit = models.FloatField(default=0)
+    debit = models.FloatField(default=0, blank=True, null=True)
+    credit = models.FloatField(default=0, blank=True, null=True)
     journal_main_id = models.ForeignKey(
         GJournalMain, on_delete=models.CASCADE, default=0)

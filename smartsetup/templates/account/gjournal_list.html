@@ -46,13 +46,13 @@
                                 {{ cat.date }}
                             </td>
                             <td>
-                                {{ cat.voucher_number }}
+                                {{ cat.ref_number }}
                             </td>
                             <td>
                                 {{ cat.description }}
                             </td>
                             <td style="text-align:left">
-                                <a href="{% url 'expense_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
+                                <a href="{% url 'gjournal_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
                                 |
                                 <a href="#" class="fa fa-trash text-red" onclick="deleteItem({{cat.id}})"> Delete</a>
 
@@ -94,11 +94,9 @@
                         //$("#itemTable).remove();
                     }
 
-                    if (data.success == true) { // if true (1)
-                        setTimeout(function () {// wait for 5 secs(2)
-                            location.reload(); // then reload the page.(3)
-                        }, 5000);
-                    }
+                    setTimeout(function () {// wait for 5 secs(2)
+                        location.reload(); // then reload the page.(3)
+                    }, 2000);
                 }
             });
         }

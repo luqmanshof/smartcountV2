@@ -627,7 +627,12 @@ class ExpenseClass(ListView):
         context['staff_name'] = EmployeeProfile.objects.all()
         context['cash_acct'] = ChartSubCategory.objects.filter(category_code_id='3')
         context['expense_acct'] = ChartSubCategory.objects.filter(category_code_id='2')
-        context['note_acct'] = ChartNoteItems.objects.all()
+        ids = ChartSubCategory.objects.filter(category_code_id='2').values_list('id', flat=True)
+        print('AM HERE NOW!!! :',ids)
+        context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids)
+        ids = ChartSubCategory.objects.filter(category_code_id='3').values_list('id', flat=True)
+        context['note_acct_cash'] = ChartNoteItems.objects.filter(sub_category__in=ids)
+        # context['note_acct'] = ChartNoteItems.objects.all()
 
         return context
 
@@ -670,11 +675,11 @@ class CreateExpense(View):
         client_name1 = request.GET.get('client_name', None)
         bill_to1 = request.GET.get('bill_to', None)
         cash_account1 = request.GET.get('cash_account', None)
-        Debit_account1 = request.GET.get('Debit_account', None)
+        Debit_account1 = request.GET.get('credit_account', None)
         pkMain = request.GET.get('mainID', None)
         description = request.GET.get('description', None)
         expense_account1 = request.GET.get('expense_account', None)
-        credit_account1 = request.GET.get('credit_account', None)
+        credit_account1 = request.GET.get('Debit_account', None)
         amount1 = request.GET.get('amount', None)
         total_amount = float(request.GET.get('total_amount', 0))
 
@@ -786,6 +791,7 @@ def gjournal_list(request, pk=None):
     args ={'fieldCols':fieldCols,'gjournal':gjournal}
     return render(request, 'account/gjournal_list.html',args)
 
+
 class GJournalClass(ListView):
     model = GJournalDetails
     template_name = 'account/gjournal.html'
@@ -802,6 +808,211 @@ class GJournalClass(ListView):
         context['note_acct'] = ChartNoteItems.objects.all()
 
         return context
+
+
+@login_required
+def gjournal_post(request):
+    ref_number1 = request.GET.get('ref_number', None)
+    pkMain = request.GET.get('mainID', None)
+    trans_date = request.GET.get('trans_date', None)
+
+    print('GJOURNAL POST VIEW PK', ref_number1)
+
+    GeneralLedger.objects.filter(ref_number=ref_number1, journal_type='GJ').delete()
+
+    for e in GJournalDetails.objects.filter(journal_main_id_id=pkMain):
+        # print(e.description)
+        expenseCategoryID = ChartSubCategory.objects.get(id = e.sub_category_id).category_code_id
+
+        obj4 = GeneralLedger.objects.create(
+            date = trans_date,
+            ref_number = ref_number1,
+            journal_type = 'GJ',
+            account_id = ChartNoteItems.objects.get(id = e.account_id),
+            sub_category = ChartSubCategory.objects.get(id = e.sub_category_id),
+            category = ChartCategory.objects.get(id = expenseCategoryID),
+            description = e.description,
+            debit = e.debit,
+            credit = e.credit,
+            )
+
+    data = {}
+    return JsonResponse(data)
+
+
+class CreateGJournal(View):
+    # print('receipt AJAX VIEW ')
+    def get(self, request):
+        print('Gournal def AJAX VIEW ')
+
+        expense_date1 = request.GET.get('trans_date', None)
+        voucher_number1 = request.GET.get('voucher_number', None)
+        bill_to1 = request.GET.get('bill_to', None)
+        # cash_account1 = request.GET.get('cash_account', None)
+        # Debit_account1 = request.GET.get('Debit_account', None)
+        pkMain = request.GET.get('mainID', None)
+        description = request.GET.get('description', None)
+        expense_account1 = request.GET.get('expense_account', None)
+        credit_account1 = request.GET.get('credit_account', None)
+        debit_amount = float(request.GET.get('debit_amount', 0).replace(',',''))
+        credit_amount = float(request.GET.get('credit_amount', 0).replace(',',''))
+        total_debit = float(request.GET.get('total_debit', 0))
+        total_credit = float(request.GET.get('total_credit', 0))
+
+        
+        print('TRANSACTION ACCOUNT ID: ', credit_account1)
+        # print('EXPENSE CLIENT ID: ', client_name1)
+
+        # ClientID = EmployeeProfile.objects.get(id = client_name1).id
+        # cashAccount = ChartSubCategory.objects.get(id = cash_account1).sub_category_name
+        # cashCategoryID = ChartSubCategory.objects.get(id = cash_account1).category_code_id
+        # DebitAccount = ChartNoteItems.objects.get(id = Debit_account1).item_name
+        expenseAccount = ChartSubCategory.objects.get(id = expense_account1).sub_category_name
+        expenseCategoryID = ChartSubCategory.objects.get(id = expense_account1).category_code_id
+        creditAccount = ChartNoteItems.objects.get(id = credit_account1).item_name
+        
+        
+
+        if pkMain:
+            print('UPDATE EXISTING RECORD ')
+            obj = GJournalMain.objects.get(id=pkMain)
+            obj.date = expense_date1
+            obj.ref_number = voucher_number1
+            obj.description = bill_to1
+            obj.save()
+
+            # obj3 = GeneralLedger.objects.get(ref_number=voucher_number1, journal_type='CDJ', main_Trans=True)
+            # obj3.date = expense_date1
+            # obj3.ref_number = voucher_number1
+            # obj3.journal_type = 'CDJ'
+            # obj3.account_id = ChartNoteItems.objects.get(id = credit_account1)
+            # obj3.sub_category = ChartSubCategory.objects.get(id = cash_account1)
+            # obj3.category = ChartCategory.objects.get(id = cashCategoryID)
+            # obj3.description = bill_to1
+            # obj3.credit = total_amount + amount2
+            # obj3.save()
+       
+        else:
+            print('ENTER NEW EXPENSE RECORD ')
+
+            obj = GJournalMain.objects.create(
+                date = expense_date1,
+                ref_number = voucher_number1,
+                description = bill_to1,
+            )
+            
+            # obj3 = GeneralLedger.objects.create(
+            # date = expense_date1,
+            # ref_number = voucher_number1,
+            # journal_type = 'CDJ',
+            # account_id = ChartNoteItems.objects.get(id = Debit_account1),
+            # sub_category = ChartSubCategory.objects.get(id = cash_account1),
+            # category = ChartCategory.objects.get(id = cashCategoryID),
+            # description = bill_to1,
+            # credit = total_amount + amount2,
+            # main_Trans = True
+            # )
+
+        print('CREATE GENERAL JOURNAL DETAILS')
+        obj2 = GJournalDetails.objects.create(
+            description = description,
+            sub_category = ChartSubCategory.objects.get(id = expense_account1),
+            account = ChartNoteItems.objects.get(id = credit_account1),
+            debit = debit_amount,
+            credit =  credit_amount,
+            journal_main_id_id = obj.id,
+        )
+
+        # obj4 = GeneralLedger.objects.create(
+        #     date = expense_date1,
+        #     ref_number = voucher_number1,
+        #     journal_type = 'CDJ',
+        #     account_id = ChartNoteItems.objects.get(id = Debit_account1),
+        #     sub_category = ChartSubCategory.objects.get(id = expense_account1),
+        #     category = ChartCategory.objects.get(id = expenseCategoryID),
+        #     description = description,
+        #     debit = amount2,
+        #     )
+
+        total_debit = GJournalDetails.objects.filter(journal_main_id_id=obj.id).aggregate(Sum('debit'))['debit__sum'] or 0.00
+        total_credit = GJournalDetails.objects.filter(journal_main_id_id=obj.id).aggregate(Sum('credit'))['credit__sum'] or 0.00
+        print('TOTAL DEBIT SUM GENERATED : ', total_debit)
+        print('TOTAL CREDIT SUM GENERATED : ', total_credit)
+
+        journal_list = serializers.serialize(
+                "json", GeneralLedger.objects.filter(ref_number=voucher_number1, journal_type='GJ'))
+
+
+        expense_main = {'Mainid': obj.id, 'date': obj.date, 'voucher_number': obj.ref_number, 'bill_to': obj.description}
+
+        expense_sub = {'Subid': obj2.id, 'description': obj2.description,'expense_account': expenseAccount, 
+                'debit_account': creditAccount, 'debit': obj2.debit, 'credit': obj2.credit}
+
+        data = {
+            'expense_main': expense_main,
+            'expense_sub': expense_sub,
+            'total_debit': total_debit,
+            'total_credit': total_credit,
+            'journal_list': journal_list
+        }
+        return JsonResponse(data)
+
+def gjournaledit(request,pk=None):
+    print('AM HERE NOW!!!')
+    if pk:
+        print('PK RETRIEVED : ', pk)
+
+        total_debit = GJournalDetails.objects.filter(journal_main_id_id=pk).aggregate(Sum('debit'))['debit__sum'] or 0.00
+        total_credit = GJournalDetails.objects.filter(journal_main_id_id=pk).aggregate(Sum('credit'))['credit__sum'] or 0.00
+        print('TOTAL DEBIT GENERATED : ', total_debit)
+
+        expensemain = GJournalMain.objects.get(id=pk)
+        ref_number1 = GJournalMain.objects.get(id=pk).ref_number
+        print('EXPENSE NO. RETRIEVED : ', ref_number1)
+
+        expenseitems = GJournalDetails.objects.filter(journal_main_id_id=pk)
+        
+        # staff_name = EmployeeProfile.objects.all()
+        # cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
+        expense_acct = ChartSubCategory.objects.all()
+        note_acct = ChartNoteItems.objects.all()
+        journal_list = GeneralLedger.objects.filter(ref_number=ref_number1, journal_type='GJ')
+        print('EXPENSE JORNAL ITEMS : ', journal_list)
+
+        args = {'expensemain':expensemain,'expenseitems':expenseitems,
+        'expense_acct':expense_acct, 'note_acct':note_acct,'total_debit':total_debit,
+        'total_credit':total_credit, 'journal_list':journal_list,}
+        return render(request,'account/gjournal.html',args)
+    else:
+        return render(request,'account/gjournal_list.html')
+
+
+
+#JOURNAL VIEW
+
+def journalview(request,pk=None,jt=None):
+    print('JOURNAL REF : ', pk)
+    print('JORNAL TYPE : ', jt)
+
+    if jt == 'CDJ':
+        j_title = 'Cash Disbursement Journal'
+    elif jt == 'CRJ':
+        j_title = 'Cash Receipt Journal'
+    elif jt == 'GJ':
+        j_title = 'General Journal'
+    else:
+        j_title = 'Journal View'
+
+    ref_num = pk
+    journal_list = GeneralLedger.objects.filter(ref_number=ref_num, journal_type=jt)
+    
+    print('JORNAL ITEMS : ', journal_list)
+
+    return render(request, 'account/journal_view.html', {
+        'journal_title':j_title,
+        'journal_list':journal_list,
+        'ref_num':ref_num,
+    })
 
 
 #REPORTS

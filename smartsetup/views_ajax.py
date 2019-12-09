@@ -169,6 +169,11 @@ class DeleteRececiptItem(View):
 class DeleteRececipt(View):
     def get(self, request):
         id1 = request.GET.get('id', None)
+
+        ref_number1 = ReceiptMain.objects.get(id=id1).receipt_number
+        GeneralLedger.objects.filter(
+            ref_number=ref_number1, journal_type='CRJ').delete()
+
         ReceiptMain.objects.get(id=id1).delete()
         data = {
             'deleted': True
@@ -179,7 +184,13 @@ class DeleteRececipt(View):
 class DeleteExpense(View):
     def get(self, request):
         id1 = request.GET.get('id', None)
+
+        ref_number1 = ExpenseMain.objects.get(id=id1).voucher_number
+        GeneralLedger.objects.filter(
+            ref_number=ref_number1, journal_type='CDJ').delete()
+
         ExpenseMain.objects.get(id=id1).delete()
+
         data = {
             'deleted': True
         }
@@ -187,6 +198,61 @@ class DeleteExpense(View):
 
 
 class DeleteExpenseItem(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+        pk = request.GET.get('mainID', None)
+        voucher_number = request.GET.get('voucher_number', None)
+        description = ExpenseDetails.objects.get(id=id1).description
+        amount = ExpenseDetails.objects.get(id=id1).amount
+
+        ExpenseDetails.objects.get(id=id1).delete()
+        GeneralLedger.objects.get(debit=amount, description=description,
+                                  ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
+
+        # get the sum of the receipt detail values
+        total_sum = ExpenseDetails.objects.filter(
+            expense_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+
+        # Update Cash receipt journal total credit value
+        total_amount = float(total_sum)
+        obj3 = GeneralLedger.objects.get(
+            ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
+        obj3.credit = total_amount
+        obj3.save()
+
+        # Get the cash receipt journal items
+        journal_list = serializers.serialize(
+            "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='CDJ'))
+
+        journal_list1 = GeneralLedger.objects.filter(
+            ref_number=voucher_number, journal_type='CDJ')
+        print('JOURNAL LIST RETRIEVED : ', journal_list1)
+
+        data = {
+            'deleted': True,
+            'total_sum': total_sum,
+            'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
+class DeleteGJournal(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+
+        ref_number1 = GJournalMain.objects.get(id=id1).ref_number
+        GeneralLedger.objects.filter(
+            ref_number=ref_number1, journal_type='GJ').delete()
+
+        GJournalMain.objects.get(id=id1).delete()
+
+        data = {
+            'deleted': True
+        }
+        return JsonResponse(data)
+
+
+class DeleteGJournalItem(View):
     def get(self, request):
         id1 = request.GET.get('id', None)
         pk = request.GET.get('mainID', None)
@@ -241,17 +307,17 @@ def populate_noteitems(request):
     if request.method == 'GET' and request.is_ajax():
         category = request.GET.get('sub_category', None)
 
-        # print('Selected Category Key is: ', category)
-
         result_set = []
         selected_items = []
 
-        # selected_category = ChartSubCategory.objects.get(
-        #     sub_category_code=category)
-        selected_category = ChartSubCategory.objects.get(
-            id=category)
-        selected_items = selected_category.noteitems.all()
-        # print('Selected Note Items are: ', selected_items)
+        if category:
+            selected_category = ChartSubCategory.objects.get(
+                id=category)
+            selected_items = selected_category.noteitems.all()
+            print('Selected Note Items are: ', selected_items)
+        else:
+            selected_items = ChartNoteItems.objects.all().order_by('-item_name')
+            print('Selected ALL Note Items')
 
         for item in selected_items:
             # print('Item Name: ', item.item_name)
@@ -259,6 +325,23 @@ def populate_noteitems(request):
             result_set.append({'item': item.item_name, 'itemID': item.id})
 
         return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
+
+    else:
+        return redirect('/')
+
+
+def get_acctcat(request):
+    if request.method == 'GET' and request.is_ajax():
+        item_code = request.GET.get('item_code', None)
+
+        selected_category = ChartNoteItems.objects.get(
+            id=item_code).sub_category_id
+        print('Selected Category Items is: ', selected_category)
+
+        data = {
+            'selected_category': selected_category
+        }
+        return JsonResponse(data)
 
     else:
         return redirect('/')

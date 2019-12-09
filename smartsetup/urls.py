@@ -133,9 +133,17 @@ urlpatterns = [
     path('ajax/expense/delete/',  views_ajax.DeleteExpense.as_view(),
          name='expense_delete'),
 
-    # JOURNAL POSTINGS
+    # GENERAL JOURNAL POSTINGS
     path('gjournal_list', views.gjournal_list, name='gjournal_list'),
     path('gjournal_new', views.GJournalClass.as_view(), name='gjournal_new'),
+    path('ajax/gjournal/create/',  views.CreateGJournal.as_view(),
+         name='gjournal_ajax_create'),
+    path('gjournal_edit/(<int:pk>)', views.gjournaledit, name='gjournal_edit'),
+    path('gjournal_post', views.gjournal_post, name='gjournal_post'),
+
+    # VIEW JOURNALS
+    path('journal_view/(<str:pk>)/(<str:jt>)',
+         views.journalview, name='journal_view'),
 
     # Reports
     path('financialperformance', views.financialperformance,
@@ -162,4 +170,6 @@ urlpatterns = [
 
     path('note_items/populate/',  views_ajax.populate_noteitems,
          name='populate_noteitems'),
+    path('get_acctcat',  views_ajax.get_acctcat,
+         name='get_acctcat'),
 ]
