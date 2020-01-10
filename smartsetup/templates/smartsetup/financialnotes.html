@@ -1,0 +1,143 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load mathfilters %}
+{% block title %}Notes to Account{% endblock title %}
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<section class="invoice">
+  <!-- info row -->
+  <div class="row invoice-info">
+    <div class="col-sm-4 invoice-col">
+      <address>
+        {% for cat in companyinfo.all %}
+        <strong>{{cat.name}}</strong><br>
+        {{cat.address}}<br>
+        {% endfor %}
+      </address>
+    </div>
+
+
+  </div>
+  <!-- /.row -->
+
+  <!-- title row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <h2 class="page-header">
+        <i class="fa fa-globe"></i> <b>Notes to the Consolidated Financial Statements</b>
+        <small class="pull-right">
+          <p id="date">Date: </p>
+        </small>
+      </h2>
+    </div>
+    <!-- /.col -->
+  </div>
+  <!-- Table row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <table class="">
+        <col width="730">
+        <col width="120">
+        <col width="160">
+
+        <thead>
+          <tr>
+            <th></th>
+            <th style="text-align: right;">Year 1</th>
+            <th style="text-align: right;">Year 2</th>
+          </tr>
+        </thead>
+      </table>
+
+
+      {% for cat in category.all %}
+      <div class="box">
+
+        <table class="table table-striped">
+          <col width="490">
+          <col width="120">
+          <col width="120">
+
+          <thead>
+            <tr style="background-color:lightgrey">
+              <th><b>Note {{cat.sub_category__notes}} - {{cat.sub_category__sub_category_name|upper}}</b></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items.all %}
+            {% if item.sub_category == cat.sub_category %}
+            <tr>
+              <td>
+                {{item.account_id__item_name}}
+              </td>
+              {% if item.category == 2 or item.category == 3 or item.category == 4 %}
+              <td style="text-align: right;">${{item.debit|sub:item.credit|floatformat:2|intcomma}}</td>
+              {% else %}
+              <td style="text-align: right;">${{item.credit|sub:item.debit|floatformat:2|intcomma}}</td>
+              {% endif %}
+              <td style="text-align: right;">$0.00</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        <!-- /.box-body -->
+      </div>
+      <div class="box">
+        <table class="table table-striped">
+          <col width="490">
+          <col width="120">
+          <col width="120">
+
+          <tfoot>
+            <tr>
+              <td><b>Total {{cat.sub_category__sub_category_name}}</b></td>
+              {% if cat.category == 2 or cat.category == 3 or cat.category == 4 %}
+              <td style="text-align: right;"><b>{{cat.totaldebit|sub:cat.totalcredit|floatformat:2|intcomma}}</b></td>
+              {% else %}
+              <td style="text-align: right;"><b>{{cat.totalcredit|sub:cat.totaldebit|floatformat:2|intcomma}}</b></td>
+              {% endif %}
+
+              <td style="text-align: right;"><b>0.00</b></td>
+            </tr>
+          </tfoot>
+        </table>
+        <!-- /.box-body -->
+      </div>
+      {% endfor %}
+    </div>
+    <!-- /.col -->
+  </div>
+
+  <!-- this row will not appear when printing -->
+  <div class="row no-print">
+    <div class="col-xs-12">
+      <!-- <a href="#" class="btn btn-default" onclick="window.print();"><i class="fa fa-print"></i> Print</a> -->
+      <a href="#" class="btn btn-success pull-right" onclick="window.print();"><i class="fa fa-print"></i> Print
+        Report</a>
+    </div>
+  </div>
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+  n = new Date();
+  y = n.getFullYear();
+  m = n.getMonth() + 1;
+  d = n.getDate();
+  document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+
+// });
+</script>
+
+{% endblock %}

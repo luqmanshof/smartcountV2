@@ -16,6 +16,7 @@ gunicorn = "*"
 django-heroku = "*"
 pillow = "*"
 django-crispy-forms = "*"
+django-mathfilters = "*"
 
 [requires]
 python_version = "3.7"

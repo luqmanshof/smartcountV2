@@ -50,7 +50,32 @@
   <link href="{% static 'custom.css' %}" rel="stylesheet">
   <link rel="shortcut icon" type="image/png" href="{% static 'myAppImage.ico' %}" />
 
+  <style>
+    .hide-on-screen {
+      display: none;
+    }
 
+    .yesPrint,
+    .noPrint {
+      display: block;
+    }
+
+    @media print {
+      .hide-on-screen {
+        display: block;
+      }
+
+      .noPrint {
+        display: none;
+      }
+    }
+
+    /*
+    <div class="hide-on-screen">Hidden on screen and shown in print</div>
+    <div class="yesPrint">Show on screen and print</div>
+    <div class="noPrint">Shown on screen and hidden in print</div>
+    */
+  </style>
 
 </head>
 
@@ -166,10 +191,11 @@
               </span>
             </a>
             <ul class="treeview-menu">
-              <!-- <li><a href="{% url 'edit_signup' %}"><i class="fa fa-gears text-gray"></i> Edit Personal Profile</a></li> -->
+              <li><a href="{% url 'setupcompanyreg' pk=1 %}"><i class="fa fa-gears text-gray"></i> Company
+                  Registration</a></li>
               <li class="treeview">
                 <a href="#">
-                  <i class="fa fa-gears text-gray"></i> Update Profile
+                  <i class="fa fa-gears text-gray"></i> Personal Profile
                   <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                   </span>
@@ -199,20 +225,36 @@
           </li>
           <li class="treeview">
             <a href="#">
-              <i class="fa fa-codepen text-fuchsia"></i><span>Application Setup</span>
+              <i class="fa fa-codepen text-fuchsia"></i><span> Setup Module</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
             </a>
             <ul class="treeview-menu">
               <!-- @*<li><a href="#"><i class="fa fa-codepen text-fuchsia"></i> Manage User Account</a></li>*@ -->
+              <li class="treeview">
+                <a href="#">
+                  <i class="fa fa-codepen text-fuchsia"></i> Organization Structure
+                  <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="{% url 'setupdivision_list' %}"><i class="fa fa-codepen text-fuchsia"></i>
+                      Setup Division</a></li>
+                  <li><a href="{% url 'setupdepartment_list' %}"><i class="fa fa-codepen text-fuchsia"></i>
+                      Setup Department</a></li>
+                  <li><a href="{% url 'setupdepartment_list' %}"><i class="fa fa-codepen text-fuchsia"></i>
+                      Setup Position</a></li>
+                </ul>
+              </li>
               <li><a href="{% url 'employees_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Employees</a></li>
               <li><a href="{% url 'setupclients_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Clients</a></li>
               <li><a href="{% url 'setupvendors_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Vendors</a></li>
               <!-- @*<li><a href="@Url.Action("Index","SetupInsuranceClasses", new { area = "AppSetup" })"><i class="fa fa-codepen text-fuchsia"></i> Insurance Class</a></li>*@ -->
               <li class="treeview">
                 <a href="#">
-                  <i class="fa fa-codepen text-fuchsia"></i> Inventory
+                  <i class="fa fa-codepen text-fuchsia"></i> Inventory / Stock
                   <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                   </span>
@@ -224,6 +266,9 @@
                       Inventory Items</a></li>
                 </ul>
               </li>
+              <li><a href="{% url 'setupfixedasset_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Fixed Asset
+                  Register</a>
+              </li>
 
               <li class="treeview">
                 <a href="#">
@@ -233,14 +278,18 @@
                   </span>
                 </a>
                 <ul class="treeview-menu">
-                  <li><a href="{% url 'chartcategory_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Category</a>
+                  <li hidden><a href="{% url 'chartcategory_list' %}"><i class="fa fa-codepen text-fuchsia"></i>
+                      Category</a>
                   </li>
                   <li><a href="{% url 'chartsubcategory_list' %}"><i class="fa fa-codepen text-fuchsia"></i>
-                      Sub-Category</a></li>
+                      Category</a></li>
                   <!-- <li><a href="{% url 'note_items' %}"><i class="fa fa-codepen text-fuchsia"></i> Note Items</a></li> -->
-                  <li><a href="{% url 'chartnoteitems_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Note
+                  <li><a href="{% url 'chartnoteitems_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Account
                       Items</a></li>
                 </ul>
+              </li>
+
+              <li><a href="{% url 'begbalance_list' %}"><i class="fa fa-codepen text-fuchsia"></i> Beginning Balance</a>
               </li>
 
               <!-- <li class="treeview">
@@ -271,7 +320,7 @@
           </li>
           <li class="treeview">
             <a href="#">
-              <i class="fa fa-book text-orange"></i> <span>Account Module</span>
+              <i class="fa fa-book text-orange"></i> <span>Task Module</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
@@ -280,7 +329,7 @@
               <li><a href="{% url 'receipt_list' %}"><i class="fa fa-book text-orange"></i> Receipt Module</a></li>
               <li><a href="{% url 'expense_list' %}"><i class="fa fa-book text-orange"></i> Expense Module</a></li>
               <li><a href="{% url 'gjournal_list' %}"><i class="fa fa-book text-orange"></i> Journal Entries</a></li>
-              <li><a href="#"><i class="fa fa-book text-orange"></i> Purchase Module</a></li>
+              <li><a href="{% url 'purchase_list' %}"><i class="fa fa-book text-orange"></i> Purchase Module</a></li>
 
               <!-- <li class="treeview">
                                               <a href="#">
@@ -385,7 +434,7 @@
 
           <li class="treeview">
             <a href="#">
-              <i class="fa fa-edit text-blue"></i> <span>IPSAS Reports</span>
+              <i class="fa fa-edit text-blue"></i> <span>Financial Reports</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
@@ -396,9 +445,11 @@
                     Performance</span></a></li>
               <li><a href="{% url 'financialposition' %}"><i class="fa fa-edit text-blue"></i> <span>Financial
                     Position</span></a></li>
+              <li><a href="{% url 'financialcashflow' %}"><i class="fa fa-edit text-blue"></i> <span>Cash Flow
+                    Statement</span></a></li>
               <li><a href="#"><i class="fa fa-edit text-blue"></i> <span>Changes In Net Asset</span></a></li>
-              <li><a href="#"><i class="fa fa-edit text-blue"></i> <span>Cash Flow Statement</span></a></li>
-              <li><a href="#"><i class="fa fa-edit text-blue"></i> <span>Notes To Account</span></a></li>
+              <li><a href="{% url 'financialnotes' %}"><i class="fa fa-edit text-blue"></i> <span>Notes To
+                    Account</span></a></li>
             </ul>
           </li>
 

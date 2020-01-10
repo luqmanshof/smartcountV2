@@ -10,14 +10,14 @@
             <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                    <li class="pull-left header"><i class="fa fa-address-card"></i> List Receipt Transactions</li>
+                    <li class="pull-left header"><i class="fa fa-address-card"></i> List Beginning Balance Entry</li>
                 </ul>
             </div>
 
         </div>
         <div class="col-xs-2">
-            <a href="{% url 'receipt_new' %}"><button type="button" class="btn btn-primary btn-md">New
-                    Receipt</button></a>
+            <a href="{% url 'begbalance_new' %}"><button type="button" class="btn btn-primary btn-sm">New
+                    Entry</button></a>
         </div>
     </div>
 
@@ -40,31 +40,30 @@
 
                     </thead>
                     <tbody>
-                        {% for cat in receipts.all %}
+                        {% for cat in begbalance.all %}
                         <tr>
                             <td>
-                                {{ cat.receipt_number }}
+                                {{ cat.year }}
                             </td>
                             <td>
-                                {{ cat.date }}
+                                {{ cat.periodstart }}
                             </td>
                             <td>
-                                {{ cat.bill_to }}
+                                {{ cat.periodend }}
+                            </td>
+                            <td>
+                                {{ cat.duration }}
                             </td>
                             <td style="text-align:left">
-                                <a href="{% url 'receipt_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
-                                <!-- <a href="{% url 'receipt_edit' pk=cat.pk %}" class="btn btn-success form-control">
-                                    EDIT</a> -->
+                                <a href="{% url 'begbalance_edit' pk=cat.pk  %}" class="fa fa-edit text-green"> Edit</a>
                                 |
-                                <a href="#" class="fa fa-trash text-red" onclick="deleteReceipt({{cat.id}})"> Delete</a>
-                                <!-- <button class="deletebtn btn btn-danger form-control"
-                                    onClick="deleteReceipt({{cat.id}})">DELETE</button> -->
-
+                                <a href="#" class="fa fa-trash text-red" onclick="deleteItem({{cat.id}})"> Delete</a>
                             </td>
                         </tr>
                         {% endfor %}
 
                     </tbody>
+
                 </table>
             </div>
             <!-- /.box-body -->
@@ -74,19 +73,18 @@
     <!-- /.col -->
 </div>
 
-
 <br>
 
 {% endblock %}
 {% block javascript %}
 <script>
 
-    function deleteReceipt(id) {
+    function deleteItem(id) {
         console.log(id);
-        var action = confirm("Are you sure you want to delete this item?");
+        var action = confirm("Are you sure you want to delete this Opening Balance Entry?");
         if (action != false) {
             $.ajax({
-                url: '{% url "receipt_delete" %}',
+                url: '{% url "begbalance_delete" %}',
                 data: {
                     'id': id,
                 },

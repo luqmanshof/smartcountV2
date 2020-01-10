@@ -33,7 +33,32 @@ urlpatterns = [
     path('login', auth_views.LoginView.as_view(), name='login'),
     path('logout', auth_views.LogoutView.as_view(), name='logout'),
 
+    # COMPANY REGISTRATION
+    path('setupcompanyreg/(<int:pk>)',
+         views.setupcompanyreg, name='setupcompanyreg'),
 
+    # DIVISION
+    path('setupdivision_list', views.setupdivision_list,
+         name='setupdivision_list'),
+    path('setupdivision/(<int:pk>)',
+         views.setupdivision, name='setupdivision'),
+    path('setupdivision/(<int:pk>)/detail',
+         views.SetupDivisionDetail.as_view(), name='setupdivision_detail'),
+    path('setupdivision/(<int:pk>)/delete',
+         views.SetupDivisionDelete.as_view(), name='setupdivision_delete'),
+
+    # DEPARTMENT
+    path('setupdepartment_list', views.setupdepartment_list,
+         name='setupdepartment_list'),
+    path('setupdepartment/(<int:pk>)',
+         views.setupdepartment, name='setupdepartment'),
+    path('setupdepartment/(<int:pk>)/detail',
+         views.SetupDepartmentDetail.as_view(), name='setupdepartment_detail'),
+    path('setupdepartment/(<int:pk>)/delete',
+         views.SetupDepartmentDelete.as_view(), name='setupdepartment_delete'),
+
+
+    # CHART MAIN CATEGORIES
     path('chartcategory_list', views.chartcategory_list, name='chartcategory_list'),
     path('chartcategory/(<int:pk>)', views.chartcategory, name='chartcategory'),
     path('chartcategory/(<int:pk>)/detail',
@@ -82,6 +107,23 @@ urlpatterns = [
          views.SetupInventoryItemsDetail.as_view(), name='setupinventoryitems_detail'),
     path('setupinventoryitems/(<int:pk>)/delete',
          views.SetupInventoryItemsDelete.as_view(), name='setupinventoryitems_delete'),
+
+
+    # FIXED ASSETS
+    path('setupfixedasset_list', views.setupfixedasset_list,
+         name='setupfixedasset_list'),
+    path('fixedasset_new', views.FixedAsset.as_view(), name='fixedasset_new'),
+    path('fixedasset_edit/(<int:pk>)',
+         views.fixedassetedit, name='fixedasset_edit'),
+    path('setupfixedasset/(<int:pk>)',
+         views.setupfixedasset, name='setupfixedasset'),
+    path('ajax/fixedasset/create/',  views.CreateFixedAsset.as_view(),
+         name='fixedasset_ajax_create'),
+    path('setupfixedasset/(<int:pk>)/detail',
+         views.SetupFixedAssetDetail.as_view(), name='setupfixedasset_detail'),
+    path('setupfixedasset/(<int:pk>)/delete',
+         views.SetupFixedAssetDelete.as_view(), name='setupfixedasset_delete'),
+
 
     # SETUP EMPLOYEES
     path('employees_list', views.employees_list, name='employees_list'),
@@ -140,6 +182,32 @@ urlpatterns = [
          name='gjournal_ajax_create'),
     path('gjournal_edit/(<int:pk>)', views.gjournaledit, name='gjournal_edit'),
     path('gjournal_post', views.gjournal_post, name='gjournal_post'),
+    path('ajax/gjournal_items/delete/',  views_ajax.DeleteGJournalItem.as_view(),
+         name='gjournal_ajax_delete'),
+    path('ajax/gjournal/delete/',  views_ajax.DeleteGJournal.as_view(),
+         name='gjournal_delete'),
+
+
+    # BEGINNING BALANCE POSTINGS
+    path('begbalance_list', views.begbalance_list, name='begbalance_list'),
+    path('begbalance_new', views.BegBalanceClass.as_view(), name='begbalance_new'),
+    path('ajax/begbalance/create/',  views.CreateBegBalance.as_view(),
+         name='begbalance_ajax_create'),
+    path('begbalance_edit/(<int:pk>)',
+         views.begbalanceedit, name='begbalance_edit'),
+    path('ajax/begbalance_items/delete/',  views_ajax.DeleteBegBalanceItem.as_view(),
+         name='begbalance_ajax_delete'),
+    path('ajax/begbalance/delete/',  views_ajax.DeleteBegBalance.as_view(),
+         name='begbalance_delete'),
+    path('begbalance_savemain', views.begbalance_savemain,
+         name='begbalance_savemain'),
+    # path('begbalance_post', views.begbalance_post, name='begbalance_post'),
+
+
+    # PURCHASE POSTINGS
+    path('purchase_list', views.purchase_list, name='purchase_list'),
+    path('purchase_new', views.PurchaseClass.as_view(), name='purchase_new'),
+
 
     # VIEW JOURNALS
     path('journal_view/(<str:pk>)/(<str:jt>)',
@@ -150,9 +218,11 @@ urlpatterns = [
          name='financialperformance'),
     # path('financialperformanceprint',views.financialperformanceprint,name='financialperformanceprint'),
     path('financialposition', views.financialposition, name='financialposition'),
+    path('financialnotes', views.financialnotes, name='financialnotes'),
     path('financialcashflow', views.financialcashflow,
          name='financialcashflow'),
 
+    path('note_view/(<str:pk>)', views.noteview, name='note_view'),
 
     ########### URL Path to Ajax views ######################
     path('note_items', views_ajax.ChartNoteItem.as_view(), name='note_items'),
@@ -172,4 +242,8 @@ urlpatterns = [
          name='populate_noteitems'),
     path('get_acctcat',  views_ajax.get_acctcat,
          name='get_acctcat'),
+    path('purchase_items/populate/',  views_ajax.populate_purchaseitems,
+         name='populate_purchaseitems'),
+    path('get_date_value',  views_ajax.get_date_value,
+         name='get_date_value'),
 ]

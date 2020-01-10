@@ -11,11 +11,25 @@
 
 <!-- Main content -->
 <section class="invoice">
+  <!-- info row -->
+  <div class="row invoice-info">
+    <div class="col-sm-4 invoice-col">
+      <address>
+        {% for cat in companyinfo.all %}
+        <strong>{{cat.name}}</strong><br>
+        {{cat.address}}<br>
+        {% endfor %}
+      </address>
+    </div>
+
+
+  </div>
+  <!-- /.row -->
   <!-- title row -->
   <div class="row">
     <div class="col-xs-12">
       <h2 class="page-header">
-        <i class="fa fa-globe"></i> <b>Consolidated Statement of Financial Position</b>
+        <i class="fa fa-globe"></i> <b>Statement of Financial Position</b>
         <small class="pull-right">
           <p id="date">Date: </p>
         </small>
@@ -23,18 +37,6 @@
     </div>
     <!-- /.col -->
   </div>
-  <!-- info row -->
-  <div class="row invoice-info">
-    <div class="col-sm-4 invoice-col">
-      <address>
-        <strong>Sample Company, ltd.</strong><br>
-        Ikeja Lagos, Nigeria<br>
-      </address>
-    </div>
-
-
-  </div>
-  <!-- /.row -->
   <!-- Table row -->
   <div class="row">
     <div class="col-xs-12">
@@ -63,8 +65,9 @@
                 <td>
                   {{cat.sub_category__sub_category_name}}
                 </td>
-                <td>
-                  {{cat.notes}}
+                <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
+                    {{cat.sub_category__notes}}</a>
+                  <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
                 <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
                 <td style="text-align: right;">$0.00</td>
@@ -93,8 +96,9 @@
                 <td>
                   {{cat.sub_category_name}}
                 </td>
-                <td>
-                  {{cat.notes}}
+                <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
+                    {{cat.sub_category__notes}}</a>
+                  <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
                 <td style="text-align: right;">$0.00</td>
                 <td style="text-align: right;">$0.00</td>
@@ -172,8 +176,9 @@
                 <td>
                   {{cat.sub_category_name}}
                 </td>
-                <td>
-                  {{cat.notes}}
+                <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
+                    {{cat.sub_category__notes}}</a>
+                  <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
                 <td style="text-align: right;">$0.00</td>
                 <td style="text-align: right;">$0.00</td>
@@ -202,8 +207,9 @@
                 <td>
                   {{cat.sub_category_name}}
                 </td>
-                <td>
-                  {{cat.notes}}
+                <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
+                    {{cat.sub_category__notes}}</a>
+                  <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
                 <td style="text-align: right;">$0.00</td>
                 <td style="text-align: right;">$0.00</td>
@@ -357,7 +363,7 @@
   y = n.getFullYear();
   m = n.getMonth() + 1;
   d = n.getDate();
-  document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+  document.getElementById("date").innerHTML = d + "/" + m + "/" + y;
 </script>
 
 {% endblock %}

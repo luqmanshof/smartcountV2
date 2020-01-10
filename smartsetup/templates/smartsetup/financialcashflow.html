@@ -4,17 +4,31 @@
 
 {% block content %}
 
-<!-- Content Header (Page header) -->
+<!-- Content Header (Page header)
 <section class="content-header">
-</section>
+</section> -->
 
 <!-- Main content -->
 <section class="invoice">
+    <!-- info row -->
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+            <address>
+                {% for cat in companyinfo.all %}
+                <strong>{{cat.name}}</strong><br>
+                {{cat.address}}<br>
+                {% endfor %}
+            </address>
+        </div>
+
+
+    </div>
+    <!-- /.row -->
     <!-- title row -->
     <div class="row">
         <div class="col-xs-12">
             <h2 class="page-header">
-                <i class="fa fa-globe"></i> <b>Consolidated Statement of Cash Flows</b>
+                <i class="fa fa-globe"></i> <b>Statement of Cash Flows</b>
                 <small class="pull-right">
                     <p id="date">Date: </p>
                 </small>
@@ -22,19 +36,7 @@
         </div>
         <!-- /.col -->
     </div>
-    <!-- info row -->
-    <div class="row invoice-info">
-        <div class="col-sm-4 invoice-col">
-            <address>
-                <strong>Sample Company, ltd.</strong><br>
-                Akindele Avenue<br>
-                Ikeja Lagos, Nigeria<br>
-            </address>
-        </div>
 
-
-    </div>
-    <!-- /.row -->
     <!-- Table row -->
     <div class="row">
         <div class="col-xs-12">
@@ -49,7 +51,7 @@
                         <thead>
                             <tr>
                                 <th><b>Cash Flow From Operating Activities</b></th>
-                                <th>Notes</th>
+                                <th></th>
                                 <th>Year 1</th>
                                 <th>Year 2</th>
                             </tr>
@@ -63,18 +65,16 @@
                                 <td>
                                     {{cat.sub_category_name}}
                                 </td>
-                                <td>
-                                    {{cat.notes}}
-                                </td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                             {% endfor %}
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td><b>$0.00</b></td>
-                                <td><b>$0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
                             </tr>
                             <tr>
                                 <td></td>
@@ -93,18 +93,16 @@
                                 <td>
                                     {{cat.sub_category_name}}
                                 </td>
-                                <td>
-                                    {{cat.notes}}
-                                </td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                             {% endfor %}
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td><b>$0.00</b></td>
-                                <td><b>$0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
                             </tr>
                             <tr>
                                 <td></td>
@@ -115,27 +113,28 @@
 
                         </tbody>
                     </table>
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <div class="box">
-                <!-- <div class="box-body"> -->
-                <table class="table table-striped">
-                    <col width="490">
-                    <col width="120">
-                    <col width="120">
-                    <col width="120">
 
-                    <tfoot>
-                        <tr>
-                            <td><b>Net Cash Flows from Operating Activities</b></td>
-                            <td></td>
-                            <td><b>$0.00</b></td>
-                            <td><b>$0.00</b></td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <!-- </div> -->
+                    <div class="box">
+                        <!-- <div class="box-body"> -->
+                        <table class="table table-striped">
+                            <col width="490">
+                            <col width="120">
+                            <col width="120">
+                            <col width="120">
+
+                            <tfoot>
+                                <tr>
+                                    <td><b>Net Cash Flows from Operating Activities</b></td>
+                                    <td></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- </div> -->
+                        <!-- /.box-body -->
+                    </div>
+                </div>
                 <!-- /.box-body -->
             </div>
         </div>
@@ -154,7 +153,7 @@
 
                         <thead>
                             <tr>
-                                <th><b>LIABILITIES</b></th>
+                                <th><b>Cash Flows from Investing Activities</b></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -162,109 +161,59 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><b><u>Current Liabilities</u></b></td>
+                                <td>Purchase of property, plant, equipment and intangible assets</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            {% for cat in curr_liabilities.all %}
-                            <tr>
-                                <td>
-                                    {{cat.sub_category_name}}
-                                </td>
-                                <td>
-                                    {{cat.notes}}
-                                </td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
-                            </tr>
-                            {% endfor %}
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td><b>$0.00</b></td>
-                                <td><b>$0.00</b></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                             <tr>
+                                <td>Proceeds from sale of property, plant and equipment</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                             <tr>
-                                <td><b><u> Non-Current Liabilities</u></b></td>
+                                <td>Decrease in non-current receivables</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
-                            {% for cat in noncurr_liabilities.all %}
                             <tr>
-                                <td>
-                                    {{cat.sub_category_name}}
-                                </td>
-                                <td>
-                                    {{cat.notes}}
-                                </td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
-                            </tr>
-                            {% endfor %}
-                            <tr>
+                                <td>Increase in investments</td>
                                 <td></td>
-                                <td></td>
-                                <td><b>$0.00</b></td>
-                                <td><b>$0.00</b></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
-
                         </tbody>
+
                     </table>
+                    <div class="box">
+                        <!-- <div class="box-body"> -->
+                        <table class="table table-striped">
+                            <col width="490">
+                            <col width="120">
+                            <col width="120">
+                            <col width="120">
+
+                            <tfoot>
+                                <tr>
+                                    <td><b>Net Cash Flows used in Investing Activities</b></td>
+                                    <td></td>
+                                    <td><b>(0.00)</b></td>
+                                    <td><b>(0.00)</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- </div> -->
+                        <!-- /.box-body -->
+                    </div>
                 </div>
-                <!-- /.box-body -->
-            </div>
-            <div class="box">
-                <!-- <div class="box-body"> -->
-                <table class="table table-striped">
-                    <col width="490">
-                    <col width="120">
-                    <col width="120">
-                    <col width="120">
-
-                    <tfoot>
-                        <tr>
-                            <td><b>Total Liabilities</b></td>
-                            <td></td>
-                            <td><b>$0.00</b></td>
-                            <td><b>$0.00</b></td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <!-- </div> -->
-                <!-- /.box-body -->
-            </div>
-
-            <div class="box">
-                <!-- <div class="box-body"> -->
-                <table class="table table-striped">
-                    <col width="490">
-                    <col width="120">
-                    <col width="120">
-                    <col width="120">
-
-                    <tfoot>
-                        <tr>
-                            <td><b>Net assets</b></td>
-                            <td></td>
-                            <td><b>$0.00</b></td>
-                            <td><b>$0.00</b></td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <!-- </div> -->
                 <!-- /.box-body -->
             </div>
         </div>
         <!-- /.col -->
     </div>
+
 
     <div class="row">
         <div class="col-xs-12">
@@ -278,7 +227,7 @@
 
                         <thead>
                             <tr>
-                                <th><b>NET ASSETS / EQUITY</b></th>
+                                <th><b>Cash Flows from Financing Activities</b></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -286,26 +235,56 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
-                                    Reserves
-                                </td>
+                                <td>Proceeds from borrowings</td>
                                 <td></td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                             <tr>
-                                <td>
-                                    Accumulated Surplus / Deficit
-                                </td>
+                                <td>Repayment of borrowings</td>
                                 <td></td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Increase in deposits</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
                             </tr>
                         </tbody>
+
                     </table>
+                    <div class="box">
+                        <!-- <div class="box-body"> -->
+                        <table class="table table-striped">
+                            <col width="490">
+                            <col width="120">
+                            <col width="120">
+                            <col width="120">
+
+                            <tfoot>
+                                <tr>
+                                    <td><b>Net Cash Flows used in Financing Activities</b></td>
+                                    <td></td>
+                                    <td><b>(0.00)</b></td>
+                                    <td><b>(0.00)</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- </div> -->
+                        <!-- /.box-body -->
+                    </div>
                 </div>
                 <!-- /.box-body -->
             </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-12">
             <div class="box">
                 <!-- <div class="box-body"> -->
                 <table class="table table-striped">
@@ -316,10 +295,10 @@
 
                     <tfoot>
                         <tr>
-                            <td><b>Total Net Assets / Equity</b></td>
+                            <td><b>Net increase/(decrease) in cash and cash equivalents</b></td>
                             <td></td>
-                            <td><b>$0.00</b></td>
-                            <td><b>$0.00</b></td>
+                            <td><b>0.00</b></td>
+                            <td><b>0.00</b></td>
                         </tr>
                     </tfoot>
                 </table>

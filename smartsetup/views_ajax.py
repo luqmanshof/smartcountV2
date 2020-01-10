@@ -10,7 +10,8 @@ from django.views.generic import ListView
 from .models import (ChartCategory, ChartSubCategory, ChartNoteItems, SetupClients, SetupVendors,
                      SetupInventoryCategory, SetupInventoryItems, SetupClients, SetupVendors,
                      ReceiptMain, ReceiptDetails, ExpenseMain, ExpenseDetails, GJournalMain,
-                     GJournalDetails, GeneralLedger)
+                     GJournalDetails, GeneralLedger, SetupFixedAssets, SetupBegbalanceDetails,
+                     SetupBegBalanceMain)
 from django.db.models import Max, PositiveIntegerField, Value, Sum
 
 
@@ -257,36 +258,88 @@ class DeleteGJournalItem(View):
         id1 = request.GET.get('id', None)
         pk = request.GET.get('mainID', None)
         voucher_number = request.GET.get('voucher_number', None)
-        description = ExpenseDetails.objects.get(id=id1).description
-        amount = ExpenseDetails.objects.get(id=id1).amount
+        description = GJournalDetails.objects.get(id=id1).description
+        debit = GJournalDetails.objects.get(id=id1).debit
+        credit = GJournalDetails.objects.get(id=id1).credit
 
-        ExpenseDetails.objects.get(id=id1).delete()
-        GeneralLedger.objects.get(debit=amount, description=description,
-                                  ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
+        GJournalDetails.objects.get(id=id1).delete()
+        GeneralLedger.objects.get(debit=debit, credit=credit, description=description,
+                                  ref_number=voucher_number, journal_type='GJ', main_Trans=False).delete()
 
         # get the sum of the receipt detail values
-        total_sum = ExpenseDetails.objects.filter(
-            expense_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        total_debit = GJournalDetails.objects.filter(
+            expense_main_id_id=pk).aggregate(Sum('debit'))['debit__sum'] or 0.00
+        total_credit = GJournalDetails.objects.filter(
+            expense_main_id_id=pk).aggregate(Sum('credit'))['credit__sum'] or 0.00
 
-        # Update Cash receipt journal total credit value
-        total_amount = float(total_sum)
-        obj3 = GeneralLedger.objects.get(
-            ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
-        obj3.credit = total_amount
-        obj3.save()
+        # # Update Cash receipt journal total credit value
+        # total_amount = float(total_sum)
+        # obj3 = GeneralLedger.objects.get(
+        #     ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
+        # obj3.credit = total_amount
+        # obj3.save()
 
         # Get the cash receipt journal items
         journal_list = serializers.serialize(
-            "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='CDJ'))
+            "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='GJ'))
 
-        journal_list1 = GeneralLedger.objects.filter(
-            ref_number=voucher_number, journal_type='CDJ')
-        print('JOURNAL LIST RETRIEVED : ', journal_list1)
+        # journal_list1 = GeneralLedger.objects.filter(
+        #     ref_number=voucher_number, journal_type='GJ')
+        # print('JOURNAL LIST RETRIEVED : ', journal_list1)
 
         data = {
             'deleted': True,
-            'total_sum': total_sum,
+            'total_debit': total_debit,
+            'total_credit': total_credit,
             'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
+class DeleteBegBalanceItem(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+        pk = request.GET.get('mainID', None)
+        period_number = request.GET.get('period_number', None)
+        description = SetupBegbalanceDetails.objects.get(id=id1).description
+        debit = SetupBegbalanceDetails.objects.get(id=id1).debit
+        credit = SetupBegbalanceDetails.objects.get(id=id1).credit
+
+        SetupBegbalanceDetails.objects.get(id=id1).delete()
+        # GeneralLedger.objects.get(debit=debit, credit=credit, description=description,
+        #                           ref_number=voucher_number, journal_type='BB', main_Trans=False).delete()
+
+        # get the sum of the receipt detail values
+        total_debit = SetupBegbalanceDetails.objects.filter(
+            mainid_id=pk).aggregate(Sum('debit'))['debit__sum'] or 0.00
+        total_credit = SetupBegbalanceDetails.objects.filter(
+            mainid_id=pk).aggregate(Sum('credit'))['credit__sum'] or 0.00
+
+        # Get the cash receipt journal items
+        journal_list = serializers.serialize(
+            "json", GeneralLedger.objects.filter(ref_number=period_number, journal_type='BB'))
+
+        data = {
+            'deleted': True,
+            'total_debit': total_debit,
+            'total_credit': total_credit,
+            'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
+class DeleteBegBalance(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+
+        ref_number1 = SetupBegBalanceMain.objects.get(id=id1).periodno
+        GeneralLedger.objects.filter(
+            ref_number=ref_number1, journal_type='BB').delete()
+
+        SetupBegBalanceMain.objects.get(id=id1).delete()
+
+        data = {
+            'deleted': True
         }
         return JsonResponse(data)
 
@@ -345,3 +398,52 @@ def get_acctcat(request):
 
     else:
         return redirect('/')
+
+
+def populate_purchaseitems(request):
+    if request.method == 'GET' and request.is_ajax():
+        print('AM HERE!!!: ')
+        option_type = request.GET.get('type', None)
+
+        result_set = []
+        selected_items = []
+
+        if option_type == 'inventory':
+            # selected_items = SetupInventoryItems.objects.all().order_by('-inventory_name')
+            selected_items = SetupInventoryItems.objects.all()
+            print('Selected Inventory Items are: ', selected_items)
+
+            for item in selected_items:
+                result_set.append(
+                    {'item': item.inventory_name, 'itemID': item.id})
+        else:
+            selected_items = SetupFixedAssets.objects.all().order_by('-description')
+            print('Selected Fixed Asset are: ', selected_items)
+
+            for item in selected_items:
+                result_set.append(
+                    {'item': item.description, 'itemID': item.id})
+
+        return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
+
+    else:
+        return redirect('/')
+
+
+
+def get_date_value(request):
+    if request.method == 'GET' and request.is_ajax():
+        main_ID = request.GET.get('main_ID', None)
+
+        selected_date = SetupBegBalanceMain.objects.get(
+            id=main_ID).entrydate
+        print('Selected DATE Items is: ', selected_date)
+
+        data = {
+            'selected_date': selected_date
+        }
+        return JsonResponse(data)
+
+    else:
+        return redirect('/')
+

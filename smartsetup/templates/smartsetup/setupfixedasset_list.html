@@ -1,0 +1,136 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<section class="content-header">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="nav-tabs-custom">
+                <!-- Tabs within a box -->
+                <ul class="nav nav-tabs pull-right">
+                    <li class="pull-left header"><i class="fa fa-address-card"></i> List of Fixed Assets </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-xs-2" style="padding-left: 0px;">
+            <a href="{% url 'fixedasset_new' %}"><button type="button" class="btn btn-primary btn-md">Register
+                    New Asset</button></a>
+        </div>
+    </div>
+
+</section>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12 col-md-2" hidden>
+            <!-- /.box -->
+            <div class="box ">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-3 col-md-12" style="margin:10px;">
+                            <a href="{% url 'purchase_new' %}"><button type="button" class="btn btn-success btn-md"
+                                    style="width: 120px;">Procure Asset</button></a>
+                        </div>
+                        <div class=" col-xs-3 col-md-12" style="margin:10px;">
+                            <a href="#"><button type="button" class="btn btn-primary btn-md"
+                                    style="width: 120px;">Depreciation</button></a>
+                        </div>
+                        <div class="col-xs-3 col-md-12" style="margin:10px;">
+                            <a href="#"><button type="button" class="btn btn-danger btn-md" style="width: 120px;">Asset
+                                    Disposal</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" col-xs-12 col-md-12">
+            <!-- /.box -->
+            <div class="box">
+                <div class="box-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                {% for fieldCol in fieldCols %}
+                                <th>{{ fieldCol }}</th>
+                                {% endfor %}
+                                <th>Event/Actions</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            {% for cat in setupfixedassets.all %}
+                            <tr>
+                                <td>
+                                    {{ cat.asset_id }}
+                                </td>
+                                <td>
+                                    {{ cat.serial_no }}
+                                </td>
+                                <td>
+                                    {{ cat.description }}
+                                </td>
+                                <td>
+                                    {{ cat.asset_account }}
+                                </td>
+                                <td>
+                                    {{ cat.purchase_date }}
+                                </td>
+                                <td>
+                                    {{ cat.purchase_value }}
+                                </td>
+                                <td>
+                                    {{ cat.depreciation_method }}
+                                </td>
+                                <td>
+                                    {{ cat.useful_life }}
+                                </td>
+                                <td>
+                                    {{ cat.salvage_value }}
+                                </td>
+                                <td>
+                                    {{ cat.department }}
+                                </td>
+                                <td style="text-align:left">
+                                    <!-- <a href="{% url 'fixedasset_edit' pk=cat.pk %}" class="fa fa-edit text-green">
+                                        Edit</a> | -->
+                                    <a href="{% url 'setupfixedasset' pk=cat.pk %}" class="fa fa-edit text-green">
+                                        Edit</a> |
+                                    <a href="{% url 'setupfixedasset_detail' pk=cat.pk %}" class="fa fa-eye text-blue">
+                                        View</a> |
+                                    <a href="{% url 'setupfixedasset_delete' pk=cat.pk %}" class="fa fa-trash text-red">
+                                        Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                        <!-- <tfoot>
+                        <tr>
+                          {% for fieldCol in fieldCols %}
+                            <th>{{ fieldCol }}</th>
+                          {% endfor %}
+                          <th>Event/Actions</th>
+                        </tr>
+
+                    </tfoot> -->
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<br>
+
+
+
+{% endblock %}

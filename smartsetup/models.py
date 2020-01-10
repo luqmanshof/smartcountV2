@@ -8,6 +8,14 @@ from django.utils import timezone
 # SETUP MODELS
 
 
+class CompanyRegistration(models.Model):
+    name = models.CharField(max_length=200)
+    address = models.TextField(max_length=500, blank=True)
+    phone = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
+    website = models.CharField(max_length=100, blank=True)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     job_description = models.CharField(blank=True, max_length=100, default='')
@@ -58,7 +66,7 @@ class EmployeeProfile(models.Model):
     last_name = models.CharField(max_length=100, default='')
     nick_name = models.CharField(max_length=100, default='')
     gender = models.CharField(max_length=50, choices=GENDER, default='Male')
-    birthdate = models.DateTimeField(auto_now=True)
+    birthdate = models.DateTimeField()
     marital_status = models.CharField(
         max_length=50, choices=M_STATUS, default='Single')
     address = models.TextField()
@@ -66,7 +74,7 @@ class EmployeeProfile(models.Model):
     login_profile = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, default='')
     email = models.CharField(max_length=200, default='', blank=True)
-    hire_date = models.DateTimeField(auto_now=True)
+    hire_date = models.DateTimeField()
     division = models.CharField(max_length=200, default='', blank=True)
     department = models.CharField(max_length=200, default='', blank=True)
     position = models.CharField(max_length=200, default='', blank=True)
@@ -109,6 +117,45 @@ class ChartNoteItems(models.Model):
         return self.item_name
 
 
+DURATION = (
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
+    ('6', '6'),
+    ('7', '7'),
+    ('8', '8'),
+    ('9', '9'),
+    ('10', '10'),
+    ('11', '11'),
+    ('12', '12'),
+)
+
+
+class SetupBegBalanceMain(models.Model):
+    entrydate = models.DateTimeField()
+    duration = models.CharField(max_length=50, choices=DURATION, default='12')
+    periodno = models.PositiveIntegerField(default=0)
+    periodstart = models.DateTimeField()
+    periodend = models.DateTimeField()
+    year = models.CharField(max_length=100)
+
+
+class SetupBegbalanceDetails(models.Model):
+    mainid = models.ForeignKey(SetupBegBalanceMain, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    account_id = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    sub_category = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(
+        ChartCategory, on_delete=models.SET_NULL, null=True)
+    description = models.CharField(max_length=256, default='')
+    debit = models.FloatField(default=0)
+    credit = models.FloatField(default=0)
+
+
 class SetupClients(models.Model):
     client_name = models.CharField(max_length=256)
     address = models.TextField()
@@ -134,6 +181,60 @@ class SetupVendors(models.Model):
         return self.vendor_name
 
 
+class SetupDivision(models.Model):
+    division_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.division_name
+
+
+class SetupDepartment(models.Model):
+    department_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    division = models.ForeignKey(
+        SetupDivision, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.department_name
+
+
+DEPR_METHODS = (
+    ('Straight-line', 'Straight-line'),
+    ('Double declining balance', 'Double declining balance'),
+    ('Sum of years', 'Sum of years'),
+    ('Units of production', 'Units of production'),
+)
+
+
+class SetupFixedAssets(models.Model):
+    asset_id = models.CharField(max_length=256)
+    serial_no = models.CharField(max_length=256, null=True)
+    description = models.CharField(max_length=256)
+    acquisition_date = models.DateTimeField(
+        default=timezone.now, blank=True)
+    department = models.ForeignKey(
+        SetupDepartment, on_delete=models.SET_NULL, null=True)
+    purchase_date = models.DateTimeField(
+        default=timezone.now, blank=True)
+    purchase_value = models.FloatField(default=0)
+    useful_life = models.CharField(max_length=256, null=True)
+    salvage_value = models.FloatField(default=0)
+    asset_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True, related_name='asset_account')
+    expense_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True, related_name='expense_account')
+    accumulated_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True, related_name='accumulated_account')
+    depreciation_method = models.CharField(
+        max_length=50, choices=DEPR_METHODS, default='Straight-line')
+    status = models.BooleanField(default=False)
+    others = models.CharField(max_length=256, null=True)
+
+    def __str__(self):
+        return self.description
+
+
 class SetupInventoryCategory(models.Model):
     inventory_category_code = models.PositiveSmallIntegerField(blank=True)
     inventory_category_name = models.CharField(max_length=256)
@@ -152,6 +253,19 @@ class SetupInventoryItems(models.Model):
 
     def __str__(self):
         return self.inventory_name
+
+
+class InventoryJournal(models.Model):
+    date = models.DateTimeField(
+        default=timezone.now, blank=True, verbose_name='Date/Time')
+    ref_number = models.PositiveIntegerField(default=100)
+    inventory_code = models.CharField(max_length=256)
+    inventory_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    debit = models.FloatField(default=0)
+    credit = models.FloatField(default=0)
+    store = models.CharField(max_length=256, default='', blank=True)
+
 
 # ACCOUNT MODELS
 
@@ -278,3 +392,37 @@ class GJournalDetails(models.Model):
     credit = models.FloatField(default=0, blank=True, null=True)
     journal_main_id = models.ForeignKey(
         GJournalMain, on_delete=models.CASCADE, default=0)
+
+
+class PurchaseMain(models.Model):
+    date = models.DateTimeField(
+        default=timezone.now, blank=True, verbose_name='Expense Date/Time')
+    voucher_number = models.PositiveIntegerField(default=100)
+    vendor = models.ForeignKey(
+        SetupVendors, on_delete=models.SET_NULL, null=True, blank=True, default='')
+    description = models.TextField(default='')
+    cash_account = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Cash Account')
+    credit_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    pay_mode = models.CharField(
+        max_length=50, choices=PAYMENT_MODES, default='Cheque')
+    total_amount = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.voucher_number
+
+
+class PurchaseDetails(models.Model):
+    inventory_item = models.ForeignKey(
+        SetupInventoryItems, on_delete=models.SET_NULL, null=True)
+    description = models.CharField(max_length=256, default='')
+    quantity = models.IntegerField(default=1)
+    expense_account = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Expense Category')
+    Debit_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    unit_price = models.FloatField(default=0)
+    amount = models.FloatField(default=0)
+    expense_main_id = models.ForeignKey(
+        ExpenseMain, on_delete=models.CASCADE, default=0)

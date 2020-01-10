@@ -7,22 +7,22 @@
 
     <div class="col-xs-12 col-md-3">
         <label>
-            JOURNAL ENTRY MODULE
+            OPENING BALANCE ENTRY MODULE
             <small>...</small>
         </label>
     </div>
 
     <div class="col-xs-12 col-md-8 pull-right">
         <div class="pull-right form-group col-xs-4 col-md-3">
-            <a href="{% url 'gjournal_list' %}"><button class="btn btn-danger form-control"
+            <a href="{% url 'begbalance_list' %}"><button class="btn btn-danger form-control"
                     type="submit">EXIT</button></a>
         </div>
-        <div class="pull-right form-group col-xs-4 col-md-3">
+        <!-- <div class="pull-right form-group col-xs-4 col-md-3">
             <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
                 data-target="#journalModal">JOURNAL</button>
-        </div>
+        </div> -->
         <div class="pull-right form-group col-xs-4 col-md-3">
-            <button class="btn btn-success form-control" onClick="postRecord()">POST</button>
+            <button class="btn btn-success form-control" onClick="postRecord()">POST TO G.L</button>
         </div>
     </div>
 
@@ -36,26 +36,58 @@
             <div class="col-xs-12">
                 <form id="receiptMainForm">
                     {% if expensemain %}
+                    <!-- formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds; -->
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Journal Date</label>
-                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
-                                name="trans_date" id="date" required>
+                            <label for="">Entry Date</label>
+                            <input class="form-control" type="text" name="test" id="test" placeholder=""
+                                value='{{ expensemain.entrydate|date:"d/m/Y"}}' required>
+                            <input class="form-control" value='{{ expensemain.entrydate|date:"Y-m-d" }}'
+                                type="datetime-local" onload="" name="trans_date" id="trans_date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{expensemain.id}}" />
                         </div>
-
                         <div class="col-xs-6 col-md-1 form-group">
-                            <label for="">Ref. No.</label>
-                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
-                                value="{{expensemain.ref_number}}" required disabled>
+                            <label for="">Months</label>
+                            <select name="month_dur" id="month_dur" class="form-control">
+                                <option value="1" {% if expensemain.duration == '1' %}selected{% endif %}>1</option>
+                                <option value="2" {% if expensemain.duration == '2' %}selected{% endif %}>2</option>
+                                <option value="3" {% if expensemain.duration == '3' %}selected{% endif %}>3</option>
+                                <option value="4" {% if expensemain.duration == '4' %}selected{% endif %}>4</option>
+                                <option value="5" {% if expensemain.duration == '5' %}selected{% endif %}>5</option>
+                                <option value="6" {% if expensemain.duration == '6' %}selected{% endif %}>6</option>
+                                <option value="7" {% if expensemain.duration == '7' %}selected{% endif %}>7</option>
+                                <option value="8" {% if expensemain.duration == '8' %}selected{% endif %}>8</option>
+                                <option value="9" {% if expensemain.duration == '9' %}selected{% endif %}>9</option>
+                                <option value="10" {% if expensemain.duration == '10' %}selected{% endif %}>10</option>
+                                <option value="11" {% if expensemain.duration == '11' %}selected{% endif %}>11</option>
+                                <option value="12" {% if expensemain.duration == '12' %}selected{% endif %}>12</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period Start Date:</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_start"
+                                value="{{expensemain.periodstart}}" id="period_start" required disabled>
 
                         </div>
 
-                        <div class="col-xs-12 col-md-5 form-group">
-                            <label for="">Narrative / Title:</label>
-                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
-                                value="{{expensemain.description}}" required>
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period End Date:</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_end"
+                                value="{{expensemain.periodend}}" id="period_end" required disabled>
+                        </div>
+
+                        <div class="col-xs-6 col-md-1 form-group" hidden>
+                            <label for="">Period No.</label>
+                            <input class="form-control" type="text" id="period_number" name="period_number"
+                                value="{{expensemain.periodno}}" required disabled>
+
+                        </div>
+
+                        <div class="col-xs-12 col-md-1 form-group">
+                            <label for="">Year</label>
+                            <input class="form-control" type="text" name="acct_year" id="acct_year" placeholder=""
+                                value="{{expensemain.year}}" required disabled>
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
@@ -73,20 +105,49 @@
                     {% else %}
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Journal Date</label>
-                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
-                                required>
+                            <label for="">Entry Date</label>
+                            <input class="form-control" type="datetime-local" onload="" name="trans_date"
+                                id="trans_date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId" />
                         </div>
-
                         <div class="col-xs-6 col-md-1 form-group">
-                            <label for="">Ref. No.</label>
-                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
-                                value="{{max_expense.max_val|add:1}}" required disabled>
+                            <label for="">Months</label>
+                            <select name="month_dur" id="month_dur" class="form-control">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12" selected>12</option>
+                            </select>
                         </div>
-                        <div class="col-xs-12 col-md-5 form-group">
-                            <label for="">Narrative / Title:</label>
-                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder="" required>
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period Start Date:</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_start"
+                                id="period_start" required disabled>
+
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period End Date:</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_end"
+                                id="period_end" required disabled>
+                        </div>
+                        <div class="col-xs-6 col-md-1 form-group" hidden>
+                            <label for="">Period No.</label>
+                            <input class="form-control" type="text" id="period_number" name="period_number"
+                                value="{{max_period.max_val|add:1}}" required disabled>
+                        </div>
+                        <div class="col-xs-12 col-md-1 form-group">
+                            <label for="">Year</label>
+                            <input class="form-control" type="text" name="acct_year" id="acct_year" placeholder=""
+                                value="Year {{max_period.max_val|add:1}}" required disabled>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Total Debit:</label>
@@ -125,17 +186,19 @@
                         <!-- <h3>ADD USER</h3> -->
                         <form id="receiptSub" action="">
                             <div class="row">
-                                <div class="col-xs-6 col-md-2 form-group">
+                                <div class="col-xs-12 col-md-4 form-group">
                                     <label for="">Account</label>
                                     <select name="credit_account" id="credit_account" class="form-control" required>
                                         <option></option>
                                         {% for item in note_acct %}
-                                        <option value="{{ item.id }}">{{ item.item_name }}
+                                        <option value="{{ item.id }}">{{ item.item_name }} |
+                                            {{item.sub_category__sub_category_name}} |
+                                            {{item.sub_category__category_code__category_name}}
                                         </option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-xs-6 col-md-2 form-group">
+                                <div class="col-xs-6 col-md-2 form-group" hidden>
                                     <label for="">Category</label>
                                     <select name="expense_account" id="expense" class="form-control" required>
                                         <option></option>
@@ -147,21 +210,21 @@
                                     <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                                 </div>
                                 <div class="col-xs-12 col-md-3 form-group">
-                                    <label for="">Item Description</label>
-                                    <input class="form-control" type="text" name="description" placeholder="description"
-                                        required>
+                                    <label for="">Description</label>
+                                    <input class="form-control" type="text" value="Opening Balance" id="item_descr"
+                                        name="item_description" placeholder="description" required>
                                 </div>
-                                <div class="col-xs-6 col-md-2 form-group">
+                                <div class="col-xs-4 col-md-2 form-group">
                                     <label for="">Debit</label>
                                     <input class="form-control" type="text" name="debit_amount" placeholder="0.00">
                                 </div>
-                                <div class="col-xs-6 col-md-2 form-group">
+                                <div class="col-xs-4 col-md-2 form-group">
                                     <label for="">Credit</label>
                                     <input class="form-control" type="text" name="credit_amount" placeholder="0.00">
                                 </div>
-                                <div class="col-xs-6 col-md-1">
+                                <div class="col-xs-4 col-md-1">
                                     <label for=""></label>
-                                    <button class="btn btn-primary form-control" type="submit">SAVE</button>
+                                    <button class="btn btn-primary form-control" type="submit">ADD</button>
                                 </div>
                             </div>
                             <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
@@ -189,7 +252,7 @@
                             {% if expenseitems %}
                             {% for item in expenseitems %}
                             <tr id="item-{{item.id}}">
-                                <td class="itemExpenseAcct itemData" name="expense">{{item.account}}</td>
+                                <td class="itemExpenseAcct itemData" name="expense">{{item.account_id}}</td>
                                 <td class="itemCreditAcct itemData" name="credit">{{item.sub_category}}</td>
                                 <td class="itemDescription itemData" name="description">{{item.description}}</td>
                                 <td class="itemAmount itemData" style="text-align: right;" name="debit">
@@ -299,9 +362,20 @@
 
 {% block javascript %}
 <script>
-    var CategoryCode, CategoryCode2, CategoryId;
+    var CategoryCode, CategoryCode2, CategoryId, duration;
     var trans_date, amountInput, debit_acct, credit_acct, totalDebit, totalCredit;
     $(document).ready(function () {
+
+        $("select#month_dur").change(function () {
+            month = $(this).children("option:selected").val();
+            compute_date(month);
+        });
+
+        $("#trans_date").change(function () {
+            month = $("select#month_dur").children("option:selected").val();
+            compute_date(month);
+        });
+
 
         $("select#cash").change(function () {
             CategoryCode = $(this).children("option:selected").val();
@@ -322,6 +396,11 @@
 
         $("select#credit_account").change(function () {
             credit_acct = $(this).children("option:selected").val();
+            item_selected = $(this).find('option:selected').text()
+            n = item_selected.indexOf("|")
+            item_selected = item_selected.substr(0, n - 1)
+            //alert(credit_acct);
+            $('#item_descr').val('Opening Balance - ' + item_selected);
             console.log(credit_acct)
             get_cat_item(credit_acct, 'expense');
         });
@@ -347,6 +426,7 @@
             seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
 
             formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+            //formattedDateTime = year + '-' + month + '-' + date;
 
             if (onlyBlank === true && $(this).val()) {
                 return this;
@@ -358,8 +438,28 @@
         }
 
         $(function () {
-            // Handler for .ready() called.
-            $('input[type="datetime-local"]').setNow();
+            if ($('#main-id').val()) {
+                mainID = $('input[name="mainId"]').val().trim();
+                $.ajax({
+                    url: '{% url "get_date_value" %}',
+                    data: {
+                        'main_ID': mainID
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        itemID = data.selected_date;
+                        $("#trans_date").val(itemID);
+                        //$("#trans_date").val(itemID + "T01:01");
+
+                    },
+                });
+
+            }
+            else {
+                // Handler for .ready() called.
+                $('input[type="datetime-local"]').setNow();
+            }
 
         });
 
@@ -378,6 +478,33 @@
 
     });
 
+    function compute_date(month) {
+        //alert('SELECTED MONTH: ' + month)
+        selected_date = $('#trans_date').val()
+        //alert('SELECTED DATE: ' + selected_date)
+        $('#period_start').val(selected_date);
+
+        var d = new Date(selected_date); // January 1, 2000
+        d.setMonth(d.getMonth() + month);
+        d.setDate(d.getDate() - 1);
+        console.log(d);
+
+        year = d.getFullYear();
+        month = d.getMonth().toString().length === 1 ? '0' + (d.getMonth() + 1).toString() : d.getMonth() + 1;
+        date = d.getDate().toString().length === 1 ? '0' + (d.getDate()).toString() : d.getDate();
+        hours = d.getHours().toString().length === 1 ? '0' + d.getHours().toString() : d.getHours();
+        minutes = d.getMinutes().toString().length === 1 ? '0' + d.getMinutes().toString() : d.getMinutes();
+        seconds = d.getSeconds().toString().length === 1 ? '0' + d.getSeconds().toString() : d.getSeconds();
+
+        formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+
+        console.log(formattedDateTime);
+
+        $('#period_end').val(formattedDateTime);
+
+
+        SaveMainRecord();
+    }
 
     function populate_account_items(CatCode, acctId) {
         $.ajax({
@@ -399,8 +526,6 @@
 
     }
 
-
-
     function get_cat_item(ItemCode, acctId) {
         $.ajax({
             url: '{% url "get_acctcat" %}',
@@ -419,22 +544,8 @@
 
     }
 
-    viewJournal();
-
-    function viewJournal() {
-        ref_no = $('input[name="voucher_number"]').val().trim();
-        var journal_url = '/smartsetup/journal_view/(' + ref_no + ')/(GJ)'
-
-        $.ajax({
-            url: journal_url,
-            success: function () {
-                $("#journalview").load(journal_url);
-            },
-        });
-    }
-
     function postRecord() {
-        ref_no = $('input[name="voucher_number"]').val().trim();
+        ref_no = $('input[name="period_number"]').val().trim();
         mainID = $('input[name="mainId"]').val().trim();
         trans_date = $('input[name="trans_date"]').val().trim();
 
@@ -451,22 +562,60 @@
             success: function (data) {
                 alert('Recorded Posted Successfully!')
 
-                viewJournal();
             },
         });
 
     }
 
+
+    function SaveMainRecord() {
+        trans_date = $('input[name="trans_date"]').val().trim();
+        period_no = $('input[name="period_number"]').val().trim();
+        period_start = $('input[name="period_start"]').val().trim();
+        period_end = $('input[name="period_end"]').val().trim();
+        acct_year = $('input[name="acct_year"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        duration = $("select#month_dur").children("option:selected").val();
+
+        /*
+        alert(period_start);
+        alert(duration);
+        alert(period_end);
+        */
+
+        $.ajax({
+            url: '{% url "begbalance_savemain" %}',
+            data: {
+                'period_number': period_no,
+                'mainID': mainID,
+                'trans_date': trans_date,
+                'period_start': period_start,
+                'period_end': period_end,
+                'acct_year': acct_year,
+                'month_dur': duration,
+            },
+            dataType: 'json',
+            success: function (data) {
+                alert('Record Saved Successfully!')
+
+            },
+        });
+
+    }
+
+
     // Create Django Ajax Call
     $("#receiptSub").submit(function () {
-        //alert("Stage 1...");
+        // alert("Stage 1...");
 
         trans_date = $('input[name="trans_date"]').val().trim();
-        voucher_no = $('input[name="voucher_number"]').val().trim();
-        received_from = $('input[name="bill_to"]').val().trim();
+        period_no = $('input[name="period_number"]').val().trim();
+        period_start = $('input[name="period_start"]').val().trim();
+        period_end = $('input[name="period_end"]').val().trim();
+        acct_year = $('input[name="acct_year"]').val().trim();
         mainID = $('input[name="mainId"]').val().trim();
-        description = $('input[name="description"]').val().trim();
-        //amountInput = $('input[name="amount"]').val().trim();
+        description = $('input[name="item_description"]').val().trim();
+        duration = $("select#month_dur").children("option:selected").val();
         debitInput = $('input[name="debit_amount"]').val().trim();
         creditInput = $('input[name="credit_amount"]').val().trim();
         totalDebit = $('input[name="total_debit"]').val().trim();
@@ -475,11 +624,14 @@
         //alert("Stage 2...");
 
         console.log(trans_date);
-        console.log(voucher_no);
+        console.log(period_no);
         console.log(debitInput);
         console.log(creditInput);
-        console.log(received_from);
+        console.log(description);
         console.log(CategoryCode2);
+        console.log(duration);
+
+        //alert("Stage 3...");
         if (debitInput && creditInput) {
             alert("You cannot enter value in both debit and credit.");
         }
@@ -488,20 +640,23 @@
         }
         else {
 
-            if (trans_date && voucher_no && description && received_from) {
+            if (trans_date && period_no && description && CategoryCode2) {
                 // Create Ajax Call
-                //alert("Stage 3...");
+                //alert("Stage 4...");
                 if (!(debitInput)) { debitInput = 0 }
                 if (!(creditInput)) { creditInput = 0 }
                 if (!(totalDebit)) { totalDebit = 0 }
                 if (!(totalCredit)) { totalCredit = 0 }
 
                 $.ajax({
-                    url: '{% url "gjournal_ajax_create" %}',
+                    url: '{% url "begbalance_ajax_create" %}',
                     data: {
                         'trans_date': trans_date,
-                        'voucher_number': voucher_no,
-                        'bill_to': received_from,
+                        'period_number': period_no,
+                        'period_start': period_start,
+                        'period_end': period_end,
+                        'acct_year': acct_year,
+                        'month_dur': duration,
                         'mainID': mainID,
                         'description': description,
                         'expense_account': CategoryCode2,
@@ -637,15 +792,15 @@
     function deleteItem(id) {
         var action = confirm("Are you sure you want to delete this item?");
         mainID = $('input[name="mainId"]').val().trim();
-        voucher_no = $('input[name="voucher_number"]').val().trim();
+        period_no = $('input[name="period_number"]').val().trim();
 
         if (action != false) {
             $.ajax({
-                url: '{% url "expense_ajax_delete" %}',
+                url: '{% url "begbalance_ajax_delete" %}',
                 data: {
                     'id': id,
                     'mainID': mainID,
-                    'voucher_number': voucher_no
+                    'period_number': period_no
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -656,9 +811,6 @@
                         $('#total_db').val(data.total_sum);
                         $('#total_cr').val(data.total_sum);
                         //$("#itemTable).remove();
-                    }
-                    if (data.journal_list) {
-                        populateJournalList(data.journal_list);
                     }
                 }
             });
