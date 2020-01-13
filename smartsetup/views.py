@@ -617,10 +617,9 @@ def employees(request, pk=None):
         args = {'form': form, 'title': 'Setup Client Account'}
         return render(request, 'smartsetup/form.html', args)
 
-
 class EmployeesDetail(generic.DetailView):
     model = EmployeeProfile
-    template_name = 'smartsetup/setupclients_detail.html'
+    template_name = 'smartsetup/employees_detail.html'
 
 
 class EmployeesDelete(generic.DeleteView):
