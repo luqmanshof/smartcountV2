@@ -447,9 +447,27 @@
                     Position</span></a></li>
               <li><a href="{% url 'financialcashflow' %}"><i class="fa fa-edit text-blue"></i> <span>Cash Flow
                     Statement</span></a></li>
-              <li><a href="#"><i class="fa fa-edit text-blue"></i> <span>Changes In Net Asset</span></a></li>
-              <li><a href="{% url 'financialnotes' %}"><i class="fa fa-edit text-blue"></i> <span>Notes To
+              <li><a href="{% url 'financialnetasset' %}"><i class="fa fa-edit text-blue"></i> <span>Changes In Net
+                    Asset</span></a></li>
+              <li hidden><a href="{% url 'financialnotes' %}"><i class="fa fa-edit text-blue"></i> <span>Notes To
                     Account</span></a></li>
+
+              <li class="treeview">
+                <a href="#">
+                  <i class="fa fa-edit text-blue"></i> Notes To Account
+                  <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="{% url 'financialnotes' %}"><i class="fa fa-edit text-blue"></i>
+                      Notes To Account</a>
+                  </li>
+                  <li><a href="{% url 'financialfixedasset' %}"><i class="fa fa-edit text-blue"></i>
+                      Fixed Assets</a></li>
+                </ul>
+              </li>
+
             </ul>
           </li>
 
@@ -464,7 +482,7 @@
               </span>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a href="#">
               <i class="fa fa-envelope"></i> <span>Mailbox</span>
               <span class="pull-right-container">
@@ -473,7 +491,7 @@
                 <small class="label pull-right bg-red">5</small>
               </span>
             </a>
-          </li>
+          </li> -->
 
           <li class="header"> </li>
 

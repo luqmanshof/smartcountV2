@@ -1144,11 +1144,13 @@ class BegBalanceClass(ListView):
 
         context['max_period'] = SetupBegBalanceMain.objects.aggregate(max_val=Coalesce(
             Max(Cast('periodno', output_field=PositiveIntegerField())), Value(0)))
-        context['expense_acct'] = ChartSubCategory.objects.all()
-        # context['note_acct'] = ChartNoteItems.objects.all()
 
-        # ids = ChartSubCategory.objects.filter(id='21').values_list('id', flat=True)
-        context['note_acct'] = ChartNoteItems.objects.all().values(
+        # context['expense_acct'] = ChartSubCategory.objects.all()
+        context['expense_acct'] = ChartSubCategory.objects.filter().exclude(Q(category_code_id = '1') | Q(category_code_id = '2'))
+
+        # context['note_acct'] = ChartNoteItems.objects.all().values(
+        #     'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        context['note_acct'] = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id = '1') | Q(sub_category__category_code_id = '2')).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         return context
@@ -1174,6 +1176,7 @@ class CreateBegBalance(View):
             'credit_amount', 0).replace(',', ''))
         total_debit = float(request.GET.get('total_debit', 0))
         total_credit = float(request.GET.get('total_credit', 0))
+        pkSub = request.GET.get('subID', None)
 
         print('TRANSACTION ACCOUNT ID: ', credit_account1)
         # print('EXPENSE CLIENT ID: ', client_name1)
@@ -1210,16 +1213,28 @@ class CreateBegBalance(View):
                 periodend=period_end,
             )
 
-        print('CREATE BEG BALANCE DETAILS')
-        obj2 = SetupBegbalanceDetails.objects.create(
-            date=expense_date1,
-            description=description,
-            sub_category=ChartSubCategory.objects.get(id=expense_account1),
-            account_id=ChartNoteItems.objects.get(id=credit_account1),
-            debit=debit_amount,
-            credit=credit_amount,
-            mainid_id=obj.id,
-        )
+        if pkSub:
+            print('EDIT BEG BALANCE DETAILS')
+            obj2 = SetupBegbalanceDetails.objects.get(id=pkSub)
+            obj2.date=expense_date1
+            obj2.description=description
+            obj2.sub_category=ChartSubCategory.objects.get(id=expense_account1)
+            obj2.account_id=ChartNoteItems.objects.get(id=credit_account1)
+            obj2.debit=debit_amount
+            obj2.credit=credit_amount
+            obj2.save()
+
+        else:
+            print('CREATE NEW BEG BALANCE DETAILS')
+            obj2 = SetupBegbalanceDetails.objects.create(
+                date=expense_date1,
+                description=description,
+                sub_category=ChartSubCategory.objects.get(id=expense_account1),
+                account_id=ChartNoteItems.objects.get(id=credit_account1),
+                debit=debit_amount,
+                credit=credit_amount,
+                mainid_id=obj.id,
+            )
 
         total_debit = SetupBegbalanceDetails.objects.filter(
             mainid_id=obj.id).aggregate(Sum('debit'))['debit__sum'] or 0.00
@@ -1236,6 +1251,8 @@ class CreateBegBalance(View):
 
         expense_sub = {'Subid': obj2.id, 'description': obj2.description, 'expense_account': expenseAccount,
                        'debit_account': creditAccount, 'debit': obj2.debit, 'credit': obj2.credit}
+
+        print('TRANSACTION DETAILS : ', expense_sub)
 
         data = {
             'expense_main': expense_main,
@@ -1267,9 +1284,14 @@ def begbalanceedit(request, pk=None):
 
         expenseitems = SetupBegbalanceDetails.objects.filter(mainid_id=pk)
 
-        expense_acct = ChartSubCategory.objects.all()
-        note_acct = ChartNoteItems.objects.all().values(
+        # expense_acct = ChartSubCategory.objects.all()
+        expense_acct = ChartSubCategory.objects.filter().exclude(Q(category_code_id = '1') | Q(category_code_id = '2'))
+
+        # note_acct = ChartNoteItems.objects.all().values(
+        #     'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        note_acct = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id = '1') | Q(sub_category__category_code_id = '2')).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+
         journal_list = GeneralLedger.objects.filter(
             ref_number=ref_number1, journal_type='BB')
         print('JOURNAL ITEMS : ', journal_list)
@@ -1281,7 +1303,6 @@ def begbalanceedit(request, pk=None):
         return render(request, 'account/begbalance.html', args)
     else:
         return render(request, 'account/begbalance_list.html')
-
 
 @login_required
 def begbalance_savemain(request):
@@ -1330,6 +1351,40 @@ def begbalance_savemain(request):
     return JsonResponse(data)
        
 
+@login_required
+def begbalance_post(request):
+    ref_number1 = request.GET.get('ref_number', None)
+    pkMain = request.GET.get('mainID', None)
+    trans_date = request.GET.get('trans_date', None)
+
+    print('BEG. BALANCE POST VIEW REF NO', ref_number1)
+    print('BEG. BALANCE POST VIEW PK', pkMain)
+
+    GeneralLedger.objects.filter(
+        ref_number=ref_number1, journal_type='BB').delete()
+
+    for e in SetupBegbalanceDetails.objects.filter(mainid_id=pkMain):
+        # print(e.description)
+        expenseCategoryID = ChartSubCategory.objects.get(
+            id=e.sub_category_id).category_code_id
+
+        print('BEG. BALANCE ACCT. CODE', expenseCategoryID)
+        obj4 = GeneralLedger.objects.create(
+            date=trans_date,
+            ref_number=ref_number1,
+            journal_type='BB',
+            account_id=ChartNoteItems.objects.get(id=e.account_id_id),
+            sub_category=ChartSubCategory.objects.get(id=e.sub_category_id),
+            category=ChartCategory.objects.get(id=expenseCategoryID),
+            description=e.description,
+            debit=e.debit,
+            credit=e.credit,
+        )
+
+    data = {}
+    return JsonResponse(data)
+
+
 
 
 # GENERAL JOURNAL TRANSACTION
@@ -1355,8 +1410,13 @@ class GJournalClass(ListView):
         context['staff_name'] = EmployeeProfile.objects.all()
         context['cash_acct'] = ChartSubCategory.objects.filter(
             category_code_id='3')
+
         context['expense_acct'] = ChartSubCategory.objects.all()
-        context['note_acct'] = ChartNoteItems.objects.all()
+        context['note_acct'] = ChartNoteItems.objects.all().values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+
+        # context['expense_acct'] = ChartSubCategory.objects.all()
+        # context['note_acct'] = ChartNoteItems.objects.all()
 
         return context
 
@@ -1413,6 +1473,7 @@ class CreateGJournal(View):
             'credit_amount', 0).replace(',', ''))
         total_debit = float(request.GET.get('total_debit', 0))
         total_credit = float(request.GET.get('total_credit', 0))
+        pkSub = request.GET.get('subID', None)
 
         print('TRANSACTION ACCOUNT ID: ', credit_account1)
         # print('EXPENSE CLIENT ID: ', client_name1)
@@ -1429,26 +1490,15 @@ class CreateGJournal(View):
             id=credit_account1).item_name
 
         if pkMain:
-            print('UPDATE EXISTING RECORD ')
+            print('UPDATE EXISTING GENERAL JOURNAL RECORD MAIN')
             obj = GJournalMain.objects.get(id=pkMain)
             obj.date = expense_date1
             obj.ref_number = voucher_number1
             obj.description = bill_to1
             obj.save()
 
-            # obj3 = GeneralLedger.objects.get(ref_number=voucher_number1, journal_type='CDJ', main_Trans=True)
-            # obj3.date = expense_date1
-            # obj3.ref_number = voucher_number1
-            # obj3.journal_type = 'CDJ'
-            # obj3.account_id = ChartNoteItems.objects.get(id = credit_account1)
-            # obj3.sub_category = ChartSubCategory.objects.get(id = cash_account1)
-            # obj3.category = ChartCategory.objects.get(id = cashCategoryID)
-            # obj3.description = bill_to1
-            # obj3.credit = total_amount + amount2
-            # obj3.save()
-
         else:
-            print('ENTER NEW EXPENSE RECORD ')
+            print('ENTER GENERAL JOURNAL RECORD MAIN ')
 
             obj = GJournalMain.objects.create(
                 date=expense_date1,
@@ -1456,38 +1506,38 @@ class CreateGJournal(View):
                 description=bill_to1,
             )
 
-            # obj3 = GeneralLedger.objects.create(
-            # date = expense_date1,
-            # ref_number = voucher_number1,
-            # journal_type = 'CDJ',
-            # account_id = ChartNoteItems.objects.get(id = Debit_account1),
-            # sub_category = ChartSubCategory.objects.get(id = cash_account1),
-            # category = ChartCategory.objects.get(id = cashCategoryID),
-            # description = bill_to1,
-            # credit = total_amount + amount2,
-            # main_Trans = True
-            # )
+        if pkSub:
+            print('EDIT GENERAL JOURNAL DETAILS')
+            obj2 = GJournalDetails.objects.get(id=pkSub)
+            obj2.description=description
+            obj2.sub_category=ChartSubCategory.objects.get(id=expense_account1)
+            obj2.account=ChartNoteItems.objects.get(id=credit_account1)
+            obj2.debit=debit_amount
+            obj2.credit=credit_amount
+            obj2.save()
 
-        print('CREATE GENERAL JOURNAL DETAILS')
-        obj2 = GJournalDetails.objects.create(
-            description=description,
-            sub_category=ChartSubCategory.objects.get(id=expense_account1),
-            account=ChartNoteItems.objects.get(id=credit_account1),
-            debit=debit_amount,
-            credit=credit_amount,
-            journal_main_id_id=obj.id,
-        )
+        else:
+            print('CREATE NEW GENERAL JOURNAL DETAILS')
+            obj2 = GJournalDetails.objects.create(
+                description=description,
+                sub_category=ChartSubCategory.objects.get(id=expense_account1),
+                account=ChartNoteItems.objects.get(id=credit_account1),
+                debit=debit_amount,
+                credit=credit_amount,
+                journal_main_id_id=obj.id,
+            )
 
-        # obj4 = GeneralLedger.objects.create(
-        #     date = expense_date1,
-        #     ref_number = voucher_number1,
-        #     journal_type = 'CDJ',
-        #     account_id = ChartNoteItems.objects.get(id = Debit_account1),
-        #     sub_category = ChartSubCategory.objects.get(id = expense_account1),
-        #     category = ChartCategory.objects.get(id = expenseCategoryID),
-        #     description = description,
-        #     debit = amount2,
-        #     )
+
+        # print('CREATE GENERAL JOURNAL DETAILS')
+        # obj2 = GJournalDetails.objects.create(
+        #     description=description,
+        #     sub_category=ChartSubCategory.objects.get(id=expense_account1),
+        #     account=ChartNoteItems.objects.get(id=credit_account1),
+        #     debit=debit_amount,
+        #     credit=credit_amount,
+        #     journal_main_id_id=obj.id,
+        # )
+
 
         total_debit = GJournalDetails.objects.filter(
             journal_main_id_id=obj.id).aggregate(Sum('debit'))['debit__sum'] or 0.00
@@ -1532,10 +1582,12 @@ def gjournaledit(request, pk=None):
 
         expenseitems = GJournalDetails.objects.filter(journal_main_id_id=pk)
 
-        # staff_name = EmployeeProfile.objects.all()
-        # cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
+        # expense_acct = ChartSubCategory.objects.all()
+        # note_acct = ChartNoteItems.objects.all()
         expense_acct = ChartSubCategory.objects.all()
-        note_acct = ChartNoteItems.objects.all()
+        note_acct = ChartNoteItems.objects.all().values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+
         journal_list = GeneralLedger.objects.filter(
             ref_number=ref_number1, journal_type='GJ')
         print('EXPENSE JORNAL ITEMS : ', journal_list)
@@ -1692,9 +1744,9 @@ def financialposition(request, pk=None):
 
     # LIABITILIES
     curr_liab = GeneralLedger.objects.filter(category_id=5).values(
-        'sub_category', 'sub_category__sub_category_name').annotate(credit=Sum('credit'), debit=-Sum('debit'))
+        'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(credit=Sum('credit'), debit=-Sum('debit'))
     noncurr_liab = GeneralLedger.objects.filter(category_id=6).values(
-        'sub_category', 'sub_category__sub_category_name').annotate(credit=Sum('credit'), debit=-Sum('debit'))
+        'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(credit=Sum('credit'), debit=-Sum('debit'))
 
     total_curr_liab_debit = GeneralLedger.objects.filter(
         category_id=5).aggregate(Sum('debit'))['debit__sum'] or 0.00
@@ -1754,9 +1806,46 @@ def financialcashflow(request):
     companyinfo = CompanyRegistration.objects.filter(
         id=1).values('name', 'address', 'phone')
 
+    # revenues = ChartSubCategory.objects.filter(category_code_id=1)
+    # expenses = ChartSubCategory.objects.filter(category_code_id=2)
+
+    revenues = GeneralLedger.objects.filter(category_id=1).values(
+        'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(credit=Sum('credit'))
+    expenses = GeneralLedger.objects.filter(category_id=2).values(
+        'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(debit=Sum('debit'))
+    total_revenue = GeneralLedger.objects.filter(
+        category_id=1).aggregate(Sum('credit'))['credit__sum'] or 0.00
+    total_expense = GeneralLedger.objects.filter(
+        category_id=2).aggregate(Sum('debit'))['debit__sum'] or 0.00
+    total_balance = (total_revenue - total_expense)
+
+    args = {'revenues': revenues, 'expenses': expenses, 'total_revenue': total_revenue,
+            'total_expense': total_expense, 'total_balance': total_balance,
+            'companyinfo': companyinfo}
+    return render(request, 'smartsetup/financialcashflow.html', args)
+
+
+@login_required
+def financialnetasset(request):
+    companyinfo = CompanyRegistration.objects.filter(
+        id=1).values('name', 'address', 'phone')
+
     revenues = ChartSubCategory.objects.filter(category_code_id=1)
     expenses = ChartSubCategory.objects.filter(category_code_id=2)
 
     args = {'revenues': revenues, 'expenses': expenses,
             'companyinfo': companyinfo}
-    return render(request, 'smartsetup/financialcashflow.html', args)
+    return render(request, 'smartsetup/financialnetasset.html', args)
+
+
+@login_required
+def financialfixedasset(request):
+    companyinfo = CompanyRegistration.objects.filter(
+        id=1).values('name', 'address', 'phone')
+
+    revenues = ChartSubCategory.objects.filter(category_code_id=1)
+    expenses = ChartSubCategory.objects.filter(category_code_id=2)
+
+    args = {'revenues': revenues, 'expenses': expenses,
+            'companyinfo': companyinfo}
+    return render(request, 'smartsetup/financialfixedasset.html', args)

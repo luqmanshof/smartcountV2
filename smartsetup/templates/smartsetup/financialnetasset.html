@@ -1,0 +1,200 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<!-- Content Header (Page header)
+<section class="content-header">
+</section> -->
+
+<!-- Main content -->
+<section class="invoice">
+    <!-- info row -->
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+            <address>
+                {% for cat in companyinfo.all %}
+                <strong>{{cat.name}}</strong><br>
+                {{cat.address}}<br>
+                {% endfor %}
+            </address>
+        </div>
+
+
+    </div>
+    <!-- /.row -->
+    <!-- title row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-globe"></i> <b>Statement of Changes in Net Assets</b>
+                <small class="pull-right">
+                    <p id="date">Date: </p>
+                </small>
+            </h2>
+        </div>
+        <!-- /.col -->
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Capital Reserves</th>
+                                <th>Other Reserves</th>
+                                <th>Accumulated Surplus</th>
+                                <th>Minority Interest</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Balance as at 31 December 2017</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Surplus/(deficit) for the period</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+
+                            </tr>
+                            <tr>
+                                <td>Transfers to/from accumulated surplus</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <div class="box">
+                        <!-- <div class="box-body"> -->
+                        <table class="table table-striped">
+                            <col width="290">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+
+                            <tfoot>
+                                <tr>
+                                    <td><b>Balance as at 31 December 2018</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- </div> -->
+                        <!-- /.box-body -->
+                    </div>
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <tbody>
+                            <tr>
+                                <td>Surplus/(deficit) for the period</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Transfers to/from accumulated surplus</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <div class="box">
+                        <!-- <div class="box-body"> -->
+                        <table class="table table-striped">
+                            <col width="290">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+
+                            <tfoot>
+                                <tr>
+                                    <td><b>Balance as at 31 December 2019</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                    <td><b>0.00</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- </div> -->
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+
+    <!-- jjjjj -->
+    <!-- this row will not appear when printing -->
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <a href="#" class="btn btn-success pull-right" onclick="window.print();"><i class="fa fa-print"></i> Print
+                Report</a>
+
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+    n = new Date();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    document.getElementById("date").innerHTML = d + "/" + m + "/" + y;
+</script>
+
+{% endblock %}

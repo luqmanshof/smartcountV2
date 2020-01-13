@@ -1,5 +1,6 @@
 {% extends 'smartapp/base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 
 {% block content %}
@@ -40,8 +41,6 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Entry Date</label>
-                            <input class="form-control" type="text" name="test" id="test" placeholder=""
-                                value='{{ expensemain.entrydate|date:"d/m/Y"}}' required>
                             <input class="form-control" value='{{ expensemain.entrydate|date:"Y-m-d" }}'
                                 type="datetime-local" onload="" name="trans_date" id="trans_date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
@@ -93,12 +92,12 @@
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Total Debit:</label>
                             <input class="form-control" type="text" name="total_debit" id="total_db" placeholder="0.00"
-                                value="{{total_debit}}" required disabled>
+                                value="{{total_debit|intcomma}}" required disabled>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Total Credit:</label>
                             <input class="form-control" type="text" name="total_credit" id="total_cr" placeholder="0.00"
-                                value="{{total_credit}}" required disabled>
+                                value="{{total_credit|intcomma}}" required disabled>
                         </div>
                     </div>
 
@@ -252,14 +251,14 @@
                             {% if expenseitems %}
                             {% for item in expenseitems %}
                             <tr id="item-{{item.id}}">
-                                <td class="itemExpenseAcct itemData" name="expense">{{item.account_id}}</td>
-                                <td class="itemCreditAcct itemData" name="credit">{{item.sub_category}}</td>
+                                <td class="itemAccount itemData" name="expense">{{item.account_id}}</td>
+                                <td class="itemCategory itemData" name="credit">{{item.sub_category}}</td>
                                 <td class="itemDescription itemData" name="description">{{item.description}}</td>
-                                <td class="itemAmount itemData" style="text-align: right;" name="debit">
-                                    {{item.debit|floatformat:2}}
+                                <td class="itemDebit itemData" style="text-align: right;" name="debit">
+                                    {{item.debit|floatformat:2|intcomma}}
                                 </td>
-                                <td class="itemAmount itemData" style="text-align: right;" name="credit">
-                                    {{item.credit|floatformat:2}}
+                                <td class="itemCredit itemData" style="text-align: right;" name="credit">
+                                    {{item.credit|floatformat:2|intcomma}}
                                 </td>
                                 <td align="center">
                                     <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
@@ -296,7 +295,7 @@
 
 <!-- Edit Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -308,17 +307,9 @@
                 <div class="box-body">
                     <form id="updateReceiptSub" action="">
                         <input class="form-control" id="form-id" type="hidden" name="formId" />
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-description" name="formdescription"
-                                placeholder="description" required>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-amount" name="formamount"
-                                placeholder="0.00" required>
-                        </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="">Expense Category</label>
-                            <select name="formexpense_account" id="form-expense" class="form-control" required>
+                            <select name="expense_acct_edit" id="expense_acct_edit" class="form-control" required>
                                 {% for item in expense_acct %}
                                 <option value="{{ item.id }}">{{ item.sub_category_name }}
                                 </option>
@@ -327,23 +318,43 @@
                             <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                         </div>
                         <div class="form-group">
-                            <label for="">Debit Account</label>
-                            <select name="formcredit_account" id="form-credit_account" class="form-control" required>
+                            <input class="form-control" id="sub_id" type="hidden" name="sub_id" />
+                            <label for="">Account</label>
+                            <select name="credit_account_edit" id="credit_account_edit" class="form-control" required>
                                 {% for item in note_acct %}
-                                <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                <option value="{{ item.id }}">{{ item.item_name }} |
+                                    {{item.sub_category__sub_category_name}} |
+                                    {{item.sub_category__category_code__category_name}}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-sm-6">
-                            <button class="btn btn-primary form-control" type="submit">UPDATE RECORD</button>
+                        <div class="form-group">
+                            <label for="">Description</label>
+                            <input class="form-control" type="text" id="description_edit" name="description_edit"
+                                placeholder="description" required>
                         </div>
-                        <div class="col-sm-6">
-                            <button type="button" class="btn btn-danger form-control"
-                                data-dismiss="modal">CLOSE</button>
+                        <div class="form-group col-sm-6">
+                            <label for="">Debit</label>
+                            <input class="form-control" type="text" id="debit_amt_edit" name="debit_amt_edit"
+                                placeholder="0.00" style="text-align: right;">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="">Credit</label>
+                            <input class="form-control" type="text" id="credit_amt_edit" name="credit_amt_edit"
+                                placeholder="0.00" style="text-align: right;">
                         </div>
 
 
                     </form>
+                    <div class="col-sm-6">
+                        <button class="btn btn-primary form-control" onclick="saveRecordEdit()" type="button">UPDATE
+                            RECORD</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-danger form-control" data-dismiss="modal">CLOSE</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -368,12 +379,14 @@
 
         $("select#month_dur").change(function () {
             month = $(this).children("option:selected").val();
-            compute_date(month);
+            selected_date = $("#trans_date").val()
+            compute_date2(month, selected_date);
         });
 
         $("#trans_date").change(function () {
             month = $("select#month_dur").children("option:selected").val();
-            compute_date(month);
+            selected_date = $(this).val()
+            compute_date2(month, selected_date);
         });
 
 
@@ -382,10 +395,10 @@
             populate_account_items(CategoryCode, 'debit_account');
         });
 
-        $("select#expense,select#form-expense").change(function () {
+        $("select#expense,select#expense_acct_edit").change(function () {
             CategoryCode2 = $(this).children("option:selected").val();
             populate_account_items(CategoryCode2, 'credit_account');
-            populate_account_items(CategoryCode2, 'form-credit_account');
+            populate_account_items(CategoryCode2, 'credit_account_edit');
         });
 
 
@@ -403,6 +416,17 @@
             $('#item_descr').val('Opening Balance - ' + item_selected);
             console.log(credit_acct)
             get_cat_item(credit_acct, 'expense');
+        });
+
+        $("select#credit_account_edit").change(function () {
+            credit_acct = $(this).children("option:selected").val();
+            item_selected = $(this).find('option:selected').text()
+            n = item_selected.indexOf("|")
+            item_selected = item_selected.substr(0, n - 1)
+            //alert(credit_acct);
+            $('#description_edit').val('Opening Balance - ' + item_selected);
+            console.log(credit_acct)
+            get_cat_item(credit_acct, 'expense_acct_edit');
         });
 
 
@@ -449,7 +473,9 @@
                     success: function (data) {
                         console.log(data);
                         itemID = data.selected_date;
-                        $("#trans_date").val(itemID);
+                        month = $("select#month_dur").children("option:selected").val();
+                        compute_date2(month, itemID);
+                        //$("#trans_date").val(itemID);
                         //$("#trans_date").val(itemID + "T01:01");
 
                     },
@@ -478,16 +504,23 @@
 
     });
 
-    function compute_date(month) {
+    function compute_date2(month, selected_date) {
         //alert('SELECTED MONTH: ' + month)
-        selected_date = $('#trans_date').val()
-        //alert('SELECTED DATE: ' + selected_date)
-        $('#period_start').val(selected_date);
 
+        $('#trans_date').val(format_date(selected_date));
+        $('#period_start').val(format_date(selected_date));
+
+        var e = new Date(selected_date); // January 1, 2000
+        e.setMonth(e.getMonth() + month);
+        e.setDate(e.getDate() - 1);
+        $('#period_end').val(format_date(e));
+
+
+        SaveMainRecord();
+    }
+
+    function format_date(selected_date) {
         var d = new Date(selected_date); // January 1, 2000
-        d.setMonth(d.getMonth() + month);
-        d.setDate(d.getDate() - 1);
-        console.log(d);
 
         year = d.getFullYear();
         month = d.getMonth().toString().length === 1 ? '0' + (d.getMonth() + 1).toString() : d.getMonth() + 1;
@@ -498,13 +531,9 @@
 
         formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
 
-        console.log(formattedDateTime);
-
-        $('#period_end').val(formattedDateTime);
-
-
-        SaveMainRecord();
+        return formattedDateTime;
     }
+
 
     function populate_account_items(CatCode, acctId) {
         $.ajax({
@@ -524,6 +553,17 @@
             },
         });
 
+    }
+
+    function ReplaceNumberWithCommas(yourNumber) {
+        //Seperates the components of the number
+        var n = yourNumber.toString().split(".");
+        //If no decimal values, add '.00'
+        if (!(n[1])) { n[1] = '00' }
+        //Comma-fies the first part
+        n[0] = n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        //Combines the two sections
+        return n.join(".");
     }
 
     function get_cat_item(ItemCode, acctId) {
@@ -548,23 +588,38 @@
         ref_no = $('input[name="period_number"]').val().trim();
         mainID = $('input[name="mainId"]').val().trim();
         trans_date = $('input[name="trans_date"]').val().trim();
+        totalDebit = $('input[name="total_debit"]').val().trim();
+        totalCredit = $('input[name="total_credit"]').val().trim();
 
         //alert(mainID);
 
-        $.ajax({
-            url: '{% url "gjournal_post" %}',
-            data: {
-                'ref_number': ref_no,
-                'mainID': mainID,
-                'trans_date': trans_date,
-            },
-            dataType: 'json',
-            success: function (data) {
-                alert('Recorded Posted Successfully!')
+        if (totalDebit == '0.00' || totalDebit == '0') { totalDebit = '' }
+        if (totalCredit == '0.00' || totalCredit == '0') { totalCredit = '' }
 
-            },
-        });
+        //alert("Stage 3...");
+        if (totalDebit == '' && totalCredit == '') {
+            alert("ABORTED!!! No opening balance item to be posted.");
+        }
+        else if (!(totalDebit == totalCredit) && !(totalDebit == '' && totalCredit == '')) {
+            alert("ABORTED!!! The total debit value must be equal to total credit value.");
+        }
+        else {
 
+            $.ajax({
+                url: '{% url "begbalance_post" %}',
+                data: {
+                    'ref_number': ref_no,
+                    'mainID': mainID,
+                    'trans_date': trans_date,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    alert('Recorded Posted Successfully!')
+
+                },
+            });
+
+        }
     }
 
 
@@ -596,7 +651,7 @@
             },
             dataType: 'json',
             success: function (data) {
-                alert('Record Saved Successfully!')
+                //alert('Record Saved Successfully!')
 
             },
         });
@@ -618,10 +673,10 @@
         duration = $("select#month_dur").children("option:selected").val();
         debitInput = $('input[name="debit_amount"]').val().trim();
         creditInput = $('input[name="credit_amount"]').val().trim();
-        totalDebit = $('input[name="total_debit"]').val().trim();
-        totalCredit = $('input[name="total_credit"]').val().trim();
+        totalDebit = parseFloat($('input[name="total_debit"]').val().trim());
+        totalCredit = parseFloat($('input[name="total_credit"]').val().trim());
 
-        //alert("Stage 2...");
+        //alert("Stage 2..." + totalDebit);
 
         console.log(trans_date);
         console.log(period_no);
@@ -630,6 +685,7 @@
         console.log(description);
         console.log(CategoryCode2);
         console.log(duration);
+        console.log(totalDebit);
 
         //alert("Stage 3...");
         if (debitInput && creditInput) {
@@ -674,21 +730,21 @@
                             console.log(data.expense_sub)
                             console.log(data.expense_main.Mainid)
                             $('#main-id').val(data.expense_main.Mainid);
-                            $('#total_db').val(data.total_debit);
-                            $('#total_cr').val(data.total_credit);
+                            $('#total_db').val(ReplaceNumberWithCommas(data.total_debit));
+                            $('#total_cr').val(ReplaceNumberWithCommas(data.total_credit));
                             rec = data.expense_sub
                             $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
-                    <td class="itemDescription" name="description">${rec.description}</td>
-                    '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
-                    '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
-                    '<td class="itemAmount" name="debit">${rec.debit}</td>
-                    '<td class="itemAmount" name="credit">${rec.credit}</td>
+                    <td class="itemAccount" name="credit">${rec.debit_account}</td>
+                    '<td class="itemCategory" name="expense">${rec.expense_account}</td>
+                    '<td class="itemDescription" name="description">${rec.description}</td>
+                    '<td align="right" class="itemDebit" name="debit">${ReplaceNumberWithCommas(rec.debit)}</td>
+                    '<td align="right" class="itemCredit" name="credit">${ReplaceNumberWithCommas(rec.credit)}</td>
                     '<td align="center">
-                        <button class="btn btn-success form-control" onClick="editItem(${rec.id})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                     </td>
                     <td align="center">
-                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.id})">DELETE</button>
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.Subid})">DELETE</button>
                     </td>
                 </tr>
               `);
@@ -704,11 +760,133 @@
             } else {
                 alert("All fields must have a valid value.");
             }
-            //$('form#receiptSub').trigger("reset");
+            $('form#receiptSub').trigger("reset");
             return false;
         }
         return false;
     });
+
+
+    function saveRecordEdit() {
+        //alert('EDIT RECORD ?');
+        trans_date = $('input[name="trans_date"]').val().trim();
+        period_no = $('input[name="period_number"]').val().trim();
+        period_start = $('input[name="period_start"]').val().trim();
+        period_end = $('input[name="period_end"]').val().trim();
+        acct_year = $('input[name="acct_year"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        description = $('input[name="description_edit"]').val().trim();
+        duration = $("select#month_dur").children("option:selected").val();
+        debitInput = $('input[name="debit_amt_edit"]').val().trim();
+        creditInput = $('input[name="credit_amt_edit"]').val().trim();
+        totalDebit = parseFloat($('input[name="total_debit"]').val().trim());
+        totalCredit = parseFloat($('input[name="total_credit"]').val().trim());
+        CategoryCode2 = $("#expense_acct_edit").children("option:selected").val();
+        credit_acct = $("#credit_account_edit").children("option:selected").val();
+
+        subID = $('input[name="sub_id"]').val().trim();
+
+        //alert("Stage 2...");
+
+        console.log(trans_date);
+        console.log(period_no);
+        console.log(debitInput);
+        console.log(creditInput);
+        console.log(description);
+        console.log(CategoryCode2);
+        console.log(duration);
+        console.log(subID);
+
+        if (debitInput == '0.00' || debitInput == '0') { debitInput = '' }
+        if (creditInput == '0.00' || creditInput == '0') { creditInput = '' }
+
+        //alert("Stage 3...");
+        if (debitInput && creditInput) {
+            alert("You cannot enter value in both debit and credit.");
+        }
+        else if (!(debitInput || creditInput)) {
+            alert("You must enter either a debit or credit value.");
+        }
+        else {
+
+            if (trans_date && period_no && description && CategoryCode2) {
+                // Create Ajax Call
+                //alert("Stage 4...");
+                if (!(debitInput)) { debitInput = 0 }
+                if (!(creditInput)) { creditInput = 0 }
+                if (!(totalDebit)) { totalDebit = 0 }
+                if (!(totalCredit)) { totalCredit = 0 }
+
+                $.ajax({
+                    url: '{% url "begbalance_ajax_create" %}',
+                    data: {
+                        'trans_date': trans_date,
+                        'period_number': period_no,
+                        'period_start': period_start,
+                        'period_end': period_end,
+                        'acct_year': acct_year,
+                        'month_dur': duration,
+                        'mainID': mainID,
+                        'description': description,
+                        'expense_account': CategoryCode2,
+                        'credit_account': credit_acct,
+                        'debit_amount': debitInput,
+                        'credit_amount': creditInput,
+                        'total_debit': totalDebit,
+                        'total_credit': totalCredit,
+                        'subID': subID,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.expense_main) {
+                            //alert('Success!!!')
+
+                            $("#itemTable #item-" + subID).remove();
+                            console.log(data.expense_sub)
+                            console.log(data.expense_main.Mainid)
+                            $('#main-id').val(data.expense_main.Mainid);
+                            $('#total_db').val(ReplaceNumberWithCommas(data.total_debit));
+                            $('#total_cr').val(ReplaceNumberWithCommas(data.total_credit));
+                            rec = data.expense_sub
+                            //alert(rec.Subid);
+                            $("#itemTable > tbody:last-child").append(`
+                <tr id="item-${rec.Subid}">
+                    <td class="itemAccount" name="credit">${rec.debit_account}</td>
+                    '<td class="itemCategory" name="expense">${rec.expense_account}</td>
+                    '<td class="itemDescription" name="description">${rec.description}</td>
+                    '<td class="itemDebit" name="debit">${ReplaceNumberWithCommas(rec.debit)}</td>
+                    '<td class="itemCredit" name="credit">${ReplaceNumberWithCommas(rec.credit)}</td>
+                    '<td align="center">
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.Subid})">DELETE</button>
+                    </td>
+                </tr>
+              `);
+
+                        }
+
+                        if (data.journal_list) {
+                            console.log(data.journal_list)
+                            populateJournalList(data.journal_list);
+                        }
+                    }
+                });
+
+                //clearList();
+                //clearEditModal();
+
+            } else {
+                alert("All fields must have a valid value.");
+            }
+            $('form#updateReceiptSub').trigger("reset");
+            $('#myModal').modal('hide');
+            return false;
+        }
+        return false;
+
+    }
 
 
     $(function () {
@@ -808,8 +986,8 @@
                         alert('Item deleted Successfully')
                         console.log(id);
                         $("#itemTable #item-" + id).remove();
-                        $('#total_db').val(data.total_sum);
-                        $('#total_cr').val(data.total_sum);
+                        $('#total_db').val(ReplaceNumberWithCommas(data.total_debit));
+                        $('#total_cr').val(ReplaceNumberWithCommas(data.total_credit));
                         //$("#itemTable).remove();
                     }
                 }
@@ -818,27 +996,34 @@
     }
 
     function editItem(id) {
+        //alert('MY ID IS ' + id);
         if (id) {
             tr_id = "#item-" + id;
             description = $(tr_id).find(".itemDescription").text();
-            ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text();
-            creditAcct = $(tr_id).find(".itemCreditAcct").text();
-            amount = $(tr_id).find(".itemAmount").text();
+            ExpenseAcct = $(tr_id).find(".itemAccount").text();
+            creditAcct = $(tr_id).find(".itemCategory").text();
+            debitAmt = $(tr_id).find(".itemDebit").text().trim();
+            creditAmt = $(tr_id).find(".itemCredit").text().trim();
+
+            //alert('MY ACCOUNT IS ' + ExpenseAcct);
 
             $.ajax({
                 url: '{% url "ajax_getacctID" %}',
                 data: {
-                    'creditAcct': creditAcct,
+                    'creditAcct': ExpenseAcct,
+                    'type': 'BB',
                 },
                 dataType: 'json',
                 success: function (data) {
                     //alert('SUCCESS!!!');
 
                     $('#form-id').val(id);
-                    $('#form-description').val(description);
-                    $('#form-expense').val(data.cat_id);
-                    $('#form-credit_account').val(data.note_id);
-                    $('#form-amount').val(amount);
+                    $('#description_edit').val(description);
+                    $('#expense_acct_edit').val(data.cat_id);
+                    $('#credit_account_edit').val(data.note_id);
+                    $('#debit_amt_edit').val(debitAmt);
+                    $('#credit_amt_edit').val(creditAmt);
+                    $('#sub_id').val(id);
 
                 }
             });
@@ -846,6 +1031,16 @@
         }
     }
 
+    function clearEditModal() {
+        $('#form-id').val('');
+        $('#description_edit').val('');
+        $('#expense_acct_edit').val('');
+        $('#credit_account_edit').val('');
+        $('#debit_amt_edit').val('');
+        $('#credit_amt_edit').val('');
+        $('#sub_id').val(id);
+
+    }
 </script>
 
 {% endblock %}

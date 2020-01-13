@@ -94,13 +94,13 @@
               {% for cat in noncurr_assets.all %}
               <tr>
                 <td>
-                  {{cat.sub_category_name}}
+                  {{cat.sub_category__sub_category_name}}
                 </td>
                 <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
                 <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
@@ -171,23 +171,23 @@
                 <td></td>
                 <td></td>
               </tr>
-              {% for cat in curr_liabilities.all %}
+              {% for cat in curr_liab.all %}
               <tr>
                 <td>
-                  {{cat.sub_category_name}}
+                  {{cat.sub_category__sub_category_name}}
                 </td>
                 <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
                 <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>${{total_curr_liab|floatformat:2|intcomma}}</b></td>
                 <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
               <tr>
@@ -202,23 +202,23 @@
                 <td></td>
                 <td></td>
               </tr>
-              {% for cat in noncurr_liabilities.all %}
+              {% for cat in noncurr_liab.all %}
               <tr>
                 <td>
-                  {{cat.sub_category_name}}
+                  {{cat.sub_category__sub_category_name}}
                 </td>
                 <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
                 <td style="text-align: right;">$0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>${{total_Ncurr_liab|floatformat:2|intcomma}}</b></td>
                 <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
 
@@ -239,7 +239,7 @@
               <tr>
                 <td><b>Total Liabilities</b></td>
                 <td></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>${{total_liabilities|floatformat:2|intcomma}}</b></td>
                 <td style="text-align: right;"><b>$0.00</b></td>
               </tr>
             </tfoot>

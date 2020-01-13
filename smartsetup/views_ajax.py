@@ -268,24 +268,13 @@ class DeleteGJournalItem(View):
 
         # get the sum of the receipt detail values
         total_debit = GJournalDetails.objects.filter(
-            expense_main_id_id=pk).aggregate(Sum('debit'))['debit__sum'] or 0.00
+            journal_main_id_id=pk).aggregate(Sum('debit'))['debit__sum'] or 0.00
         total_credit = GJournalDetails.objects.filter(
-            expense_main_id_id=pk).aggregate(Sum('credit'))['credit__sum'] or 0.00
-
-        # # Update Cash receipt journal total credit value
-        # total_amount = float(total_sum)
-        # obj3 = GeneralLedger.objects.get(
-        #     ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
-        # obj3.credit = total_amount
-        # obj3.save()
+            journal_main_id_id=pk).aggregate(Sum('credit'))['credit__sum'] or 0.00
 
         # Get the cash receipt journal items
         journal_list = serializers.serialize(
             "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='GJ'))
-
-        # journal_list1 = GeneralLedger.objects.filter(
-        #     ref_number=voucher_number, journal_type='GJ')
-        # print('JOURNAL LIST RETRIEVED : ', journal_list1)
 
         data = {
             'deleted': True,

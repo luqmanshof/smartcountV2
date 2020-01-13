@@ -201,7 +201,7 @@ urlpatterns = [
          name='begbalance_delete'),
     path('begbalance_savemain', views.begbalance_savemain,
          name='begbalance_savemain'),
-    # path('begbalance_post', views.begbalance_post, name='begbalance_post'),
+    path('begbalance_post', views.begbalance_post, name='begbalance_post'),
 
 
     # PURCHASE POSTINGS
@@ -221,6 +221,9 @@ urlpatterns = [
     path('financialnotes', views.financialnotes, name='financialnotes'),
     path('financialcashflow', views.financialcashflow,
          name='financialcashflow'),
+    path('financialnetasset', views.financialnetasset, name='financialnetasset'),
+    path('financialfixedasset', views.financialfixedasset,
+         name='financialfixedasset'),
 
     path('note_view/(<str:pk>)', views.noteview, name='note_view'),
 
