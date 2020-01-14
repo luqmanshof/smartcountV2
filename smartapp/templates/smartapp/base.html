@@ -215,10 +215,11 @@
                   </span>
                 </a>
                 <ul class="treeview-menu">
-                  <li><a href="{% url 'signup' %}"><i class="fa fa-gears text-gray"></i> Create User Account</a></li>
+                  <li hidden><a href="{% url 'signup' %}"><i class="fa fa-gears text-gray"></i> Create User Account</a>
+                  </li>
+                  <li><a href="{% url 'admin:index' %}"><i class="fa fa-gears text-gray"></i> Manage User Roles</a></li>
                   <li><a href="{% url 'list_signup' %}"><i class="fa fa-gears text-gray"></i> View User Account</a></li>
                   <!-- @*<li><a href="@Url.Action("Index","SetupBizClasses", new { area = "AppSetup" })"><i class="fa fa-gears text-gray"></i> Setup Roles</a></li>*@ -->
-                  <li><a href="{% url 'admin:index' %}"><i class="fa fa-gears text-gray"></i> Manage User Roles</a></li>
                 </ul>
               </li>
             </ul>
@@ -471,6 +472,22 @@
             </ul>
           </li>
 
+          <li class="treeview">
+            <a href="#">
+              <i class="fa fa-edit text-blue"></i> <span>Other Reports</span>
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+            </a>
+
+            <ul class="treeview-menu">
+              <li><a href="{% url 'financialacctchart' %}"><i class="fa fa-edit text-blue"></i> <span>Chart of
+                    Account</span></a></li>
+
+            </ul>
+          </li>
+
+
 
           <li class="header" style="padding-top:0px;"></li>
           <li>
@@ -482,17 +499,6 @@
               </span>
             </a>
           </li>
-          <!-- <li>
-            <a href="#">
-              <i class="fa fa-envelope"></i> <span>Mailbox</span>
-              <span class="pull-right-container">
-                <small class="label pull-right bg-yellow">12</small>
-                <small class="label pull-right bg-green">16</small>
-                <small class="label pull-right bg-red">5</small>
-              </span>
-            </a>
-          </li> -->
-
           <li class="header"> </li>
 
           <li>

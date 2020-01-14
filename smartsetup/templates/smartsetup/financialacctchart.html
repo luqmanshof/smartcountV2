@@ -1,0 +1,115 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load mathfilters %}
+{% block title %}Chart of Account{% endblock title %}
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<section class="invoice">
+  <!-- info row -->
+  <div class="row invoice-info">
+    <div class="col-sm-4 invoice-col">
+      <address>
+        {% for cat in companyinfo.all %}
+        <strong>{{cat.name}}</strong><br>
+        {{cat.address}}<br>
+        {% endfor %}
+      </address>
+    </div>
+
+
+  </div>
+  <!-- /.row -->
+  <!-- title row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <h2 class="page-header">
+        <i class="fa fa-globe"></i> <b>Chart of Account</b>
+        <small class="pull-right">
+          <p id="date">Date: </p>
+        </small>
+      </h2>
+    </div>
+    <!-- /.col -->
+  </div>
+
+  <!-- Table row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-body">
+          {% for cat in category.all %}
+          <h4><b>{{ cat.category_name }}</b></h4>
+          <ul>
+            {% for sub in cat.chartsubcategory_set.all|dictsort:"sub_category_code" %}
+            <li>
+              <h5><b>{{ sub.sub_category_code }}-{{ sub.sub_category_name }}</b></h5>
+            </li>
+            <ul>
+              {% for act in acctitems.all %}
+              {% if act.sub_category_id == sub.id %}
+              <li>{{ act.item_name }}</li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+            {% endfor %}
+          </ul>
+          {% endfor %}
+
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+    <!-- /.col -->
+  </div>
+
+
+  <!-- this row will not appear when printing -->
+  <div class="row no-print">
+    <div class="col-xs-12">
+      <!-- <a href="#" class="btn btn-default" onclick="window.print();"><i class="fa fa-print"></i> Print</a> -->
+      <a href="#" class="btn btn-success pull-right" onclick="window.print();"><i class="fa fa-print"></i> Print
+        Report</a>
+    </div>
+  </div>
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+  n = new Date();
+  y = n.getFullYear();
+  m = n.getMonth() + 1;
+  d = n.getDate();
+  document.getElementById("date").innerHTML = d + "/" + m + "/" + y;
+
+  $('body').on('click', 'td', function () {
+    //alert('clicked');
+    //viewNotes(0);
+  });
+
+
+
+  function viewNotes(ref_no) {
+    var journal_url = '/smartsetup/note_view/(' + ref_no + ')'
+    //alert('Im here ' + ref_no);
+
+    $.ajax({
+      url: journal_url,
+      success: function () {
+        $("#journalview").load(journal_url);
+      },
+    });
+  }
+</script>
+
+{% endblock %}

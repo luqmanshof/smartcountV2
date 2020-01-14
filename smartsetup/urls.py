@@ -224,8 +224,12 @@ urlpatterns = [
     path('financialnetasset', views.financialnetasset, name='financialnetasset'),
     path('financialfixedasset', views.financialfixedasset,
          name='financialfixedasset'),
-
     path('note_view/(<str:pk>)', views.noteview, name='note_view'),
+
+    # Reports (OTHERS)
+    path('financialacctchart', views.financialacctchart,
+         name='financialacctchart'),
+
 
     ########### URL Path to Ajax views ######################
     path('note_items', views_ajax.ChartNoteItem.as_view(), name='note_items'),

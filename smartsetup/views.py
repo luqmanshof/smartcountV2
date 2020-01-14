@@ -1848,3 +1848,24 @@ def financialfixedasset(request):
     args = {'revenues': revenues, 'expenses': expenses,
             'companyinfo': companyinfo}
     return render(request, 'smartsetup/financialfixedasset.html', args)
+
+
+# REPORTS (OTHERS)
+@login_required
+def financialacctchart(request):
+    companyinfo = CompanyRegistration.objects.filter(
+        id=1).values('name', 'address', 'phone')
+    category = ChartCategory.objects.all()
+    subcategory = ChartSubCategory.objects.all()
+    acctitems = ChartNoteItems.objects.all()
+    
+
+    print('MAIN CATEGORY : ', category)
+    print('SUB CATEGORY : ', subcategory)
+    print('ACCOUNT ITEMS : ', acctitems)
+    print('COMPANY INFO : ', companyinfo)
+
+    args = {'category': category, 'subcategory': subcategory, 
+            'acctitems': acctitems, 'companyinfo': companyinfo}
+    return render(request, 'smartsetup/financialacctchart.html', args)
+
