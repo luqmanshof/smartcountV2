@@ -11,7 +11,7 @@ from .models import (ChartCategory, ChartSubCategory, ChartNoteItems, SetupClien
                      SetupInventoryCategory, SetupInventoryItems, SetupClients, SetupVendors,
                      ReceiptMain, ReceiptDetails, ExpenseMain, ExpenseDetails, GJournalMain,
                      GJournalDetails, GeneralLedger, SetupFixedAssets, SetupBegbalanceDetails,
-                     SetupBegBalanceMain)
+                     SetupBegBalanceMain, PurchaseMain, PurchaseDetails)
 from django.db.models import Max, PositiveIntegerField, Value, Sum
 
 
@@ -396,6 +396,7 @@ def populate_purchaseitems(request):
 
         result_set = []
         selected_items = []
+        selected_accounts = []
 
         if option_type == 'inventory':
             # selected_items = SetupInventoryItems.objects.all().order_by('-inventory_name')
@@ -405,6 +406,9 @@ def populate_purchaseitems(request):
             for item in selected_items:
                 result_set.append(
                     {'item': item.inventory_name, 'itemID': item.id})
+
+            # ids = ChartSubCategory.objects.filter(id='24').values_list('id', flat=True)
+            # note_acct_inventory = ChartNoteItems.objects.filter(sub_category__in=ids)
         else:
             selected_items = SetupFixedAssets.objects.all().order_by('-description')
             print('Selected Fixed Asset are: ', selected_items)
@@ -418,6 +422,72 @@ def populate_purchaseitems(request):
     else:
         return redirect('/')
 
+
+class DeletePurchaseItem(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+        pk = request.GET.get('mainID', None)
+        voucher_number = request.GET.get('voucher_number', None)
+        description = PurchaseDetails.objects.get(id=id1).description
+        amount = PurchaseDetails.objects.get(id=id1).amount
+
+        PurchaseDetails.objects.get(id=id1).delete()
+        GeneralLedger.objects.get(debit=amount, description=description,
+                                  ref_number=voucher_number, journal_type='PJ', main_Trans=False).delete()
+
+        # get the sum of the receipt detail values
+        total_sum = PurchaseDetails.objects.filter(
+            expense_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+
+        # Update Cash receipt journal total credit value
+        total_amount = float(total_sum)
+        obj3 = GeneralLedger.objects.get(
+            ref_number=voucher_number, journal_type='PJ', main_Trans=True)
+        obj3.credit = total_amount
+        obj3.save()
+
+        # Get the cash receipt journal items
+        journal_list = serializers.serialize(
+            "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='PJ'))
+
+        journal_list1 = GeneralLedger.objects.filter(
+            ref_number=voucher_number, journal_type='PJ')
+        print('JOURNAL LIST RETRIEVED : ', journal_list1)
+
+        data = {
+            'deleted': True,
+            'total_sum': total_sum,
+            'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
+def get_assetaccts(request):
+    if request.method == 'GET' and request.is_ajax():
+        item_code = request.GET.get('item_code', None)
+
+        asset_account = SetupFixedAssets.objects.get(
+            id=item_code).asset_account_id
+        expense_account = SetupFixedAssets.objects.get(
+            id=item_code).expense_account_id
+        accumulated_account = SetupFixedAssets.objects.get(
+            id=item_code).accumulated_account_id
+        asset_category = ChartNoteItems.objects.get(
+            id=asset_account).sub_category_id
+
+        print('Selected Asset Account Items is: ', asset_account)
+        print('Selected Category Items is: ', asset_category)
+
+        data = {
+            'asset_account': asset_account,
+            'expense_account': expense_account,
+            'accumulated_account': accumulated_account,
+            'asset_category': asset_category,
+        }
+        return JsonResponse(data)
+
+    else:
+        return redirect('/')
 
 
 def get_date_value(request):
@@ -435,4 +505,3 @@ def get_date_value(request):
 
     else:
         return redirect('/')
-

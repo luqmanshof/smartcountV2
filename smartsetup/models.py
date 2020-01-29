@@ -416,6 +416,8 @@ class PurchaseMain(models.Model):
 class PurchaseDetails(models.Model):
     inventory_item = models.ForeignKey(
         SetupInventoryItems, on_delete=models.SET_NULL, null=True)
+    asset_item = models.ForeignKey(
+        SetupFixedAssets, on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=256, default='')
     quantity = models.IntegerField(default=1)
     expense_account = models.ForeignKey(
@@ -425,4 +427,5 @@ class PurchaseDetails(models.Model):
     unit_price = models.FloatField(default=0)
     amount = models.FloatField(default=0)
     expense_main_id = models.ForeignKey(
-        ExpenseMain, on_delete=models.CASCADE, default=0)
+        PurchaseMain, on_delete=models.CASCADE, default=0)
+    asset = models.BooleanField(default=False)

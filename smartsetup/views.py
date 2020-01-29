@@ -922,6 +922,7 @@ class GetAcctIDs(View):
         cat_id = ChartNoteItems.objects.get(
             item_name=creditAcct).sub_category_id
         print('THE NOTE ID IS : ', note_id)
+        print('THE SUB-CATEGORY ID IS : ', cat_id)
 
         data = {
             'note_id': note_id,
@@ -1607,7 +1608,6 @@ def purchase_list(request, pk=None):
     args = {'fieldCols': fieldCols, 'expenses': expenses}
     return render(request, 'account/purchase_list.html', args)
 
-
 class PurchaseClass(ListView):
     model = PurchaseDetails
     template_name = 'account/purchase.html'
@@ -1638,6 +1638,293 @@ class PurchaseClass(ListView):
         # context['note_acct'] = ChartNoteItems.objects.all()
 
         return context
+
+class CreatePurchase(View):
+    # print('receipt AJAX VIEW ')
+    def get(self, request):
+        print('Purchase def AJAX VIEW ')
+
+        purchase_date1 = request.GET.get('trans_date', None)
+        voucher_number1 = request.GET.get('voucher_number', None)
+        pay_mode = request.GET.get('pay_mode', None)
+        vendor_name1 = request.GET.get('vendor_name', None)
+        bill_to1 = request.GET.get('bill_to', None)
+        cash_account1 = request.GET.get('cash_account', None)
+        Debit_account1 = request.GET.get('credit_account', None)
+        pkMain = request.GET.get('mainID', None)
+        purchase_item = request.GET.get('inventory_item', None)
+        description = request.GET.get('description', None)
+        purchase_account1 = request.GET.get('expense_account', None)
+        credit_account1 = request.GET.get('Debit_account', None)
+        unit_price = request.GET.get('unit_price', None)
+        quantity = request.GET.get('quantity', None)
+        amount1 = request.GET.get('amount', None)
+        total_amount = float(request.GET.get('total_amount', 0))
+        optionSelect = request.GET.get('optionSelect', None)
+
+        amount2 = float(amount1.replace(',', ''))
+        print('PURCHASE CASH ACCOUNT ID: ', cash_account1)
+        print('PURCHASE CLIENT ID: ', vendor_name1)
+
+        if vendor_name1:
+            vendorID = SetupVendors.objects.get(id=vendor_name1).id
+
+        cashAccount = ChartSubCategory.objects.get(
+            id=cash_account1).sub_category_name
+        cashCategoryID = ChartSubCategory.objects.get(
+            id=cash_account1).category_code_id
+        creditAccount = ChartNoteItems.objects.get(
+            id=credit_account1).item_name
+        purchaseAccount = ChartSubCategory.objects.get(
+            id=purchase_account1).sub_category_name
+        purchaseCategoryID = ChartSubCategory.objects.get(
+            id=purchase_account1).category_code_id
+        DebitAccount = ChartNoteItems.objects.get(id=Debit_account1).item_name
+
+        if pkMain:
+            print('UPDATE EXISTING PURCHASE RECORD ')
+            obj = PurchaseMain.objects.get(id=pkMain)
+            obj.date = purchase_date1
+            obj.voucher_number = voucher_number1
+            # obj.vendor = SetupVendors.objects.get(id=vendor_name1)
+            obj.description = bill_to1
+            obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
+            obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
+            obj.pay_mode=pay_mode
+            obj.save()
+
+            obj3 = GeneralLedger.objects.get(
+                ref_number=voucher_number1, journal_type='PJ', main_Trans=True)
+            obj3.date = purchase_date1
+            obj3.ref_number = voucher_number1
+            obj3.journal_type = 'PJ'
+            obj3.account_id = ChartNoteItems.objects.get(id=credit_account1)
+            obj3.sub_category = ChartSubCategory.objects.get(id=cash_account1)
+            obj3.category = ChartCategory.objects.get(id=cashCategoryID)
+            obj3.description = bill_to1
+            obj3.credit = total_amount + amount2
+            obj3.save()
+
+        else:
+            print('POST NEW PURCHASE RECORD ')
+
+            obj = PurchaseMain.objects.create(
+                date=purchase_date1,
+                voucher_number=voucher_number1,
+                # vendor=SetupVendors.objects.get(id=vendor_name1),
+                description=bill_to1,
+                cash_account=ChartSubCategory.objects.get(id=cash_account1),
+                credit_account=ChartNoteItems.objects.get(id=credit_account1),
+                pay_mode=pay_mode,
+            )
+
+            print('POST GENERAL LEDGER RECORD')
+            obj3 = GeneralLedger.objects.create(
+                date=purchase_date1,
+                ref_number=voucher_number1,
+                journal_type='PJ',
+                account_id=ChartNoteItems.objects.get(id=credit_account1),
+                sub_category=ChartSubCategory.objects.get(id=cash_account1),
+                category=ChartCategory.objects.get(id=cashCategoryID),
+                description=bill_to1,
+                credit=total_amount + amount2,
+                main_Trans=True
+            )
+
+        if optionSelect == 'inventory':
+            print('POST INVENTORY PURCHASE DETAILS ')
+            obj2 = PurchaseDetails.objects.create(
+                inventory_item=SetupInventoryItems.objects.get(id=purchase_item),
+                description=description,
+                expense_account=ChartSubCategory.objects.get(id=purchase_account1),
+                Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
+                unit_price=unit_price,
+                quantity=quantity,
+                amount=amount2,
+                expense_main_id_id=obj.id,
+            )
+        else:
+            print('POST ASSET PURCHASE DETAILS ')
+            obj2 = PurchaseDetails.objects.create(
+                asset_item=SetupFixedAssets.objects.get(id=purchase_item),
+                description=description,
+                expense_account=ChartSubCategory.objects.get(id=purchase_account1),
+                Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
+                unit_price=unit_price,
+                quantity=quantity,
+                amount=amount2,
+                asset=True,
+                expense_main_id_id=obj.id,
+            )
+
+        print('POST PURCHASE DETAILS LEDGER RECORD ')
+        obj4 = GeneralLedger.objects.create(
+            date=purchase_date1,
+            ref_number=voucher_number1,
+            journal_type='PJ',
+            account_id=ChartNoteItems.objects.get(id=Debit_account1),
+            sub_category=ChartSubCategory.objects.get(id=purchase_account1),
+            category=ChartCategory.objects.get(id=purchaseCategoryID),
+            description=description,
+            debit=amount2,
+        )
+
+        total_sum = PurchaseDetails.objects.filter(
+            expense_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        print('TOTAL SUM GENERATED CREATED : ', total_sum)
+
+        journal_list = serializers.serialize(
+            "json", GeneralLedger.objects.filter(ref_number=voucher_number1, journal_type='PJ'))
+
+        purchase_main = {'Mainid': obj.id, 'date': obj.date,
+                        'voucher_number': obj.voucher_number, 'bill_to': obj.description}
+
+        purchase_sub = {'Subid': obj2.id, 'inventory_item': obj2.inventory_item, 'Debit_account': obj2.Debit_account,
+                       'unit_price': obj2.unit_price, 'quantity': quantity, 'amount': obj2.amount}
+
+        data = {
+            'purchase_main': purchase_main,
+            'purchase_sub': purchase_sub,
+            'total_sum': total_sum,
+            'journal_list': journal_list
+        }
+        return JsonResponse(data)
+
+def purchaseedit(request, pk=None):
+    print('AM HERE NOW!!!')
+    if pk:
+        print('PK RETRIEVED : ', pk)
+
+        total_sum = PurchaseDetails.objects.filter(
+            expense_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        print('TOTAL SUM GENERATED CREATED : ', total_sum)
+
+        expensemain = PurchaseMain.objects.get(id=pk)
+        expense_number1 = PurchaseMain.objects.get(id=pk).voucher_number
+        print('EXPENSE NO. RETRIEVED : ', expense_number1)
+
+        expenseitems = PurchaseDetails.objects.filter(expense_main_id_id=pk)
+
+        vendor_name = SetupVendors.objects.all()
+        ids = ChartSubCategory.objects.filter(id='24').values_list('id', flat=True)
+        inventory_items = SetupInventoryItems.objects.all()
+        note_acct_inventory = ChartNoteItems.objects.filter(
+            sub_category__in=ids)
+        ids = ChartSubCategory.objects.filter(
+            id='21').values_list('id', flat=True)
+        note_acct_cash = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+
+        cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
+        # expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
+        expense_acct = ChartSubCategory.objects.filter(Q(id='24') | Q(id='26'))
+        note_acct = ChartNoteItems.objects.all()
+
+
+        journal_list = GeneralLedger.objects.filter(
+            ref_number=expense_number1, journal_type='PJ')
+        print('PURCHASE JORNAL ITEMS : ', journal_list)
+
+        args = {'expensemain': expensemain, 'expenseitems': expenseitems, 'vendor_name': vendor_name,
+                'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
+                'note_acct_cash': note_acct_cash, 'note_acct_inventory': note_acct_inventory,
+                'total_sum': total_sum, 'journal_list': journal_list, }
+        return render(request, 'account/purchase.html', args)
+    else:
+        return render(request, 'account/purchase_list.html')
+
+@login_required
+def purchase_post(request):
+    # ref_number1 = request.GET.get('ref_number', None)
+    # pkMain = request.GET.get('mainID', None)
+    # trans_date = request.GET.get('trans_date', None)
+
+    purchase_date1 = request.GET.get('trans_date', None)
+    voucher_number1 = request.GET.get('voucher_number', None)
+    pay_mode = request.GET.get('pay_mode', None)
+    vendor_name1 = request.GET.get('vendor_name', None)
+    bill_to1 = request.GET.get('bill_to', None)
+    cash_account1 = request.GET.get('cash_account', None)
+    credit_account1 = request.GET.get('Debit_account', None)
+    pkMain = request.GET.get('mainID', None)
+    total_amount = float(request.GET.get('total_amount', 0))
+
+    print('PURCHASE POST VIEW PK', voucher_number1)
+
+    GeneralLedger.objects.filter(
+        ref_number=voucher_number1, journal_type='PJ').delete()
+
+    if pkMain:
+        print('UPDATE EXISTING PURCHASE RECORD ')
+        obj = PurchaseMain.objects.get(id=pkMain)
+        obj.date = purchase_date1
+        obj.voucher_number = voucher_number1
+        # obj.vendor = SetupVendors.objects.get(id=vendor_name1)
+        obj.description = bill_to1
+        obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
+        obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
+        obj.pay_mode=pay_mode
+        obj.save()
+
+        obj3 = GeneralLedger.objects.get(
+            ref_number=voucher_number1, journal_type='PJ', main_Trans=True)
+        obj3.date = purchase_date1
+        obj3.ref_number = voucher_number1
+        obj3.journal_type = 'PJ'
+        obj3.account_id = ChartNoteItems.objects.get(id=credit_account1)
+        obj3.sub_category = ChartSubCategory.objects.get(id=cash_account1)
+        obj3.category = ChartCategory.objects.get(id=cashCategoryID)
+        obj3.description = bill_to1
+        obj3.credit = total_amount
+        obj3.save()
+
+        for e in PurchaseDetails.objects.filter(expense_main_id_id=pkMain):
+            # print(e.description)
+            expenseCategoryID = ChartSubCategory.objects.get(
+                id=e.expense_account_id).category_code_id
+
+            obj4 = GeneralLedger.objects.create(
+                date=purchase_date1,
+                ref_number=voucher_number1,
+                journal_type='PJ',
+                account_id=ChartNoteItems.objects.get(id=e.Debit_account_id),
+                sub_category=ChartSubCategory.objects.get(id=e.expense_account_id),
+                category=ChartCategory.objects.get(id=expenseCategoryID),
+                description=e.description,
+                debit=e.amount,
+            )
+
+
+    else:
+        print('POST NEW PURCHASE RECORD ')
+
+        obj = PurchaseMain.objects.create(
+            date=purchase_date1,
+            voucher_number=voucher_number1,
+            # vendor=SetupVendors.objects.get(id=vendor_name1),
+            description=bill_to1,
+            cash_account=ChartSubCategory.objects.get(id=cash_account1),
+            credit_account=ChartNoteItems.objects.get(id=credit_account1),
+            pay_mode=pay_mode,
+        )
+
+        print('POST GENERAL LEDGER RECORD')
+        obj3 = GeneralLedger.objects.create(
+            date=purchase_date1,
+            ref_number=voucher_number1,
+            journal_type='PJ',
+            account_id=ChartNoteItems.objects.get(id=credit_account1),
+            sub_category=ChartSubCategory.objects.get(id=cash_account1),
+            category=ChartCategory.objects.get(id=cashCategoryID),
+            description=bill_to1,
+            credit=total_amount,
+            main_Trans=True
+        )
+
+
+    data = {}
+    return JsonResponse(data)
+
 
 
 # JOURNAL VIEW

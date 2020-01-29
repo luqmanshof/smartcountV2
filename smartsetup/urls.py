@@ -207,6 +207,12 @@ urlpatterns = [
     # PURCHASE POSTINGS
     path('purchase_list', views.purchase_list, name='purchase_list'),
     path('purchase_new', views.PurchaseClass.as_view(), name='purchase_new'),
+    path('ajax/purchase/create/',  views.CreatePurchase.as_view(),
+         name='purchase_ajax_create'),
+    path('purchase_edit/(<int:pk>)', views.purchaseedit, name='purchase_edit'),
+    path('purchase_post', views.purchase_post, name='purchase_post'),
+    path('ajax/purchase_items/delete/',  views_ajax.DeletePurchaseItem.as_view(),
+         name='purchase_ajax_delete'),
 
 
     # VIEW JOURNALS
@@ -253,4 +259,6 @@ urlpatterns = [
          name='populate_purchaseitems'),
     path('get_date_value',  views_ajax.get_date_value,
          name='get_date_value'),
+    path('get_assetaccts',  views_ajax.get_assetaccts,
+         name='get_assetaccts'),
 ]
