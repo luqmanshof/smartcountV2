@@ -5,7 +5,7 @@ from smartsetup.forms import (
     SetupClientsForm, SetupVendorsForm, ReceiptMainForm, ReceiptDetailsForm,
     ExpenseMainForm, ExpenseDetailsForm, GJournalMainForm, GJournalDetailsForm,
     EmployeeProfileForm, SetupFixedAssetsForm, SetupDivisionForm, SetupDepartmentForm,
-    CompanyRegistrationForm
+    CompanyRegistrationForm, SetupUnitForm, BudgetDepartmentForm
 )
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
@@ -17,7 +17,8 @@ from smartsetup.models import (
     SetupVendors, ReceiptMain, ReceiptDetails, ExpenseMain, ExpenseDetails,
     GJournalMain, GJournalDetails, GeneralLedger, EmployeeProfile, PurchaseMain,
     PurchaseDetails, SetupFixedAssets, SetupDivision, SetupDepartment, CompanyRegistration,
-    SetupBegBalanceMain, SetupBegbalanceDetails
+    SetupBegBalanceMain, SetupBegbalanceDetails, SetupUnit, BudgetDepartment,
+    BudgetMain, BudgetDetails, BudgetDepartment
 )
 from django.forms.models import model_to_dict
 from django.views import generic
@@ -145,6 +146,49 @@ def setupcompanyreg(request, pk=None):
         return render(request, 'smartsetup/form.html', args)
 
 
+# SETUP DEPARTMENT
+@login_required
+def setupdepartment_list(request, pk=None):
+    setupdepartment = SetupDepartment.objects
+    fieldCols = ['Department Name', 'Division']
+    args = {'fieldCols': fieldCols, 'setupdepartment': setupdepartment}
+    return render(request, 'smartsetup/setupdepartment_list.html', args)
+
+
+@login_required
+def setupdepartment(request, pk=None):
+    if request.method == 'POST':
+        if pk:
+            setupdepartment = SetupDepartment.objects.get(pk=pk)
+            form = SetupDepartmentForm(request.POST, instance=setupdepartment)
+        else:
+            form = SetupDepartmentForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('setupdepartment_list')
+    else:
+        if (pk != 0):
+            setupdepartment = SetupDepartment.objects.get(pk=pk)
+            form = SetupDepartmentForm(instance=setupdepartment)
+        else:
+            form = SetupDepartmentForm()
+
+        args = {'form': form, 'title': 'Setup Department'}
+        return render(request, 'smartsetup/form.html', args)
+
+
+class SetupDepartmentDetail(generic.DetailView):
+    model = SetupDepartment
+    template_name = 'smartsetup/setupdepartment_detail.html'
+
+
+class SetupDepartmentDelete(generic.DeleteView):
+    model = SetupDepartment
+    template_name = 'smartsetup/setupdepartment_delete.html'
+    success_url = reverse_lazy('setupdepartment_list')
+
+
 # SETUP DIVISION
 @login_required
 def setupdivision_list(request, pk=None):
@@ -188,47 +232,47 @@ class SetupDivisionDelete(generic.DeleteView):
     success_url = reverse_lazy('setupdivision_list')
 
 
-# SETUP DEPARTMENT
+# SETUP UNIT
 @login_required
-def setupdepartment_list(request, pk=None):
-    setupdepartment = SetupDepartment.objects
-    fieldCols = ['Department Name', 'Division']
-    args = {'fieldCols': fieldCols, 'setupdepartment': setupdepartment}
-    return render(request, 'smartsetup/setupdepartment_list.html', args)
+def setupunit_list(request, pk=None):
+    setupunit = SetupUnit.objects
+    fieldCols = ['Unit Name', 'Description']
+    args = {'fieldCols': fieldCols, 'setupunit': setupunit}
+    return render(request, 'smartsetup/setupunit_list.html', args)
 
 
 @login_required
-def setupdepartment(request, pk=None):
+def setupunit(request, pk=None):
     if request.method == 'POST':
         if pk:
-            setupdepartment = SetupDepartment.objects.get(pk=pk)
-            form = SetupDepartmentForm(request.POST, instance=setupdepartment)
+            setupunit = SetupUnit.objects.get(pk=pk)
+            form = SetupUnitForm(request.POST, instance=setupunit)
         else:
-            form = SetupDepartmentForm(request.POST)
+            form = SetupUnitForm(request.POST)
 
         if form.is_valid():
             form.save()
-            return redirect('setupdepartment_list')
+            return redirect('setupunit_list')
     else:
         if (pk != 0):
-            setupdepartment = SetupDepartment.objects.get(pk=pk)
-            form = SetupDepartmentForm(instance=setupdepartment)
+            setupunit = SetupUnit.objects.get(pk=pk)
+            form = SetupUnitForm(instance=setupunit)
         else:
-            form = SetupDepartmentForm()
+            form = SetupUnitForm()
 
-        args = {'form': form, 'title': 'Setup Department'}
+        args = {'form': form, 'title': 'Setup Unit'}
         return render(request, 'smartsetup/form.html', args)
 
 
-class SetupDepartmentDetail(generic.DetailView):
-    model = SetupDepartment
-    template_name = 'smartsetup/setupdepartment_detail.html'
+class SetupUnitDetail(generic.DetailView):
+    model = SetupUnit
+    template_name = 'smartsetup/setupunit_detail.html'
 
 
-class SetupDepartmentDelete(generic.DeleteView):
-    model = SetupDepartment
-    template_name = 'smartsetup/setupdepartment_delete.html'
-    success_url = reverse_lazy('setupdepartment_list')
+class SetupUnitDelete(generic.DeleteView):
+    model = SetupUnit
+    template_name = 'smartsetup/setupunit_delete.html'
+    success_url = reverse_lazy('setupunit_list')
 
 
 # SETUP CHART CATEGORY
@@ -427,9 +471,12 @@ class SetupInventoryItemsDelete(generic.DeleteView):
 @login_required
 def setupfixedasset_list(request, pk=None):
     setupfixedassets = SetupFixedAssets.objects
-    fieldCols = ['Asset ID', 'Serial No', 'Asset Description', 'Asset Category',
-                 'Purchase Date', 'Purchase Cost', 'Depr. Method', 'Useful Life',
-                 'Salvage Value', 'Department'
+    # fieldCols = ['Asset ID', 'Serial No', 'Asset Description', 'Asset Category',
+    #              'Purchase Date', 'Purchase Cost', 'Depr. Method', 'Useful Life',
+    #              'Salvage Value', 'Department'
+    #              ]
+    fieldCols = ['Asset ID', 'Asset Description', 'Asset Category', 'Depr. Method',
+                 'Purchase Date', 'Purchase Cost', 'Useful Life', 'Salvage Value'
                  ]
     args = {'fieldCols': fieldCols, 'setupfixedassets': setupfixedassets}
     return render(request, 'smartsetup/setupfixedasset_list.html', args)
@@ -617,6 +664,7 @@ def employees(request, pk=None):
         args = {'form': form, 'title': 'Setup Client Account'}
         return render(request, 'smartsetup/form.html', args)
 
+
 class EmployeesDetail(generic.DetailView):
     model = EmployeeProfile
     template_name = 'smartsetup/employees_detail.html'
@@ -700,7 +748,7 @@ def setupvendors(request, pk=None):
             form = SetupVendorsForm()
 
         args = {'form': form, 'title': 'Setup Vendor Account'}
-        return render(request, 'smartsetup/form.html', args)
+        return render(request, 'smartsetup/setupvendor.html', args)
 
 
 class SetupVendorsDetail(generic.DetailView):
@@ -1125,6 +1173,171 @@ class CreateExpense(View):
         return JsonResponse(data)
 
 
+# BUDGET TRANSACTION
+@login_required
+def budget_list(request, pk=None):
+    budget = BudgetMain.objects
+    fieldCols = ['Period Start', 'Period End', 'Description']
+    args = {'fieldCols': fieldCols, 'budget': budget}
+    return render(request, 'account/budget_list.html', args)
+
+
+class BudgetClass(ListView):
+    model = BudgetDetails
+    template_name = 'account/budget.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the Sub Category
+
+        context['max_budget'] = BudgetMain.objects.aggregate(max_val=Coalesce(
+            Max(Cast('budget_no', output_field=PositiveIntegerField())), Value(1000)))
+        context['department'] = BudgetDepartment.objects.all()
+        context['cash_acct'] = ChartSubCategory.objects.filter(
+            category_code_id='3')
+
+        context['expense_acct'] = ChartSubCategory.objects.filter(
+            category_code_id='2')
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='2').values_list('id', flat=True)
+        context['note_acct_exp'] = ChartNoteItems.objects.filter(
+            sub_category__in=ids)
+
+        context['revenue_acct'] = ChartSubCategory.objects.filter(
+            category_code_id='1')
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='1').values_list('id', flat=True)
+        context['note_acct_rev'] = ChartNoteItems.objects.filter(
+            sub_category__in=ids)
+
+        # print('AM HERE NOW!!! :', ids)
+
+        return context
+
+
+class CreateBudget(View):
+    # print('receipt AJAX VIEW ')
+    def get(self, request):
+        print('BUDGET def AJAX VIEW ')
+
+        period_start = request.GET.get('period_start', None)
+        period_end = request.GET.get('period_end', None)
+        voucher_number1 = request.GET.get('voucher_number', None)
+        department_name = request.GET.get('department_name', None)
+        # bill_to1 = request.GET.get('bill_to', None)
+        # cash_account1 = request.GET.get('cash_account', None)
+        Debit_account1 = request.GET.get('credit_account', None)
+        pkMain = request.GET.get('mainID', None)
+        description = request.GET.get('description', None)
+        expense_account1 = request.GET.get('expense_account', None)
+        # credit_account1 = request.GET.get('Debit_account', None)
+        amount1 = request.GET.get('amount', None)
+        total_amount = float(request.GET.get('total_amount', 0))
+
+        amount2 = float(amount1.replace(',', ''))
+        print('EXPENSE DEPARTMENT ID: ', department_name)
+
+        departmentID = BudgetDepartment.objects.get(id=department_name).id
+        # cashAccount = ChartSubCategory.objects.get(
+        #     id=cash_account1).sub_category_name
+        # cashCategoryID = ChartSubCategory.objects.get(
+        #     id=cash_account1).category_code_id
+        # creditAccount = ChartNoteItems.objects.get(
+        #     id=credit_account1).item_name
+        expenseAccount = ChartSubCategory.objects.get(
+            id=expense_account1).sub_category_name
+        expenseCategoryID = ChartSubCategory.objects.get(
+            id=expense_account1).category_code_id
+        DebitAccount = ChartNoteItems.objects.get(id=Debit_account1).item_name
+
+        if pkMain:
+            print('UPDATE EXISTING RECORD ')
+            obj = BudgetMain.objects.get(id=pkMain)
+            obj.period_start = period_start
+            obj.period_end = period_end
+            obj.budget_no = voucher_number1
+            obj.description = description
+            obj.save()
+
+        else:
+            print('ENTER NEW BUDGET RECORD ')
+
+            obj = BudgetMain.objects.create(
+                period_start=period_start,
+                period_end=period_end,
+                budget_no=voucher_number1,
+                description=description,
+            )
+        obj2 = BudgetDetails.objects.create(
+            budget_dept=BudgetDepartment.objects.get(id=department_name),
+            budget_cat=ChartSubCategory.objects.get(id=expense_account1),
+            budget_item=ChartNoteItems.objects.get(id=Debit_account1),
+            amount=amount2,
+            budget_main_id_id=obj.id,
+        )
+
+        total_sum = BudgetDetails.objects.filter(
+            budget_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        print('TOTAL SUM GENERATED CREATED : ', total_sum)
+
+        budget_main = {'Mainid': obj.id, 'period_start': obj.period_start, 'period_end': obj.period_end,
+                       'voucher_number': obj.budget_no, 'description': obj.description}
+
+        budget_sub = {'Subid': obj2.id, 'department': obj2.budget_dept,
+                      'debit_account': budget_item, 'amount': obj2.amount}
+
+        data = {
+            'budget_main': budget_main,
+            'budget_sub': budget_sub,
+            'total_sum': total_sum,
+        }
+        return JsonResponse(data)
+
+
+# SETUP BUDGET DEPARTMENT
+@login_required
+def budgetdept_list(request, pk=None):
+    budgetdept = BudgetDepartment.objects
+    fieldCols = ['Department Code', 'Department Name', 'Description']
+    args = {'fieldCols': fieldCols, 'budgetdept': budgetdept}
+    return render(request, 'smartsetup/budgetdept_list.html', args)
+
+
+@login_required
+def budgetdept(request, pk=None):
+    if request.method == 'POST':
+        if pk:
+            setupunit = BudgetDepartment.objects.get(pk=pk)
+            form = BudgetDepartmentForm(request.POST, instance=setupunit)
+        else:
+            form = BudgetDepartmentForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('budgetdept_list')
+    else:
+        if (pk != 0):
+            setupunit = BudgetDepartment.objects.get(pk=pk)
+            form = BudgetDepartmentForm(instance=setupunit)
+        else:
+            form = BudgetDepartmentForm()
+
+        args = {'form': form, 'title': 'Setup Department'}
+        return render(request, 'smartsetup/form.html', args)
+
+
+class BudgetDeptDetail(generic.DetailView):
+    model = BudgetDepartment
+    template_name = 'smartsetup/budgetdept_detail.html'
+
+
+class BudgetDeptDelete(generic.DeleteView):
+    model = BudgetDepartment
+    template_name = 'smartsetup/budgetdept_delete.html'
+    success_url = reverse_lazy('budgetdept_list')
+
+
 # SETUP OPENING BALANCE
 @login_required
 def begbalance_list(request, pk=None):
@@ -1132,6 +1345,7 @@ def begbalance_list(request, pk=None):
     fieldCols = ['Account Year', 'Start Date', 'End Date', 'Duration (months)']
     args = {'fieldCols': fieldCols, 'begbalance': begbalance}
     return render(request, 'account/begbalance_list.html', args)
+
 
 class BegBalanceClass(ListView):
     model = SetupBegbalanceDetails
@@ -1146,14 +1360,16 @@ class BegBalanceClass(ListView):
             Max(Cast('periodno', output_field=PositiveIntegerField())), Value(0)))
 
         # context['expense_acct'] = ChartSubCategory.objects.all()
-        context['expense_acct'] = ChartSubCategory.objects.filter().exclude(Q(category_code_id = '1') | Q(category_code_id = '2'))
+        context['expense_acct'] = ChartSubCategory.objects.filter().exclude(
+            Q(category_code_id='1') | Q(category_code_id='2'))
 
         # context['note_acct'] = ChartNoteItems.objects.all().values(
         #     'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
-        context['note_acct'] = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id = '1') | Q(sub_category__category_code_id = '2')).values(
+        context['note_acct'] = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id='1') | Q(sub_category__category_code_id='2')).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         return context
+
 
 class CreateBegBalance(View):
     # print('receipt AJAX VIEW ')
@@ -1216,12 +1432,13 @@ class CreateBegBalance(View):
         if pkSub:
             print('EDIT BEG BALANCE DETAILS')
             obj2 = SetupBegbalanceDetails.objects.get(id=pkSub)
-            obj2.date=expense_date1
-            obj2.description=description
-            obj2.sub_category=ChartSubCategory.objects.get(id=expense_account1)
-            obj2.account_id=ChartNoteItems.objects.get(id=credit_account1)
-            obj2.debit=debit_amount
-            obj2.credit=credit_amount
+            obj2.date = expense_date1
+            obj2.description = description
+            obj2.sub_category = ChartSubCategory.objects.get(
+                id=expense_account1)
+            obj2.account_id = ChartNoteItems.objects.get(id=credit_account1)
+            obj2.debit = debit_amount
+            obj2.credit = credit_amount
             obj2.save()
 
         else:
@@ -1246,7 +1463,7 @@ class CreateBegBalance(View):
         journal_list = serializers.serialize(
             "json", GeneralLedger.objects.filter(ref_number=period_number, journal_type='BB'))
 
-        expense_main = {'Mainid': obj.id, 'date': obj.entrydate, 'period_number': obj.periodno, 
+        expense_main = {'Mainid': obj.id, 'date': obj.entrydate, 'period_number': obj.periodno,
                         'acct_year': obj.year, 'period_start': obj.periodstart, 'period_end': obj.periodend}
 
         expense_sub = {'Subid': obj2.id, 'description': obj2.description, 'expense_account': expenseAccount,
@@ -1262,6 +1479,7 @@ class CreateBegBalance(View):
             'journal_list': journal_list
         }
         return JsonResponse(data)
+
 
 def begbalanceedit(request, pk=None):
     print('AM HERE NOW!!!')
@@ -1285,11 +1503,12 @@ def begbalanceedit(request, pk=None):
         expenseitems = SetupBegbalanceDetails.objects.filter(mainid_id=pk)
 
         # expense_acct = ChartSubCategory.objects.all()
-        expense_acct = ChartSubCategory.objects.filter().exclude(Q(category_code_id = '1') | Q(category_code_id = '2'))
+        expense_acct = ChartSubCategory.objects.filter().exclude(
+            Q(category_code_id='1') | Q(category_code_id='2'))
 
         # note_acct = ChartNoteItems.objects.all().values(
         #     'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
-        note_acct = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id = '1') | Q(sub_category__category_code_id = '2')).values(
+        note_acct = ChartNoteItems.objects.filter().exclude(Q(sub_category__category_code_id='1') | Q(sub_category__category_code_id='2')).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         journal_list = GeneralLedger.objects.filter(
@@ -1299,10 +1518,11 @@ def begbalanceedit(request, pk=None):
         args = {'expensemain': expensemain, 'expenseitems': expenseitems,
                 'expense_acct': expense_acct, 'note_acct': note_acct, 'total_debit': total_debit,
                 'total_credit': total_credit, 'journal_list': journal_list,
-                'entry_date': entry_date }
+                'entry_date': entry_date}
         return render(request, 'account/begbalance.html', args)
     else:
         return render(request, 'account/begbalance_list.html')
+
 
 @login_required
 def begbalance_savemain(request):
@@ -1338,18 +1558,16 @@ def begbalance_savemain(request):
             duration=month_dur,
             periodstart=period_start,
             periodend=period_end,
-            )
+        )
 
-
-    expense_main = {'Mainid': obj.id, 'date': obj.entrydate, 'period_number': obj.periodno, 
+    expense_main = {'Mainid': obj.id, 'date': obj.entrydate, 'period_number': obj.periodno,
                     'acct_year': obj.year, 'period_start': obj.periodstart, 'period_end': obj.periodend}
-
 
     data = {
         'expense_main': expense_main,
     }
     return JsonResponse(data)
-       
+
 
 @login_required
 def begbalance_post(request):
@@ -1383,8 +1601,6 @@ def begbalance_post(request):
 
     data = {}
     return JsonResponse(data)
-
-
 
 
 # GENERAL JOURNAL TRANSACTION
@@ -1509,11 +1725,12 @@ class CreateGJournal(View):
         if pkSub:
             print('EDIT GENERAL JOURNAL DETAILS')
             obj2 = GJournalDetails.objects.get(id=pkSub)
-            obj2.description=description
-            obj2.sub_category=ChartSubCategory.objects.get(id=expense_account1)
-            obj2.account=ChartNoteItems.objects.get(id=credit_account1)
-            obj2.debit=debit_amount
-            obj2.credit=credit_amount
+            obj2.description = description
+            obj2.sub_category = ChartSubCategory.objects.get(
+                id=expense_account1)
+            obj2.account = ChartNoteItems.objects.get(id=credit_account1)
+            obj2.debit = debit_amount
+            obj2.credit = credit_amount
             obj2.save()
 
         else:
@@ -1527,7 +1744,6 @@ class CreateGJournal(View):
                 journal_main_id_id=obj.id,
             )
 
-
         # print('CREATE GENERAL JOURNAL DETAILS')
         # obj2 = GJournalDetails.objects.create(
         #     description=description,
@@ -1537,7 +1753,6 @@ class CreateGJournal(View):
         #     credit=credit_amount,
         #     journal_main_id_id=obj.id,
         # )
-
 
         total_debit = GJournalDetails.objects.filter(
             journal_main_id_id=obj.id).aggregate(Sum('debit'))['debit__sum'] or 0.00
@@ -1608,6 +1823,7 @@ def purchase_list(request, pk=None):
     args = {'fieldCols': fieldCols, 'expenses': expenses}
     return render(request, 'account/purchase_list.html', args)
 
+
 class PurchaseClass(ListView):
     model = PurchaseDetails
     template_name = 'account/purchase.html'
@@ -1638,6 +1854,7 @@ class PurchaseClass(ListView):
         # context['note_acct'] = ChartNoteItems.objects.all()
 
         return context
+
 
 class CreatePurchase(View):
     # print('receipt AJAX VIEW ')
@@ -1690,7 +1907,7 @@ class CreatePurchase(View):
             obj.description = bill_to1
             obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
             obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
-            obj.pay_mode=pay_mode
+            obj.pay_mode = pay_mode
             obj.save()
 
             obj3 = GeneralLedger.objects.get(
@@ -1734,9 +1951,11 @@ class CreatePurchase(View):
         if optionSelect == 'inventory':
             print('POST INVENTORY PURCHASE DETAILS ')
             obj2 = PurchaseDetails.objects.create(
-                inventory_item=SetupInventoryItems.objects.get(id=purchase_item),
+                inventory_item=SetupInventoryItems.objects.get(
+                    id=purchase_item),
                 description=description,
-                expense_account=ChartSubCategory.objects.get(id=purchase_account1),
+                expense_account=ChartSubCategory.objects.get(
+                    id=purchase_account1),
                 Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
                 unit_price=unit_price,
                 quantity=quantity,
@@ -1748,7 +1967,8 @@ class CreatePurchase(View):
             obj2 = PurchaseDetails.objects.create(
                 asset_item=SetupFixedAssets.objects.get(id=purchase_item),
                 description=description,
-                expense_account=ChartSubCategory.objects.get(id=purchase_account1),
+                expense_account=ChartSubCategory.objects.get(
+                    id=purchase_account1),
                 Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
                 unit_price=unit_price,
                 quantity=quantity,
@@ -1777,10 +1997,10 @@ class CreatePurchase(View):
             "json", GeneralLedger.objects.filter(ref_number=voucher_number1, journal_type='PJ'))
 
         purchase_main = {'Mainid': obj.id, 'date': obj.date,
-                        'voucher_number': obj.voucher_number, 'bill_to': obj.description}
+                         'voucher_number': obj.voucher_number, 'bill_to': obj.description}
 
         purchase_sub = {'Subid': obj2.id, 'inventory_item': obj2.inventory_item, 'Debit_account': obj2.Debit_account,
-                       'unit_price': obj2.unit_price, 'quantity': quantity, 'amount': obj2.amount}
+                        'unit_price': obj2.unit_price, 'quantity': quantity, 'amount': obj2.amount}
 
         data = {
             'purchase_main': purchase_main,
@@ -1789,6 +2009,7 @@ class CreatePurchase(View):
             'journal_list': journal_list
         }
         return JsonResponse(data)
+
 
 def purchaseedit(request, pk=None):
     print('AM HERE NOW!!!')
@@ -1806,7 +2027,8 @@ def purchaseedit(request, pk=None):
         expenseitems = PurchaseDetails.objects.filter(expense_main_id_id=pk)
 
         vendor_name = SetupVendors.objects.all()
-        ids = ChartSubCategory.objects.filter(id='24').values_list('id', flat=True)
+        ids = ChartSubCategory.objects.filter(
+            id='24').values_list('id', flat=True)
         inventory_items = SetupInventoryItems.objects.all()
         note_acct_inventory = ChartNoteItems.objects.filter(
             sub_category__in=ids)
@@ -1820,7 +2042,6 @@ def purchaseedit(request, pk=None):
         expense_acct = ChartSubCategory.objects.filter(Q(id='24') | Q(id='26'))
         note_acct = ChartNoteItems.objects.all()
 
-
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='PJ')
         print('PURCHASE JORNAL ITEMS : ', journal_list)
@@ -1832,6 +2053,7 @@ def purchaseedit(request, pk=None):
         return render(request, 'account/purchase.html', args)
     else:
         return render(request, 'account/purchase_list.html')
+
 
 @login_required
 def purchase_post(request):
@@ -1863,7 +2085,7 @@ def purchase_post(request):
         obj.description = bill_to1
         obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
         obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
-        obj.pay_mode=pay_mode
+        obj.pay_mode = pay_mode
         obj.save()
 
         obj3 = GeneralLedger.objects.get(
@@ -1888,12 +2110,12 @@ def purchase_post(request):
                 ref_number=voucher_number1,
                 journal_type='PJ',
                 account_id=ChartNoteItems.objects.get(id=e.Debit_account_id),
-                sub_category=ChartSubCategory.objects.get(id=e.expense_account_id),
+                sub_category=ChartSubCategory.objects.get(
+                    id=e.expense_account_id),
                 category=ChartCategory.objects.get(id=expenseCategoryID),
                 description=e.description,
                 debit=e.amount,
             )
-
 
     else:
         print('POST NEW PURCHASE RECORD ')
@@ -1921,10 +2143,8 @@ def purchase_post(request):
             main_Trans=True
         )
 
-
     data = {}
     return JsonResponse(data)
-
 
 
 # JOURNAL VIEW
@@ -2145,14 +2365,30 @@ def financialacctchart(request):
     category = ChartCategory.objects.all()
     subcategory = ChartSubCategory.objects.all()
     acctitems = ChartNoteItems.objects.all()
-    
 
     print('MAIN CATEGORY : ', category)
     print('SUB CATEGORY : ', subcategory)
     print('ACCOUNT ITEMS : ', acctitems)
     print('COMPANY INFO : ', companyinfo)
 
-    args = {'category': category, 'subcategory': subcategory, 
+    args = {'category': category, 'subcategory': subcategory,
             'acctitems': acctitems, 'companyinfo': companyinfo}
     return render(request, 'smartsetup/financialacctchart.html', args)
 
+
+@login_required
+def financialbudget(request):
+    companyinfo = CompanyRegistration.objects.filter(
+        id=1).values('name', 'address', 'phone')
+    budget = BudgetDetails.objects.all().values()
+    subcategory = ChartSubCategory.objects.all()
+    acctitems = ChartNoteItems.objects.all()
+
+    print('MAIN CATEGORY : ', category)
+    print('SUB CATEGORY : ', subcategory)
+    print('ACCOUNT ITEMS : ', acctitems)
+    print('COMPANY INFO : ', companyinfo)
+
+    args = {'category': category, 'subcategory': subcategory,
+            'acctitems': acctitems, 'companyinfo': companyinfo}
+    return render(request, 'smartsetup/financialbudgetanalysis.html', args)

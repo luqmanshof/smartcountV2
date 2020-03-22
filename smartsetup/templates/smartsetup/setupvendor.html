@@ -1,0 +1,69 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        {{ title }}
+        <small>...</small>
+    </h1>
+    <br />
+
+</section>
+
+<div class="box box-primary">
+    <form method="post">
+        <div class="box-body" style="padding-top:15px">
+            <!-- <h2>Login</h2> -->
+            <form method="post">
+                {% csrf_token %}
+                <!-- {{ form|crispy }} -->
+
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.vendor_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-2 mb-0">
+                        {{ form.tin_number|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-2 mb-0">
+                        {{ form.payer_id|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-2 mb-0">
+                        {{ form.vendor_type|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.address|as_crispy_field }}
+                        <!-- <div class="form-group col-md-6 mb-0">
+                            {{ form.vendor_type|as_crispy_field }}
+                        </div> -->
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        <div class="form-group col-md-12" style="padding: 0%;">
+                            {{ form.city|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-12 mb-0" style="padding: 0%;">
+                            {{ form.website|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-12 mb-0" style="padding: 0%;">
+                            {{ form.phone|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 mb-0">
+                        <button type="submit" class="btn btn-primary">Save Record</button>
+                    </div>
+
+                </div>
+
+
+            </form>
+
+        </div>
+</div>
+{% endblock %}

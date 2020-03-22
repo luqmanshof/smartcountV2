@@ -1,0 +1,617 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<section class="content-header">
+
+    <div class="col-xs-12 col-md-2">
+        <label>
+            BUDGET MODULE
+            <small>...</small>
+        </label>
+    </div>
+
+    <div class="col-xs-12 col-md-10 pull-right">
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <a href="{% url 'budget_list' %}"><button class="btn btn-danger form-control"
+                    type="submit">EXIT</button></a>
+        </div>
+        <div class="pull-right form-group col-xs-4 col-md-3" hidden>
+            <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
+                data-target="#journalModal">PRINT</button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section>
+
+    <div class="box box-primary col-xs-12 col-md-12">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-xs-12">
+                <form id="receiptMainForm">
+                    {% if expensemain %}
+                    <div class="row">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Date</label>
+                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
+                                name="trans_date" id="date" required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId"
+                                value="{{expensemain.id}}" />
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{expensemain.voucher_number}}" required disabled>
+
+                        </div>
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Description:</label>
+                            <input class="form-control" type="text" name="description" id="description" placeholder=""
+                                value="{{expensemain.description}}" required>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <div class="row">
+                        <div class="col-xs-4 col-md-2 form-group">
+                            <label for="">Period Start</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_start"
+                                id="start_date" required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId" />
+                        </div>
+
+                        <div class="col-xs-4 col-md-2 form-group">
+                            <label for="">Period End</label>
+                            <input class="form-control" type="datetime-local" onload="" name="period_end" id="end_date"
+                                required>
+                        </div>
+
+                        <div class="col-xs-4 col-md-1 form-group">
+                            <label for="">Ref. No.</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{max_budget.max_val|add:1}}" required disabled>
+                        </div>
+
+                        <div class="col-xs-6 col-md-3 form-group">
+                            <label for="">Description:</label>
+                            <input class="form-control" type="text" name="description" id="description" placeholder=""
+                                required>
+                        </div>
+
+                        <div class="col-xs-3 col-md-2 form-group">
+                            <label for="">Type</label>
+                            <select name="budget_type" id="BType" class="form-control">
+                                <option value="Cash" selected>Expense</option>
+                                <option value="Cash">Revenue</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xs-3 col-md-2 form-group">
+                            <label for="">Total Amount:</label>
+                            <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                placeholder="0.00" value="{{total_sum}}" required disabled>
+                        </div>
+
+                    </div>
+
+
+                    {% endif %}
+
+                    <!-- <button type="submit">Save</button> -->
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="box box-primary col-xs-12">
+
+        <div class="box-body">
+            <div class="col-md-4">
+                <h4>Enter Details</h4>
+                <!-- /.box -->
+                <div class="box">
+                    <div class="box-body">
+                        <!-- <h3>ADD USER</h3> -->
+                        <form id="receiptSub" action="">
+                            <div class="form-group">
+                                <label for="">Department</label>
+                                <select name="department_name" id="department" class="form-control" required>
+                                    <option></option>
+                                    {% for item in department %}
+                                    <option value="{{ item.id }}">{{ item.department_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Budget Account</label>
+                                <select name="credit_account" id="credit_account" class="form-control" required>
+                                    <option></option>
+                                    {% for item in note_acct_exp %}
+                                    <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Amount</label>
+                                <input class="form-control" type="text" name="amount" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group" hidden>
+                                <label for="">Expense Category</label>
+                                <select name="expense_account" id="expense" class="form-control" required>
+                                    <option></option>
+                                    {% for item in expense_acct %}
+                                    <option value="{{ item.id }}">{{ item.sub_category_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
+                            </div>
+                            <button class="btn btn-primary form-control" type="submit">ADD RECORD</button>
+                            <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
+                        </form>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-8">
+                <h4>...</h4>
+                <!-- /.box -->
+                <div class="box">
+                    <div class="box-body">
+                        <table id="itemTable" class="table table-striped">
+                            <tr>
+                                <!-- <th>Description</th> -->
+                                <th>Department</th>
+                                <th>Budget Account</th>
+                                <th colspan="3">Amount</th>
+                            </tr>
+                            <!-- table_list -->
+                            {% if expenseitems %}
+                            {% for item in expenseitems %}
+                            <tr id="item-{{item.id}}">
+                                <!-- <td class="itemDescription itemData" name="description">{{item.description}}</td> -->
+                                <td class="itemExpenseAcct itemData" name="expense">{{item.expense_account}}</td>
+                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account}}</td>
+                                <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                    {{item.amount|floatformat:2}}
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
+                                        data-toggle="modal" data-target="#myModal">EDIT</button>
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-danger form-control"
+                                        onClick="deleteItem({{item.id}})">DELETE</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <!-- No Item Listed -->
+                            {% endif %}
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+                <label for="">...</label>
+
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+
+        </div>
+
+
+
+
+    </div>
+
+</section>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myModalLabel">Edit Details</h4>
+            </div>
+            <!-- /.box -->
+            <div class="box">
+                <div class="box-body">
+                    <form id="updateReceiptSub" action="">
+                        <input class="form-control" id="form-id" type="hidden" name="formId" />
+                        <div class="form-group">
+                            <input class="form-control" type="text" id="form-description" name="formdescription"
+                                placeholder="description" required>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" id="form-amount" name="formamount"
+                                placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Expense Category</label>
+                            <select name="formexpense_account" id="form-expense" class="form-control" required>
+                                {% for item in expense_acct %}
+                                <option value="{{ item.id }}">{{ item.sub_category_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
+                        </div>
+                        <div class="form-group">
+                            <label for="">Expense Account</label>
+                            <select name="formcredit_account" id="form-credit_account" class="form-control" required>
+                                {% for item in note_acct_exp %}
+                                <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary form-control" type="submit">UPDATE RECORD</button>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-danger form-control"
+                                data-dismiss="modal">CLOSE</button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END Edit Modal -->
+
+<!-- View Journal Modal -->
+<div id="journalview">
+    {% include 'account/journal_view.html' %}
+</div>
+<!-- END Journal Modal -->
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    var CategoryCode, CategoryCode2, CategoryId;
+    var period_start, period_end, amountInput, debit_acct, credit_acct, departmentID, totalAmount;
+    $(document).ready(function () {
+
+        $("select#cash").change(function () {
+            CategoryCode = $(this).children("option:selected").val();
+            populate_account_items(CategoryCode, 'debit_account');
+        });
+
+        $("select#expense,select#form-expense").change(function () {
+            CategoryCode2 = $(this).children("option:selected").val();
+            populate_account_items(CategoryCode2, 'credit_account');
+            populate_account_items(CategoryCode2, 'form-credit_account');
+        });
+
+        $("select#debit_account").change(function () {
+            debit_acct = $(this).children("option:selected").val();
+            console.log(debit_acct)
+            get_cat_item(debit_acct, 'cash');
+        });
+
+        $("select#credit_account").change(function () {
+            credit_acct = $(this).children("option:selected").val();
+            console.log(credit_acct)
+            get_cat_item(credit_acct, 'expense');
+        });
+
+        $("select#department").change(function () {
+            departmentID = $(this).children("option:selected").val();
+            console.log(departmentID)
+        });
+
+
+        //DATE PICKER
+        $.fn.setNow = function (onlyBlank) {
+            var now = new Date($.now())
+                , year
+                , month
+                , date
+                , hours
+                , minutes
+                , seconds
+                , formattedDateTime
+                ;
+
+            year = now.getFullYear();
+            month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+            date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
+            hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
+            minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
+            seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
+
+            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+
+            if (onlyBlank === true && $(this).val()) {
+                return this;
+            }
+
+            $(this).val(formattedDateTime);
+
+            return this;
+        }
+
+        $(function () {
+            // Handler for .ready() called.
+            $('input[type="datetime-local"]').setNow();
+        });
+
+        //DEFAULTS
+        if ($('#main-id').val()) {
+            //CategoryCode = $('#cash').children("option:selected").val();
+            CategoryCode2 = $('#expense').children("option:selected").val();
+            debit_acct = $('#debit_account').children("option:selected").val();
+            credit_acct = $('#credit_account').children("option:selected").val();
+            departmentID = $('#department').children("option:selected").val();
+
+        }
+        else {
+            $('#department, #cash, #expense, #debit_acct').val('');
+            $('#total_amt').val('0.00');
+        }
+
+    });
+
+
+    function populate_account_items(CatCode, acctId) {
+        $.ajax({
+            url: '{% url "populate_noteitems" %}',
+            data: {
+                'sub_category': CatCode
+            },
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                $("#" + acctId + " option").remove();
+                for (var i = result.length - 1; i >= 0; i--) {
+                    //$("#" + acctId).append('<option>' + result[i].item + '</option>');
+                    $("#" + acctId).append('<option value="' + result[i].itemID + '">' + result[i].item + '</option>');
+                };
+                $("#" + acctId).val('');
+            },
+        });
+
+    }
+
+    function get_cat_item(ItemCode, acctId) {
+        $.ajax({
+            url: '{% url "get_acctcat" %}',
+            data: {
+                'item_code': ItemCode
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                itemID = data.selected_category;
+                $("#" + acctId).val(itemID);
+                if (acctId == 'cash')
+                    CategoryCode = itemID;
+                else if (acctId == 'expense')
+                    CategoryCode2 = itemID;
+            },
+        });
+
+    }
+
+
+    viewJournal();
+
+    function viewJournal() {
+        ref_no = $('input[name="voucher_number"]').val().trim();
+        var journal_url = '/smartsetup/journal_view/(' + ref_no + ')/(CDJ)'
+
+        $.ajax({
+            url: journal_url,
+            success: function () {
+                $("#journalview").load(journal_url);
+            },
+        });
+    }
+
+
+    // Create Django Ajax Call
+    $("#receiptSub").submit(function () {
+        //alert("Stage 1...");
+
+        period_start = $('input[name="period_start"]').val().trim();
+        period_end = $('input[name="period_end"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        description = $('input[name="description"]').val().trim();
+        amountInput = $('input[name="amount"]').val().trim();
+        //totalAmount = $('input[name="total_amount"]').val().trim();
+
+        //alert("Stage 2...");
+
+        console.log(period_start);
+        console.log(period_end);
+        console.log(voucher_no);
+        console.log(amountInput);
+        console.log('START');
+        //console.log(debit_acct);
+        console.log(credit_acct);
+        console.log('END');
+        //console.log(received_from);
+        console.log(CategoryCode);
+        //console.log(CategoryCode2);
+        if (period_start && period_end && voucher_no && CategoryCode2) {
+            // Create Ajax Call
+            //alert("Stage 3...");
+            $.ajax({
+                url: '{% url "budget_ajax_create" %}',
+                data: {
+                    'period_start': period_start,
+                    'period_end': period_end,
+                    'voucher_number': voucher_no,
+                    'department_name': departmentID,
+                    'mainID': mainID,
+                    'description': description,
+                    'expense_account': CategoryCode2,
+                    'credit_account': credit_acct,
+                    'amount': amountInput,
+                    'total_amount': totalAmount,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.budget_main) {
+                        alert('Success!!!')
+                        //clearList();
+                        console.log(data.budget_sub)
+                        console.log(data.budget_main.Mainid)
+                        $('#main-id').val(data.budget_main.Mainid);
+                        $('#total_amt').val(data.total_sum);
+                        rec = data.budget_sub
+                        $("#itemTable > tbody:last-child").append(`
+                <tr id="item-${rec.Subid}">
+                    <td class="itemDescription" name="description">${rec.description}</td>
+                    '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
+                    '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
+                    '<td class="itemAmount" name="amount">${rec.amount}</td>
+                    '<td align="center">
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.id})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.id})">DELETE</button>
+                    </td>
+                </tr>
+              `);
+
+                    }
+
+                    if (data.journal_list) {
+                        console.log(data.journal_list)
+                        //populateJournalList(data.journal_list);
+                        viewJournal();
+                    }
+                }
+            });
+        } else {
+            alert("All fields must have a valid value.");
+        }
+        //$('form#receiptSub').trigger("reset");
+        return false;
+    });
+
+    /*
+    $('#department').change(function () {
+        $('#bill_to').val($(this).find('option:selected').text());
+    });
+    */
+
+    $(function () {
+        $(".select-placeholder").prepend("<option value='' disabled selected>Select an option...</option>");
+        // This will make every element with the class "date-picker" into a DatePicker element
+        $('.date-picker').datepicker();
+    })
+
+    function clearList() {
+        console.log('CLEAR LIST');
+        $('#itemTable tr').each(function () {
+            //console.log(this.id)
+            var str = this.id;
+            var res = str.split("-").pop()
+            //var res = this.id.slice(5, 6);
+            console.log(res);
+            $("#itemTable #item-" + res).remove();
+
+        })
+    }
+
+    function clearJournalList() {
+        console.log('CLEAR JOURNAL LIST');
+        $('#journalTable tr').each(function () {
+            //console.log(this.id)
+            var str = this.id;
+            var res = str.split("-").pop()
+            //var res = this.id.slice(5, 6);
+            console.log(res);
+            $("#journalTable #item-" + res).remove();
+
+        })
+    }
+
+    function deleteItem(id) {
+        var action = confirm("Are you sure you want to delete this item?");
+        mainID = $('input[name="mainId"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+
+        if (action != false) {
+            $.ajax({
+                url: '{% url "expense_ajax_delete" %}',
+                data: {
+                    'id': id,
+                    'mainID': mainID,
+                    'voucher_number': voucher_no
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.deleted) {
+                        alert('Item deleted Successfully')
+                        console.log(id);
+                        $("#itemTable #item-" + id).remove();
+                        $('#total_amt').val(data.total_sum);
+                        //$("#itemTable).remove();
+                    }
+                    if (data.journal_list) {
+                        //populateJournalList(data.journal_list);
+                        viewJournal();
+                    }
+                }
+            });
+        }
+    }
+
+    function editItem(id) {
+        if (id) {
+            tr_id = "#item-" + id;
+            description = $(tr_id).find(".itemDescription").text();
+            ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text();
+            creditAcct = $(tr_id).find(".itemCreditAcct").text();
+            amount = $(tr_id).find(".itemAmount").text();
+
+            $.ajax({
+                url: '{% url "ajax_getacctID" %}',
+                data: {
+                    'creditAcct': creditAcct,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    //alert('SUCCESS!!!');
+
+                    $('#form-id').val(id);
+                    $('#form-description').val(description);
+                    $('#form-expense').val(data.cat_id);
+                    $('#form-credit_account').val(data.note_id);
+                    $('#form-amount').val(amount);
+
+                }
+            });
+
+        }
+    }
+
+</script>
+
+{% endblock %}

@@ -10,14 +10,14 @@
       <div class="nav-tabs-custom">
         <!-- Tabs within a box -->
         <ul class="nav nav-tabs pull-right">
-          <li class="pull-left header"><i class="fa fa-address-card"></i> List Section</li>
+          <li class="pull-left header"><i class="fa fa-address-card"></i> List Department</li>
         </ul>
       </div>
 
     </div>
     <div class="col-xs-2">
-      <a href="{% url 'setupdivision' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
-          Section</button></a>
+      <a href="{% url 'budgetdept' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
+          Department</button></a>
     </div>
   </div>
 
@@ -40,18 +40,21 @@
 
           </thead>
           <tbody>
-            {% for cat in setupdivision.all %}
+            {% for cat in budgetdept.all %}
             <tr>
               <td>
-                {{ cat.division_name }}
+                {{ cat.department_code }}
               </td>
               <td>
-                {{ cat.division }}
+                {{ cat.department_name }}
+              </td>
+              <td>
+                {{ cat.description }}
               </td>
               <td style="text-align:left">
-                <a href="{% url 'setupdivision' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
-                <a href="{% url 'setupdivision_detail' cat.pk %}" class="fa fa-eye text-blue"> View</a> |
-                <a href="{% url 'setupdivision_delete' cat.pk %}" class="fa fa-trash text-red"> Delete</a>
+                <a href="{% url 'budgetdept' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
+                <a href="{% url 'budgetdept_detail' cat.pk %}" class="fa fa-eye text-blue"> View</a> |
+                <a href="{% url 'budgetdept_delete' cat.pk %}" class="fa fa-trash text-red"> Delete</a>
               </td>
             </tr>
             {% endfor %}

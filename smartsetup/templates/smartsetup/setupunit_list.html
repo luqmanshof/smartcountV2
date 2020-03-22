@@ -10,14 +10,14 @@
             <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                    <li class="pull-left header"><i class="fa fa-address-card"></i> Vendor Setup Module</li>
+                    <li class="pull-left header"><i class="fa fa-address-card"></i> List of Units</li>
                 </ul>
             </div>
 
         </div>
         <div class="col-xs-2">
-            <a href="{% url 'setupvendors' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
-                    Record</button></a>
+            <a href="{% url 'setupdivision' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
+                    Unit</button></a>
         </div>
     </div>
 
@@ -40,26 +40,19 @@
 
                     </thead>
                     <tbody>
-                        {% for cat in setupvendors.all %}
+                        {% for cat in setupdivision.all %}
                         <tr>
                             <td>
-                                {{ cat.vendor_name }}
+                                {{ cat.division_name }}
                             </td>
                             <td>
-                                {{ cat.address }}
+                                {{ cat.division }}
                             </td>
-                            <td>
-                                {{ cat.phone }}
-                            </td>
-                            <td>
-                                {{ cat.website }}
-                            </td>
-
                             <td style="text-align:left">
-                                <a href="{% url 'setupvendors' pk=cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
-                                <a href="{% url 'setupvendors_detail' pk=cat.pk %}" class="fa fa-eye text-blue">
-                                    View</a> |
-                                <a href="{% url 'setupvendors_delete' pk=cat.pk %}" class="fa fa-trash text-red">
+                                <a href="{% url 'setupdivision' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
+                                <a href="{% url 'setupdivision_detail' cat.pk %}" class="fa fa-eye text-blue"> View</a>
+                                |
+                                <a href="{% url 'setupdivision_delete' cat.pk %}" class="fa fa-trash text-red">
                                     Delete</a>
                             </td>
                         </tr>

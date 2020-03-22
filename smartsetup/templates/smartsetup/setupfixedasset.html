@@ -37,7 +37,7 @@
                 <form id="receiptMainForm">
                     {% if expensemain %}
                     <div class="row">
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Acquisition Date</label>
                             <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
                                 name="trans_date" id="date" required>
@@ -51,12 +51,12 @@
                                 value="{{expensemain.voucher_number}}" required disabled>
 
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
-                            <label for="">Description:</label>
+                        <div class="col-xs-12 col-md-6 form-group">
+                            <label for="">Asset Description:</label>
                             <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
                                 value="{{expensemain.description}}" required>
                         </div>
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Department:</label>
                             <select name="depart_name" id="depart" class="form-control">
                                 {% for item in dept_name %}
@@ -68,7 +68,7 @@
                             </select>
 
                         </div>
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Depr. Method:</label>
                             <select name="depr_method" id="depr_method" class="form-control">
                                 {% for item in staff_name %}
@@ -120,7 +120,7 @@
 
                     {% else %}
                     <div class="row">
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Acquisition Date</label>
                             <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
                                 required>
@@ -132,12 +132,12 @@
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number" value=""
                                 required>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
-                            <label for="">Description:</label>
+                        <div class="col-xs-12 col-md-6 form-group">
+                            <label for="">Asset Description:</label>
                             <input class="form-control" type="text" name="description" id="description" placeholder=""
                                 required>
                         </div>
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Department:</label>
                             <select name="depart_name" id="depart" class="form-control">
                                 {% for item in dept_name %}
@@ -146,7 +146,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-xs-6 col-md-2 form-group">
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Depr. Method:</label>
                             <select name="depr_method" id="depr_method" class="form-control">
                                 <option value="Straight-line">Straight-line</option>
@@ -174,7 +174,7 @@
                                 id="purchase_date" disabled>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Purchase /Gross Value:</label>
+                            <label for="">Purchase Value:</label>
                             <input class="form-control" type="text" name="purchase_value" id="purchase_value"
                                 placeholder="0.00" disabled>
                         </div>

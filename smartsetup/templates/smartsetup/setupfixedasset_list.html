@@ -68,14 +68,17 @@
                                 <td>
                                     {{ cat.asset_id }}
                                 </td>
-                                <td>
+                                <!-- <td>
                                     {{ cat.serial_no }}
-                                </td>
+                                </td> -->
                                 <td>
                                     {{ cat.description }}
                                 </td>
                                 <td>
                                     {{ cat.asset_account }}
+                                </td>
+                                <td>
+                                    {{ cat.depreciation_method }}
                                 </td>
                                 <td>
                                     {{ cat.purchase_date }}
@@ -84,17 +87,14 @@
                                     {{ cat.purchase_value }}
                                 </td>
                                 <td>
-                                    {{ cat.depreciation_method }}
-                                </td>
-                                <td>
                                     {{ cat.useful_life }}
                                 </td>
                                 <td>
                                     {{ cat.salvage_value }}
                                 </td>
-                                <td>
+                                <!-- <td>
                                     {{ cat.department }}
-                                </td>
+                                </td> -->
                                 <td style="text-align:left">
                                     <!-- <a href="{% url 'fixedasset_edit' pk=cat.pk %}" class="fa fa-edit text-green">
                                         Edit</a> | -->

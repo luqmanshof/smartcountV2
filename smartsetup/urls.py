@@ -37,6 +37,16 @@ urlpatterns = [
     path('setupcompanyreg/(<int:pk>)',
          views.setupcompanyreg, name='setupcompanyreg'),
 
+    # DEPARTMENT
+    path('setupdepartment_list', views.setupdepartment_list,
+         name='setupdepartment_list'),
+    path('setupdepartment/(<int:pk>)',
+         views.setupdepartment, name='setupdepartment'),
+    path('setupdepartment/(<int:pk>)/detail',
+         views.SetupDepartmentDetail.as_view(), name='setupdepartment_detail'),
+    path('setupdepartment/(<int:pk>)/delete',
+         views.SetupDepartmentDelete.as_view(), name='setupdepartment_delete'),
+
     # DIVISION
     path('setupdivision_list', views.setupdivision_list,
          name='setupdivision_list'),
@@ -47,15 +57,16 @@ urlpatterns = [
     path('setupdivision/(<int:pk>)/delete',
          views.SetupDivisionDelete.as_view(), name='setupdivision_delete'),
 
-    # DEPARTMENT
-    path('setupdepartment_list', views.setupdepartment_list,
-         name='setupdepartment_list'),
-    path('setupdepartment/(<int:pk>)',
-         views.setupdepartment, name='setupdepartment'),
-    path('setupdepartment/(<int:pk>)/detail',
-         views.SetupDepartmentDetail.as_view(), name='setupdepartment_detail'),
-    path('setupdepartment/(<int:pk>)/delete',
-         views.SetupDepartmentDelete.as_view(), name='setupdepartment_delete'),
+
+    # UNIT
+    path('setupunit_list', views.setupunit_list,
+         name='setupunit_list'),
+    path('setupunit/(<int:pk>)',
+         views.setupunit, name='setupunit'),
+    path('setupunit/(<int:pk>)/detail',
+         views.SetupUnitDetail.as_view(), name='setupunit_detail'),
+    path('setupunit/(<int:pk>)/delete',
+         views.SetupUnitDelete.as_view(), name='setupunit_delete'),
 
 
     # CHART MAIN CATEGORIES
@@ -175,6 +186,22 @@ urlpatterns = [
     path('ajax/expense/delete/',  views_ajax.DeleteExpense.as_view(),
          name='expense_delete'),
 
+    # BUDGET
+    path('budget_list', views.budget_list, name='budget_list'),
+    path('budget_new', views.BudgetClass.as_view(), name='budget_new'),
+    path('ajax/budget/create/',  views.CreateBudget.as_view(),
+         name='budget_ajax_create'),
+    # BUDGET DEPARTMENT SETUP
+    path('budgetdept_list', views.budgetdept_list,
+         name='budgetdept_list'),
+    path('budgetdept/(<int:pk>)',
+         views.budgetdept, name='budgetdept'),
+    path('budgetdept/(<int:pk>)/detail',
+         views.BudgetDeptDetail.as_view(), name='budgetdept_detail'),
+    path('budgetdept/(<int:pk>)/delete',
+         views.SetupUnitDelete.as_view(), name='budgetdept_delete'),
+
+
     # GENERAL JOURNAL POSTINGS
     path('gjournal_list', views.gjournal_list, name='gjournal_list'),
     path('gjournal_new', views.GJournalClass.as_view(), name='gjournal_new'),
@@ -230,6 +257,7 @@ urlpatterns = [
     path('financialnetasset', views.financialnetasset, name='financialnetasset'),
     path('financialfixedasset', views.financialfixedasset,
          name='financialfixedasset'),
+    path('financialbudget', views.financialbudget, name='financialbudget'),
     path('note_view/(<str:pk>)', views.noteview, name='note_view'),
 
     # Reports (OTHERS)

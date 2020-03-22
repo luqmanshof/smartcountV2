@@ -6,7 +6,7 @@ from smartsetup.models import (
     SetupClients, SetupVendors, ReceiptMain, ReceiptDetails, ExpenseMain,
     ExpenseDetails, GJournalMain, GJournalDetails, EmployeeProfile, SetupFixedAssets,
     SetupDivision, SetupDepartment, CompanyRegistration, SetupBegBalanceMain,
-    SetupBegbalanceDetails
+    SetupBegbalanceDetails, SetupUnit, BudgetDepartment
 )
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .widgets import BootstrapDateTimePickerInput
@@ -19,18 +19,25 @@ class CompanyRegistrationForm(forms.ModelForm):
         fields = ('name', 'address', 'phone', 'email', 'website')
 
 
-class SetupDivisionForm(forms.ModelForm):
-
-    class Meta:
-        model = SetupDivision
-        fields = ('division_name', 'description')
-
-
 class SetupDepartmentForm(forms.ModelForm):
 
     class Meta:
         model = SetupDepartment
-        fields = ('department_name', 'description', 'division')
+        fields = ('department_name', 'description')
+
+
+class SetupDivisionForm(forms.ModelForm):
+
+    class Meta:
+        model = SetupDivision
+        fields = ('division_name', 'description', 'department')
+
+
+class SetupUnitForm(forms.ModelForm):
+
+    class Meta:
+        model = SetupUnit
+        fields = ('unit_name', 'description', 'division')
 
 
 class UserProfileForm(forms.ModelForm):
@@ -126,7 +133,8 @@ class SetupClientsForm(forms.ModelForm):
 class SetupVendorsForm(forms.ModelForm):
     class Meta:
         model = SetupVendors
-        fields = ('vendor_name', 'address', 'city', 'website', 'phone')
+        fields = ('vendor_name', 'vendor_type', 'tin_number',
+                  'payer_id', 'address', 'city', 'website', 'phone')
 
 
 class ReceiptMainForm(forms.ModelForm):
@@ -208,3 +216,9 @@ class GJournalDetailsForm(forms.ModelForm):
         fields = (
             'description', 'sub_category', 'account', 'debit', 'credit', 'journal_main_id'
         )
+
+
+class BudgetDepartmentForm(forms.ModelForm):
+    class Meta:
+        model = BudgetDepartment
+        fields = ('department_code', 'department_name', 'description')

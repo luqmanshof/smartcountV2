@@ -30,6 +30,34 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class SetupDepartment(models.Model):
+    department_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.department_name
+
+
+class SetupDivision(models.Model):
+    division_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    department = models.ForeignKey(
+        SetupDepartment, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.division_name
+
+
+class SetupUnit(models.Model):
+    unit_name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    division = models.ForeignKey(
+        SetupDivision, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.unit_name
+
+
 TITLE = (
     ('Mr', 'Mr'),
     ('Mrs', 'Mrs'),
@@ -72,12 +100,15 @@ class EmployeeProfile(models.Model):
     address = models.TextField()
     phone = models.CharField(max_length=100, default='')
     login_profile = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, null=True, default='')
+        User, on_delete=models.SET_NULL, blank=True, null=True, default='')
     email = models.CharField(max_length=200, default='', blank=True)
     hire_date = models.DateTimeField()
-    division = models.CharField(max_length=200, default='', blank=True)
-    department = models.CharField(max_length=200, default='', blank=True)
-    position = models.CharField(max_length=200, default='', blank=True)
+    department = models.ForeignKey(
+        SetupDepartment, on_delete=models.SET_NULL, blank=True, null=True, default='')
+    division = models.ForeignKey(
+        SetupDivision, on_delete=models.SET_NULL, blank=True, null=True, default='')
+    unit = models.ForeignKey(
+        SetupUnit, on_delete=models.SET_NULL, blank=True, null=True, default='')
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -170,33 +201,28 @@ class SetupClients(models.Model):
         return self.client_name
 
 
+VENDOR_TYPES = (
+    ('Agency', 'Agency'),
+    ('Supplier', 'Supplier'),
+    ('contractor', 'contractor'),
+)
+
+
 class SetupVendors(models.Model):
     vendor_name = models.CharField(max_length=256)
+    vendor_type = models.CharField(
+        max_length=200, choices=VENDOR_TYPES, default='Supplier')
     address = models.TextField()
-    city = models.CharField(max_length=100, default='')
-    website = models.URLField(default='')
+    city = models.CharField(max_length=200, default='', blank=True, null=True)
+    website = models.URLField(default='', blank=True, null=True)
     phone = models.CharField(max_length=100, default='')
+    tin_number = models.CharField(
+        max_length=200, default='', blank=True, null=True)
+    payer_id = models.CharField(
+        max_length=200, default='', blank=True, null=True)
 
     def __str__(self):
         return self.vendor_name
-
-
-class SetupDivision(models.Model):
-    division_name = models.CharField(max_length=256)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.division_name
-
-
-class SetupDepartment(models.Model):
-    department_name = models.CharField(max_length=256)
-    description = models.TextField(blank=True)
-    division = models.ForeignKey(
-        SetupDivision, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return self.department_name
 
 
 DEPR_METHODS = (
@@ -215,8 +241,7 @@ class SetupFixedAssets(models.Model):
         default=timezone.now, blank=True)
     department = models.ForeignKey(
         SetupDepartment, on_delete=models.SET_NULL, null=True)
-    purchase_date = models.DateTimeField(
-        default=timezone.now, blank=True)
+    purchase_date = models.DateTimeField(blank=True, null=True)
     purchase_value = models.FloatField(default=0)
     useful_life = models.CharField(max_length=256, null=True)
     salvage_value = models.FloatField(default=0)
@@ -368,6 +393,43 @@ class ExpenseDetails(models.Model):
     amount = models.FloatField(default=0)
     expense_main_id = models.ForeignKey(
         ExpenseMain, on_delete=models.CASCADE, default=0)
+
+
+class BudgetDepartment(models.Model):
+    department_code = models.CharField(max_length=256, default='')
+    department_name = models.CharField(max_length=256, default='')
+    description = models.TextField(max_length=256, default='')
+
+    def __str__(self):
+        return self.department_name
+
+
+class BudgetMain(models.Model):
+    period_start = models.DateTimeField(default=timezone.now, blank=True)
+    period_end = models.DateTimeField(default=timezone.now, blank=True)
+    description = models.CharField(max_length=256, default='')
+    budget_no = models.IntegerField(default=0)
+
+
+BUDGET_TYPES = (
+    ('Revenue', 'Revenue'),
+    ('Expenditure', 'Expenditure'),
+)
+
+
+class BudgetDetails(models.Model):
+    budget_dept = models.ForeignKey(
+        BudgetDepartment, on_delete=models.SET_NULL, null=True)
+    budget_item = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    budget_cat = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True)
+    description = models.CharField(max_length=256, default='')
+    budget_type = models.CharField(
+        max_length=256, choices=BUDGET_TYPES, default='')
+    amount = models.FloatField(default=0)
+    budget_main_id = models.ForeignKey(
+        BudgetMain, on_delete=models.CASCADE, default=0)
 
 
 class GJournalMain(models.Model):

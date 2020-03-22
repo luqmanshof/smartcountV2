@@ -155,11 +155,20 @@
             <div class="col-xs-12 col-md-4 form-group">
               <div class="col-xs-6 col-md-6 form-group">
                 <label for="">Payment Mode</label>
-                <select name="pay_mode" id="pMode" class="form-control">
+                <input type="text" list="pMode" class="form-control" />
+                <datalist id="pMode">
+                  <option>Cash</option>
+                  <option>Cheque</option>
+                  <option>Transfer</option>
+                  <option>Audi</option>
+                </datalist>
+
+
+                <!-- <select name="pay_mode" id="pMode" class="form-control">
                   <option value="Cash">Cash</option>
                   <option value="Cash">Cheque</option>
                   <option value="Cash">Transfer</option>
-                </select>
+                </select> -->
               </div>
               <div class="col-xs-6 col-md-6 form-group">
                 <label for="">Total Amount:</label>
@@ -476,6 +485,7 @@
     description = $('input[name="description"]').val().trim();
     amountInput = $('input[name="amount"]').val().trim();
     totalAmount = $('input[name="total_amount"]').val().trim();
+    clientID = $('#client').children("option:selected").val();
 
     //alert("Stage 2...");
 
