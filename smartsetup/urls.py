@@ -191,6 +191,11 @@ urlpatterns = [
     path('budget_new', views.BudgetClass.as_view(), name='budget_new'),
     path('ajax/budget/create/',  views.CreateBudget.as_view(),
          name='budget_ajax_create'),
+    path('budget_edit/(<int:pk>)', views.budgetedit, name='budget_edit'),
+    path('ajax/budget/delete/',  views_ajax.DeleteBudget.as_view(),
+         name='budget_delete'),
+
+
     # BUDGET DEPARTMENT SETUP
     path('budgetdept_list', views.budgetdept_list,
          name='budgetdept_list'),

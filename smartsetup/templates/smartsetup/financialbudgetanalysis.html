@@ -42,10 +42,9 @@
             <div class="box">
                 <div class="box-body">
                     <table class="table table-striped">
-                        <col width="290">
-                        <col width="200">
+                        <col width="450">
                         <col width="100">
-                        <col width="100">
+                        <col width="390">
                         <col width="100">
                         <col width="100">
                         <col width="100">
@@ -61,12 +60,12 @@
                         <col width="100">
                         <col width="100">
 
+
                         <thead>
                             <tr>
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th>Budget</th>
                                 <th>JAN</th>
                                 <th>FEB</th>
                                 <th>MAR</th>
@@ -82,163 +81,13 @@
                                 <th>TOTAL</th>
                                 <th>BAL.</th>
                             </tr>
-                            <tr>
-                                <th>CHAIRMAN</th>
-                                <th>2001</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense1</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense2</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense3</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
 
-                        </tbody>
-
-                    </table>
-                    <div class="box">
-                        <!-- <div class="box-body"> -->
-                        <table class="table table-striped">
-                            <col width="290">
-                            <col width="200">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><b>Total</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <!-- </div> -->
-                        <!-- /.box-body -->
-                    </div>
-                    <table class="table table-striped">
-                        <col width="290">
-                        <col width="200">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-
+                        {% for cat in budgetdept.all %}
                         <thead>
                             <tr>
-                                <th>PERM. SEC.</th>
-                                <th>2002</th>
+                                <th>{{cat.department_name}}</th>
+                                <th>{{cat.department_code}}</th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -258,11 +107,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for sub in cat.budgetdetails_set.all %}
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td>Expense1</td>
-                                <td>0.00</td>
+                                <td>{{sub.budget_item}}</td>
                                 <td>0.00</td>
                                 <td>0.00</td>
                                 <td>0.00</td>
@@ -278,405 +127,32 @@
                                 <td>0.00</td>
                                 <td>0.00</td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense2</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense3</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-
+                            {% endfor %}
                         </tbody>
 
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                            </tr>
+                        </tfoot>
+                        {% endfor %}
                     </table>
-                    <div class="box">
-                        <!-- <div class="box-body"> -->
-                        <table class="table table-striped">
-                            <col width="290">
-                            <col width="200">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><b>Total</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <!-- </div> -->
-                        <!-- /.box-body -->
-                    </div>
-                    <table class="table table-striped">
-                        <col width="290">
-                        <col width="200">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-
-                        <thead>
-                            <tr>
-                                <th>DIRECTOR</th>
-                                <th>2003</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense1</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense2</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense3</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-                    <div class="box">
-                        <!-- <div class="box-body"> -->
-                        <table class="table table-striped">
-                            <col width="290">
-                            <col width="200">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><b>Total</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <!-- </div> -->
-                        <!-- /.box-body -->
-                    </div>
-                    <table class="table table-striped">
-                        <col width="290">
-                        <col width="200">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-                        <col width="100">
-
-                        <thead>
-                            <tr>
-                                <th>FINANCE</th>
-                                <th>2004</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense1</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense2</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Expense3</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-                    <div class="box">
-                        <!-- <div class="box-body"> -->
-                        <table class="table table-striped">
-                            <col width="290">
-                            <col width="200">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <col width="100">
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><b>Total</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                    <td><b>0.00</b></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <!-- </div> -->
-                        <!-- /.box-body -->
-                    </div>
                 </div>
                 <!-- /.box-body -->
 

@@ -3,6 +3,9 @@
 
 
 {% block content %}
+<style>
+
+</style>
 <section class="content-header">
 
     <div class="col-xs-12 col-md-2">
@@ -34,27 +37,41 @@
         <div class="box-body" style="padding-top:15px">
             <div class="col-xs-12">
                 <form id="receiptMainForm">
-                    {% if expensemain %}
+                    {% if budgetmain %}
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Voucher Date</label>
-                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
-                                name="trans_date" id="date" required>
+                            <label for="">Period Start</label>
+                            <input class="form-control" value="{{budgetmain.period_start}}" type="datetime-local"
+                                onload="" name="period_start" id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
-                                value="{{expensemain.id}}" />
+                                value="{{budgetmain.id}}" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Voucher Number</label>
+                            <label for="">Period End</label>
+                            <input class="form-control" value="{{budgetmain.period_end}}" type="datetime-local"
+                                onload="" name="period_end" id="date" required>
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Ref. No.</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
-                                value="{{expensemain.voucher_number}}" required disabled>
+                                value="{{budgetmain.budget_no}}" required disabled>
 
                         </div>
+
                         <div class="col-xs-12 col-md-4 form-group">
                             <label for="">Description:</label>
                             <input class="form-control" type="text" name="description" id="description" placeholder=""
-                                value="{{expensemain.description}}" required>
+                                value="{{budgetmain.description}}" required>
                         </div>
+                        <div class="col-xs-3 col-md-2 form-group">
+                            <label for="">Total Amount:</label>
+                            <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                placeholder="0.00" value="{{total_sum}}" required disabled>
+                        </div>
+
+
                     </div>
 
                     {% else %}
@@ -72,24 +89,16 @@
                                 required>
                         </div>
 
-                        <div class="col-xs-4 col-md-1 form-group">
+                        <div class="col-xs-4 col-md-2 form-group">
                             <label for="">Ref. No.</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
                                 value="{{max_budget.max_val|add:1}}" required disabled>
                         </div>
 
-                        <div class="col-xs-6 col-md-3 form-group">
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Description:</label>
                             <input class="form-control" type="text" name="description" id="description" placeholder=""
                                 required>
-                        </div>
-
-                        <div class="col-xs-3 col-md-2 form-group">
-                            <label for="">Type</label>
-                            <select name="budget_type" id="BType" class="form-control">
-                                <option value="Cash" selected>Expense</option>
-                                <option value="Cash">Revenue</option>
-                            </select>
                         </div>
 
                         <div class="col-xs-3 col-md-2 form-group">
@@ -124,6 +133,14 @@
                         <!-- <h3>ADD USER</h3> -->
                         <form id="receiptSub" action="">
                             <div class="form-group">
+                                <label for="">Budget Type</label>
+                                <select name="budget_type" id="BType" class="form-control">
+                                    <option value="Expense" selected>Expense</option>
+                                    <option value="Revenue">Revenue</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+
                                 <label for="">Department</label>
                                 <select name="department_name" id="department" class="form-control" required>
                                     <option></option>
@@ -172,32 +189,38 @@
                 <!-- /.box -->
                 <div class="box">
                     <div class="box-body">
-                        <table id="itemTable" class="table table-striped">
-                            <tr>
-                                <!-- <th>Description</th> -->
-                                <th>Department</th>
-                                <th>Budget Account</th>
-                                <th colspan="3">Amount</th>
-                            </tr>
+                        <!-- <table id="itemTable" class="table table-striped table-bordered table-sm" cellspacing="0"
+                            width="100%"> -->
+                        <table id="itemTable" class="table table-striped fixed_header">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Description</th> -->
+                                    <th>Department</th>
+                                    <th>Budget Account</th>
+                                    <th colspan="3">Amount</th>
+                                </tr>
+                            </thead>
                             <!-- table_list -->
-                            {% if expenseitems %}
-                            {% for item in expenseitems %}
-                            <tr id="item-{{item.id}}">
-                                <!-- <td class="itemDescription itemData" name="description">{{item.description}}</td> -->
-                                <td class="itemExpenseAcct itemData" name="expense">{{item.expense_account}}</td>
-                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account}}</td>
-                                <td class="itemAmount itemData" style="text-align: right;" name="amount">
-                                    {{item.amount|floatformat:2}}
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
-                                        data-toggle="modal" data-target="#myModal">EDIT</button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-danger form-control"
-                                        onClick="deleteItem({{item.id}})">DELETE</button>
-                                </td>
-                            </tr>
+                            {% if budgetitems %}
+                            {% for item in budgetitems %}
+                            <tbody>
+                                <tr id="item-{{item.id}}">
+                                    <td class="itemDescription itemData" name="description">{{item.budget_dept}}</td>
+                                    <td class="itemCreditAcct itemData" name="credit">{{item.budget_item}}</td>
+                                    <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                        {{item.amount|floatformat:2}}
+                                    </td>
+                                    <td align="center">
+                                        <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
+                                            data-toggle="modal" data-target="#myModal">EDIT</button>
+                                    </td>
+                                    <td align="center">
+                                        <button class="btn btn-danger form-control"
+                                            onClick="deleteItem({{item.id}})">DELETE</button>
+                                    </td>
+                                </tr>
+
+                            </tbody>
                             {% endfor %}
                             {% else %}
                             <!-- No Item Listed -->
@@ -294,6 +317,13 @@
     var period_start, period_end, amountInput, debit_acct, credit_acct, departmentID, totalAmount;
     $(document).ready(function () {
 
+        //table vertical scrolling
+        $('#itemTable').DataTable({
+            "scrollY": "50px",
+            "scrollCollapse": true,
+        });
+        $('.dataTables_length').addClass('bs-select');
+
         $("select#cash").change(function () {
             CategoryCode = $(this).children("option:selected").val();
             populate_account_items(CategoryCode, 'debit_account');
@@ -365,6 +395,7 @@
             debit_acct = $('#debit_account').children("option:selected").val();
             credit_acct = $('#credit_account').children("option:selected").val();
             departmentID = $('#department').children("option:selected").val();
+            budget_type = $('#BType').children("option:selected").val();
 
         }
         else {
@@ -441,6 +472,7 @@
         mainID = $('input[name="mainId"]').val().trim();
         description = $('input[name="description"]').val().trim();
         amountInput = $('input[name="amount"]').val().trim();
+        budget_type = $('#BType').children("option:selected").val();
         //totalAmount = $('input[name="total_amount"]').val().trim();
 
         //alert("Stage 2...");
@@ -468,6 +500,7 @@
                     'department_name': departmentID,
                     'mainID': mainID,
                     'description': description,
+                    'budget_type': budget_type,
                     'expense_account': CategoryCode2,
                     'credit_account': credit_acct,
                     'amount': amountInput,
@@ -485,8 +518,7 @@
                         rec = data.budget_sub
                         $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
-                    <td class="itemDescription" name="description">${rec.description}</td>
-                    '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
+                    <td class="itemDescription" name="description">${rec.department}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
                     '<td class="itemAmount" name="amount">${rec.amount}</td>
                     '<td align="center">

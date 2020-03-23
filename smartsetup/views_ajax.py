@@ -11,7 +11,7 @@ from .models import (ChartCategory, ChartSubCategory, ChartNoteItems, SetupClien
                      SetupInventoryCategory, SetupInventoryItems, SetupClients, SetupVendors,
                      ReceiptMain, ReceiptDetails, ExpenseMain, ExpenseDetails, GJournalMain,
                      GJournalDetails, GeneralLedger, SetupFixedAssets, SetupBegbalanceDetails,
-                     SetupBegBalanceMain, PurchaseMain, PurchaseDetails)
+                     SetupBegBalanceMain, PurchaseMain, PurchaseDetails, BudgetMain, BudgetDetails)
 from django.db.models import Max, PositiveIntegerField, Value, Sum
 
 
@@ -176,6 +176,18 @@ class DeleteRececipt(View):
             ref_number=ref_number1, journal_type='CRJ').delete()
 
         ReceiptMain.objects.get(id=id1).delete()
+        data = {
+            'deleted': True
+        }
+        return JsonResponse(data)
+
+
+class DeleteBudget(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+
+        BudgetMain.objects.get(id=id1).delete()
+
         data = {
             'deleted': True
         }

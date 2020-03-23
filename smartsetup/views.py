@@ -1072,7 +1072,7 @@ class CreateExpense(View):
         print('EXPENSE CASH ACCOUNT ID: ', cash_account1)
         print('EXPENSE CLIENT ID: ', client_name1)
 
-        ClientID = EmployeeProfile.objects.get(id=client_name1).id
+        # ClientID = EmployeeProfile.objects.get(id=client_name1).id
         cashAccount = ChartSubCategory.objects.get(
             id=cash_account1).sub_category_name
         cashCategoryID = ChartSubCategory.objects.get(
@@ -1090,7 +1090,7 @@ class CreateExpense(View):
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
             obj.voucher_number = voucher_number1
-            obj.payee = EmployeeProfile.objects.get(id=client_name1)
+            # obj.payee = EmployeeProfile.objects.get(id=client_name1)
             obj.description = bill_to1
             obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
             obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
@@ -1114,7 +1114,7 @@ class CreateExpense(View):
             obj = ExpenseMain.objects.create(
                 date=expense_date1,
                 voucher_number=voucher_number1,
-                payee_id=ClientID,
+                # payee_id=ClientID,
                 description=bill_to1,
                 cash_account=ChartSubCategory.objects.get(id=cash_account1),
                 credit_account=ChartNoteItems.objects.get(id=Debit_account1),
@@ -1231,14 +1231,15 @@ class CreateBudget(View):
         pkMain = request.GET.get('mainID', None)
         description = request.GET.get('description', None)
         expense_account1 = request.GET.get('expense_account', None)
-        # credit_account1 = request.GET.get('Debit_account', None)
+        budget_type = request.GET.get('budget_type', None)
         amount1 = request.GET.get('amount', None)
         total_amount = float(request.GET.get('total_amount', 0))
 
         amount2 = float(amount1.replace(',', ''))
         print('EXPENSE DEPARTMENT ID: ', department_name)
 
-        departmentID = BudgetDepartment.objects.get(id=department_name).id
+        department = BudgetDepartment.objects.get(
+            id=department_name).department_name
         # cashAccount = ChartSubCategory.objects.get(
         #     id=cash_account1).sub_category_name
         # cashCategoryID = ChartSubCategory.objects.get(
@@ -1269,7 +1270,9 @@ class CreateBudget(View):
                 budget_no=voucher_number1,
                 description=description,
             )
+
         obj2 = BudgetDetails.objects.create(
+            budget_type=budget_type,
             budget_dept=BudgetDepartment.objects.get(id=department_name),
             budget_cat=ChartSubCategory.objects.get(id=expense_account1),
             budget_item=ChartNoteItems.objects.get(id=Debit_account1),
@@ -1281,11 +1284,14 @@ class CreateBudget(View):
             budget_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
         print('TOTAL SUM GENERATED CREATED : ', total_sum)
 
-        budget_main = {'Mainid': obj.id, 'period_start': obj.period_start, 'period_end': obj.period_end,
-                       'voucher_number': obj.budget_no, 'description': obj.description}
+        budget_main = {'Mainid': obj.id, 'period_start': obj.period_start,
+                       'period_end': obj.period_end, 'voucher_number': obj.budget_no,
+                       'description': obj.description, 'budget_type': budget_type}
 
-        budget_sub = {'Subid': obj2.id, 'department': obj2.budget_dept,
-                      'debit_account': budget_item, 'amount': obj2.amount}
+        budget_sub = {'Subid': obj2.id, 'department': department,
+                      'debit_account': DebitAccount, 'amount': obj2.amount}
+
+        # print('TOTAL DATA GENERATED : ')
 
         data = {
             'budget_main': budget_main,
@@ -1293,6 +1299,38 @@ class CreateBudget(View):
             'total_sum': total_sum,
         }
         return JsonResponse(data)
+
+
+def budgetedit(request, pk=None):
+    print('AM HERE NOW!!!')
+    if pk:
+        print('PK RETRIEVED : ', pk)
+
+        total_sum = BudgetDetails.objects.filter(
+            budget_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        print('TOTAL SUM GENERATED CREATED : ', total_sum)
+
+        budgetmain = BudgetMain.objects.get(id=pk)
+        print('TOTAL SUM ')
+        budget_number1 = BudgetMain.objects.get(id=pk).budget_no
+        print('budget NO. RETRIEVED : ', budget_number1)
+
+        budgetitems = BudgetDetails.objects.filter(budget_main_id_id=pk)
+
+        staff_name = EmployeeProfile.objects.all()
+        cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
+        expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
+        note_acct = ChartNoteItems.objects.all()
+        # journal_list = GeneralLedger.objects.filter(
+        #     ref_number=expense_number1, journal_type='CDJ')
+        # print('EXPENSE JORNAL ITEMS : ', journal_list)
+
+        args = {'budgetmain': budgetmain, 'budgetitems': budgetitems, 'staff_name': staff_name,
+                'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
+                'total_sum': total_sum, }
+        return render(request, 'account/budget.html', args)
+    else:
+        return render(request, 'account/budget_list.html')
 
 
 # SETUP BUDGET DEPARTMENT
@@ -2380,15 +2418,15 @@ def financialacctchart(request):
 def financialbudget(request):
     companyinfo = CompanyRegistration.objects.filter(
         id=1).values('name', 'address', 'phone')
-    budget = BudgetDetails.objects.all().values()
-    subcategory = ChartSubCategory.objects.all()
+    budgetdept = BudgetDepartment.objects.all()
+    budget = BudgetDetails.objects.all()
     acctitems = ChartNoteItems.objects.all()
 
-    print('MAIN CATEGORY : ', category)
-    print('SUB CATEGORY : ', subcategory)
+    print('BUDGET RECORDS : ', budget)
+    print('BUDGET DEPT : ', budgetdept)
     print('ACCOUNT ITEMS : ', acctitems)
     print('COMPANY INFO : ', companyinfo)
 
-    args = {'category': category, 'subcategory': subcategory,
+    args = {'budgetdept': budgetdept, 'budget': budget,
             'acctitems': acctitems, 'companyinfo': companyinfo}
     return render(request, 'smartsetup/financialbudgetanalysis.html', args)

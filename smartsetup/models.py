@@ -382,6 +382,15 @@ class ExpenseMain(models.Model):
         return self.voucher_number
 
 
+class BudgetDepartment(models.Model):
+    department_code = models.CharField(max_length=256, default='')
+    department_name = models.CharField(max_length=256, default='')
+    description = models.TextField(max_length=256, default='')
+
+    def __str__(self):
+        return self.department_name
+
+
 class ExpenseDetails(models.Model):
     quantity = models.IntegerField(default=1)
     description = models.CharField(max_length=256, default='')
@@ -393,15 +402,8 @@ class ExpenseDetails(models.Model):
     amount = models.FloatField(default=0)
     expense_main_id = models.ForeignKey(
         ExpenseMain, on_delete=models.CASCADE, default=0)
-
-
-class BudgetDepartment(models.Model):
-    department_code = models.CharField(max_length=256, default='')
-    department_name = models.CharField(max_length=256, default='')
-    description = models.TextField(max_length=256, default='')
-
-    def __str__(self):
-        return self.department_name
+    budget_dept = models.ForeignKey(
+        BudgetDepartment, on_delete=models.SET_NULL, null=True)
 
 
 class BudgetMain(models.Model):
@@ -413,7 +415,7 @@ class BudgetMain(models.Model):
 
 BUDGET_TYPES = (
     ('Revenue', 'Revenue'),
-    ('Expenditure', 'Expenditure'),
+    ('Expense', 'Expense'),
 )
 
 

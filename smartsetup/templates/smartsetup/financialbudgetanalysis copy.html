@@ -1,0 +1,640 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<!-- Content Header (Page header)
+<section class="content-header">
+</section> -->
+
+<!-- Main content -->
+<section class="invoice">
+    <!-- info row -->
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+            <address>
+                {% for cat in companyinfo.all %}
+                <strong>{{cat.name}}</strong><br>
+                {{cat.address}}<br>
+                {% endfor %}
+            </address>
+        </div>
+
+
+    </div>
+    <!-- /.row -->
+    <!-- title row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-globe"></i> <b>Budget Analysis Report</b>
+                <small class="pull-right">
+                    <p id="date">Date: </p>
+                </small>
+            </h2>
+        </div>
+        <!-- /.col -->
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>Budget</th>
+                                <th>JAN</th>
+                                <th>FEB</th>
+                                <th>MAR</th>
+                                <th>APR</th>
+                                <th>MAY</th>
+                                <th>JUN</th>
+                                <th>JUL</th>
+                                <th>AUG</th>
+                                <th>SEP</th>
+                                <th>OCT</th>
+                                <th>NOV</th>
+                                <th>DEC</th>
+                                <th>TOTAL</th>
+                                <th>BAL.</th>
+                            </tr>
+                        </thead>
+
+                    </table>
+                    <!-- <div class="box"> -->
+                    <!-- <div class="box-body"> -->
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+
+                        <thead>
+                            <tr>
+                                <th>CHAIRMAN</th>
+                                <th>2001</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense1</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense2</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense3</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- </div> -->
+                    <!-- /.box-body -->
+                    <!-- </div> -->
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <thead>
+                            <tr>
+                                <th>PERM. SEC.</th>
+                                <th>2002</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense1</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense2</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense3</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <thead>
+                            <tr>
+                                <th>DIRECTOR</th>
+                                <th>2003</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense1</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense2</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense3</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+                    <table class="table table-striped">
+                        <col width="290">
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+
+                        <thead>
+                            <tr>
+                                <th>FINANCE</th>
+                                <th>2004</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense1</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense2</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Expense3</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                                <td><b>0.00</b></td>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+                </div>
+                <!-- /.box-body -->
+
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+
+
+    <!-- jjjjj -->
+    <!-- this row will not appear when printing -->
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <a href="#" class="btn btn-success pull-right" onclick="window.print();"><i class="fa fa-print"></i> Print
+                Report</a>
+
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+    n = new Date();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    document.getElementById("date").innerHTML = d + "/" + m + "/" + y;
+</script>
+
+{% endblock %}
