@@ -204,7 +204,7 @@ urlpatterns = [
     path('budgetdept/(<int:pk>)/detail',
          views.BudgetDeptDetail.as_view(), name='budgetdept_detail'),
     path('budgetdept/(<int:pk>)/delete',
-         views.SetupUnitDelete.as_view(), name='budgetdept_delete'),
+         views.BudgetDeptDelete.as_view(), name='budgetdept_delete'),
 
 
     # GENERAL JOURNAL POSTINGS

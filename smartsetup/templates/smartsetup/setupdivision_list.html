@@ -46,7 +46,10 @@
                 {{ cat.division_name }}
               </td>
               <td>
-                {{ cat.division }}
+                {{ cat.department }}
+              </td>
+              <td>
+                {{ cat.description }}
               </td>
               <td style="text-align:left">
                 <a href="{% url 'setupdivision' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |

@@ -16,7 +16,7 @@
 
         </div>
         <div class="col-xs-2">
-            <a href="{% url 'setupdivision' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
+            <a href="{% url 'setupunit' pk=0 %}"><button type="button" class="btn btn-primary btn-md">New
                     Unit</button></a>
         </div>
     </div>
@@ -40,19 +40,22 @@
 
                     </thead>
                     <tbody>
-                        {% for cat in setupdivision.all %}
+                        {% for cat in setupunit.all %}
                         <tr>
                             <td>
-                                {{ cat.division_name }}
+                                {{ cat.unit_name }}
                             </td>
                             <td>
                                 {{ cat.division }}
                             </td>
+                            <td>
+                                {{ cat.description }}
+                            </td>
                             <td style="text-align:left">
-                                <a href="{% url 'setupdivision' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
-                                <a href="{% url 'setupdivision_detail' cat.pk %}" class="fa fa-eye text-blue"> View</a>
+                                <a href="{% url 'setupunit' cat.pk %}" class="fa fa-edit text-green"> Edit</a> |
+                                <a href="{% url 'setupunit_detail' cat.pk %}" class="fa fa-eye text-blue"> View</a>
                                 |
-                                <a href="{% url 'setupdivision_delete' cat.pk %}" class="fa fa-trash text-red">
+                                <a href="{% url 'setupunit_delete' cat.pk %}" class="fa fa-trash text-red">
                                     Delete</a>
                             </td>
                         </tr>

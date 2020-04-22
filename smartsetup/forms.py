@@ -192,7 +192,7 @@ class ExpenseDetailsForm(forms.ModelForm):
         model = ExpenseDetails
         fields = (
             'quantity', 'description', 'expense_account', 'unit_price',
-            'amount', 'expense_main_id'
+            'amount', 'budget_dept', 'expense_main_id'
         )
 
     def __init__(self, *args, **kwargs):

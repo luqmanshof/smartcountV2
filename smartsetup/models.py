@@ -39,10 +39,10 @@ class SetupDepartment(models.Model):
 
 
 class SetupDivision(models.Model):
-    division_name = models.CharField(max_length=256)
-    description = models.TextField(blank=True)
+    division_name = models.CharField(max_length=256, verbose_name='section')
     department = models.ForeignKey(
         SetupDepartment, on_delete=models.SET_NULL, null=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.division_name
@@ -50,9 +50,9 @@ class SetupDivision(models.Model):
 
 class SetupUnit(models.Model):
     unit_name = models.CharField(max_length=256)
-    description = models.TextField(blank=True)
     division = models.ForeignKey(
-        SetupDivision, on_delete=models.SET_NULL, null=True)
+        SetupDivision, on_delete=models.SET_NULL, null=True, verbose_name='section')
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.unit_name

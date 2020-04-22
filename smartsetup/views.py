@@ -193,7 +193,7 @@ class SetupDepartmentDelete(generic.DeleteView):
 @login_required
 def setupdivision_list(request, pk=None):
     setupdivision = SetupDivision.objects
-    fieldCols = ['Division Name', 'Description']
+    fieldCols = ['Section', 'Department', 'Description']
     args = {'fieldCols': fieldCols, 'setupdivision': setupdivision}
     return render(request, 'smartsetup/setupdivision_list.html', args)
 
@@ -217,7 +217,7 @@ def setupdivision(request, pk=None):
         else:
             form = SetupDivisionForm()
 
-        args = {'form': form, 'title': 'Setup Department'}
+        args = {'form': form, 'title': 'Setup Section'}
         return render(request, 'smartsetup/form.html', args)
 
 
@@ -236,7 +236,7 @@ class SetupDivisionDelete(generic.DeleteView):
 @login_required
 def setupunit_list(request, pk=None):
     setupunit = SetupUnit.objects
-    fieldCols = ['Unit Name', 'Description']
+    fieldCols = ['Unit Name', 'Section', 'Description']
     args = {'fieldCols': fieldCols, 'setupunit': setupunit}
     return render(request, 'smartsetup/setupunit_list.html', args)
 
@@ -1014,7 +1014,7 @@ class ExpenseClass(ListView):
             category_code_id='3').values_list('id', flat=True)
         context['note_acct_cash'] = ChartNoteItems.objects.filter(
             sub_category__in=ids)
-        # context['note_acct'] = ChartNoteItems.objects.all()
+        context['department'] = BudgetDepartment.objects.all()
 
         return context
 
@@ -1030,6 +1030,7 @@ def expenseedit(request, pk=None):
 
         expensemain = ExpenseMain.objects.get(id=pk)
         expense_number1 = ExpenseMain.objects.get(id=pk).voucher_number
+        # acct_cash = ExpenseMain.objects.get(id=pk).voucher_number
         print('EXPENSE NO. RETRIEVED : ', expense_number1)
 
         expenseitems = ExpenseDetails.objects.filter(expense_main_id_id=pk)
@@ -1038,13 +1039,24 @@ def expenseedit(request, pk=None):
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
         expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
         note_acct = ChartNoteItems.objects.all()
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='3').values_list('id', flat=True)
+        note_acct_cash = ChartNoteItems.objects.filter(
+            sub_category__in=ids)
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='2').values_list('id', flat=True)
+        note_acct_exp = ChartNoteItems.objects.filter(
+            sub_category__in=ids)
+
+        department = BudgetDepartment.objects.all()
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='CDJ')
         print('EXPENSE JORNAL ITEMS : ', journal_list)
 
         args = {'expensemain': expensemain, 'expenseitems': expenseitems, 'staff_name': staff_name,
                 'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
-                'total_sum': total_sum, 'journal_list': journal_list, }
+                'note_acct_cash': note_acct_cash, 'department': department, 'total_sum': total_sum,
+                'journal_list': journal_list, 'note_acct_exp': note_acct_exp, }
         return render(request, 'account/expense.html', args)
     else:
         return render(request, 'account/expense_list.html')
@@ -1067,6 +1079,7 @@ class CreateExpense(View):
         credit_account1 = request.GET.get('Debit_account', None)
         amount1 = request.GET.get('amount', None)
         total_amount = float(request.GET.get('total_amount', 0))
+        budget_dept2 = request.GET.get('budget_dept', None)
 
         amount2 = float(amount1.replace(',', ''))
         print('EXPENSE CASH ACCOUNT ID: ', cash_account1)
@@ -1084,8 +1097,11 @@ class CreateExpense(View):
         expenseCategoryID = ChartSubCategory.objects.get(
             id=expense_account1).category_code_id
         DebitAccount = ChartNoteItems.objects.get(id=Debit_account1).item_name
+        departmentName = BudgetDepartment.objects.get(
+            id=budget_dept2).department_name
 
         if pkMain:
+            print('VOUCHER NUMBER', voucher_number1)
             print('UPDATE EXISTING RECORD ')
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
@@ -1131,12 +1147,13 @@ class CreateExpense(View):
                 credit=total_amount + amount2,
                 main_Trans=True
             )
-
+        print('ADD EXPENSE DETAILS RECORD ')
         obj2 = ExpenseDetails.objects.create(
             description=description,
             expense_account=ChartSubCategory.objects.get(id=expense_account1),
             Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
             amount=amount2,
+            budget_dept=BudgetDepartment.objects.get(id=budget_dept2),
             expense_main_id_id=obj.id,
         )
 
@@ -1162,7 +1179,7 @@ class CreateExpense(View):
                         'voucher_number': obj.voucher_number, 'bill_to': obj.description}
 
         expense_sub = {'Subid': obj2.id, 'description': obj2.description, 'expense_account': expenseAccount,
-                       'debit_account': DebitAccount, 'amount': obj2.amount}
+                       'debit_account': DebitAccount, 'amount': obj2.amount, 'budget_dept': departmentName}
 
         data = {
             'expense_main': expense_main,

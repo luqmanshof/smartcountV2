@@ -221,7 +221,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" hidden>
                                 <label for="">Expense Category</label>
                                 <select name="expense_account" id="expense" class="form-control" required>
                                     <option></option>
@@ -232,6 +232,17 @@
                                 </select>
                                 <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                             </div>
+
+                            <div class="form-group">
+                                <label for="">Department</label>
+                                <select name="budget_dept" id="budget_dept" class="form-control" required>
+                                    <option></option>
+                                    {% for item in department %}
+                                    <option value="{{ item.id }}">{{ item.department_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
                             <button class="btn btn-primary form-control" type="submit">ADD RECORD</button>
                             <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
                         </form>
@@ -249,6 +260,7 @@
                     <div class="box-body">
                         <table id="itemTable" class="table table-striped">
                             <tr>
+                                <th>Department</th>
                                 <th>Description</th>
                                 <th>Category</th>
                                 <th>Expense Account</th>
@@ -258,6 +270,7 @@
                             {% if expenseitems %}
                             {% for item in expenseitems %}
                             <tr id="item-{{item.id}}">
+                                <td class="itemDepartment itemData" name="department">{{item.budget_dept}}</td>
                                 <td class="itemDescription itemData" name="description">{{item.description}}</td>
                                 <td class="itemExpenseAcct itemData" name="expense">{{item.expense_account}}</td>
                                 <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account}}</td>
@@ -366,7 +379,7 @@
 {% block javascript %}
 <script>
     var CategoryCode, CategoryCode2, CategoryId;
-    var trans_date, amountInput, debit_acct, credit_acct, clientID, totalAmount;
+    var trans_date, amountInput, debit_acct, credit_acct, clientID, totalAmount, budget_dept;
     $(document).ready(function () {
 
         $("select#cash").change(function () {
@@ -391,6 +404,13 @@
             console.log(credit_acct)
             get_cat_item(credit_acct, 'expense');
         });
+
+        //budget_dept
+        $("select#budget_dept").change(function () {
+            budget_dept = $(this).children("option:selected").val();
+        });
+
+
 
         $("select#client").change(function () {
             clientID = $(this).children("option:selected").val();
@@ -443,6 +463,7 @@
             debit_acct = $('#debit_account').children("option:selected").val();
             credit_acct = $('#credit_account').children("option:selected").val();
             clientID = $('#client').children("option:selected").val();
+            budget_dept = $(this).children("option:selected").val();
 
         }
         else {
@@ -551,6 +572,7 @@
                     'credit_account': credit_acct,
                     'amount': amountInput,
                     'total_amount': totalAmount,
+                    'budget_dept': budget_dept,
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -564,7 +586,8 @@
                         rec = data.expense_sub
                         $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
-                    <td class="itemDescription" name="description">${rec.description}</td>
+                    <td class="itemDescription" name="department">${rec.budget_dept}</td>
+                    '<td class="itemDescription" name="description">${rec.description}</td>
                     '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
                     '<td class="itemAmount" name="amount">${rec.amount}</td>

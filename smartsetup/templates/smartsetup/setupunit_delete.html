@@ -22,12 +22,12 @@
         <br>
 
         <button type="submit" class="btn btn-danger">Delete</button>
-        <a href="{% url 'setupdivision_list' %}" class="btn btn-primary">Back to List</a>
+        <a href="{% url 'setupunit_list' %}" class="btn btn-primary">Back to List</a>
       </form>
 
     </div>
     <div class="container col-md-6">
-      <h2><a href="{% url 'setupdivision_detail' setupdivision.id %}">{{ setupdivision.division_name }}</a></h2>
+      <h2><a href="{% url 'setupunit_detail' setupunit.id %}">{{ setupunit.unit_name }}</a></h2>
     </div>
   </div>
 
