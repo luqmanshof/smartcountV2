@@ -1014,7 +1014,8 @@ class ExpenseClass(ListView):
             category_code_id='3').values_list('id', flat=True)
         context['note_acct_cash'] = ChartNoteItems.objects.filter(
             sub_category__in=ids)
-        context['department'] = BudgetDepartment.objects.all()
+        context['department'] = BudgetDetails.objects.all()
+        # context['department'] = BudgetDepartment.objects.all()
 
         return context
 
@@ -1033,7 +1034,9 @@ def expenseedit(request, pk=None):
         # acct_cash = ExpenseMain.objects.get(id=pk).voucher_number
         print('EXPENSE NO. RETRIEVED : ', expense_number1)
 
-        expenseitems = ExpenseDetails.objects.filter(expense_main_id_id=pk)
+        expenseitems = ExpenseDetails.objects.filter(
+            expense_main_id_id=pk).values('budget_dept__budget_dept__department_name',
+                                          'description', 'expense_account__sub_category_name', 'Debit_account__item_name', 'amount', 'id')
 
         staff_name = EmployeeProfile.objects.all()
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
@@ -1048,7 +1051,9 @@ def expenseedit(request, pk=None):
         note_acct_exp = ChartNoteItems.objects.filter(
             sub_category__in=ids)
 
-        department = BudgetDepartment.objects.all()
+        # department = BudgetDepartment.objects.all()
+        department = BudgetDetails.objects.all()
+
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='CDJ')
         print('EXPENSE JORNAL ITEMS : ', journal_list)
@@ -1097,8 +1102,10 @@ class CreateExpense(View):
         expenseCategoryID = ChartSubCategory.objects.get(
             id=expense_account1).category_code_id
         DebitAccount = ChartNoteItems.objects.get(id=Debit_account1).item_name
+        departmentId = BudgetDetails.objects.get(
+            id=budget_dept2).budget_dept_id
         departmentName = BudgetDepartment.objects.get(
-            id=budget_dept2).department_name
+            id=departmentId).department_name
 
         if pkMain:
             print('VOUCHER NUMBER', voucher_number1)
@@ -1153,7 +1160,7 @@ class CreateExpense(View):
             expense_account=ChartSubCategory.objects.get(id=expense_account1),
             Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
             amount=amount2,
-            budget_dept=BudgetDepartment.objects.get(id=budget_dept2),
+            budget_dept=BudgetDetails.objects.get(id=budget_dept2),
             expense_main_id_id=obj.id,
         )
 
@@ -1334,17 +1341,27 @@ def budgetedit(request, pk=None):
 
         budgetitems = BudgetDetails.objects.filter(budget_main_id_id=pk)
 
-        staff_name = EmployeeProfile.objects.all()
+        # staff_name = EmployeeProfile.objects.all()
+        department = BudgetDepartment.objects.all()
+
+        revenue_acct = ChartSubCategory.objects.filter(category_code_id='1')
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='1').values_list('id', flat=True)
+        note_acct_rev = ChartNoteItems.objects.filter(sub_category__in=ids)
+
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
         expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
-        note_acct = ChartNoteItems.objects.all()
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='2').values_list('id', flat=True)
+        note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids)
+        # note_acct = ChartNoteItems.objects.all()
         # journal_list = GeneralLedger.objects.filter(
         #     ref_number=expense_number1, journal_type='CDJ')
         # print('EXPENSE JORNAL ITEMS : ', journal_list)
 
-        args = {'budgetmain': budgetmain, 'budgetitems': budgetitems, 'staff_name': staff_name,
-                'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
-                'total_sum': total_sum, }
+        args = {'budgetmain': budgetmain, 'budgetitems': budgetitems, 'department': department,
+                'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct_exp': note_acct_exp,
+                'revenue_acct': revenue_acct, 'note_acct_rev': note_acct_rev, 'total_sum': total_sum, }
         return render(request, 'account/budget.html', args)
     else:
         return render(request, 'account/budget_list.html')
@@ -2436,14 +2453,25 @@ def financialbudget(request):
     companyinfo = CompanyRegistration.objects.filter(
         id=1).values('name', 'address', 'phone')
     budgetdept = BudgetDepartment.objects.all()
-    budget = BudgetDetails.objects.all()
-    acctitems = ChartNoteItems.objects.all()
 
-    print('BUDGET RECORDS : ', budget)
-    print('BUDGET DEPT : ', budgetdept)
-    print('ACCOUNT ITEMS : ', acctitems)
+    # expenses = ExpenseDetails.objects.all().values(
+    #     'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(debit=Sum('debit'))
+
+    # budget = BudgetDetails.objects.all()
+    # acctitems = ChartNoteItems.objects.all()
+
+    # budget2 = BudgetDetails.objects.raw('''SELECT * from smartsetup_BudgetDetails
+    #                INNER JOIN smartsetup_GeneralLedger
+    #                ON smartsetup_BudgetDetails.budget_item_id = smartsetup_GeneralLedger.account_id_id
+    #                ''')
+
+    # print('BUDGET RECORDS : ', budget)
+    # print('ACCOUNT ITEMS : ', acctitems)
     print('COMPANY INFO : ', companyinfo)
+    print('BUDGET DEPT : ', budgetdept)
 
-    args = {'budgetdept': budgetdept, 'budget': budget,
-            'acctitems': acctitems, 'companyinfo': companyinfo}
+    args = {'budgetdept': budgetdept, 'companyinfo': companyinfo}
+
+    # args = {'budgetdept': budgetdept, 'budget': budget, 'budget2': budget2,
+    #         'acctitems': acctitems, 'companyinfo': companyinfo}
     return render(request, 'smartsetup/financialbudgetanalysis.html', args)

@@ -357,30 +357,6 @@ class ReceiptDetails(models.Model):
     receipt_main_id = models.ForeignKey(
         ReceiptMain, on_delete=models.CASCADE, default=0)
 
-# Expense Models
-
-
-class ExpenseMain(models.Model):
-    date = models.DateTimeField(
-        default=timezone.now, blank=True, verbose_name='Expense Date/Time')
-    voucher_number = models.PositiveIntegerField(default=100)
-    payee = models.ForeignKey(
-        EmployeeProfile, on_delete=models.SET_NULL, null=True, blank=True, default='')
-    description = models.TextField(default='')
-    cash_account = models.ForeignKey(
-        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Cash Account')
-    credit_account = models.ForeignKey(
-        ChartNoteItems, on_delete=models.SET_NULL, null=True)
-    pay_mode = models.CharField(
-        max_length=50, choices=PAYMENT_MODES, default='Cheque')
-    total_amount = models.FloatField(default=0)
-
-    # class Meta:
-    #     get_latest_by = 'receipt_number'
-
-    def __str__(self):
-        return self.voucher_number
-
 
 class BudgetDepartment(models.Model):
     department_code = models.CharField(max_length=256, default='')
@@ -389,21 +365,6 @@ class BudgetDepartment(models.Model):
 
     def __str__(self):
         return self.department_name
-
-
-class ExpenseDetails(models.Model):
-    quantity = models.IntegerField(default=1)
-    description = models.CharField(max_length=256, default='')
-    expense_account = models.ForeignKey(
-        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Expense Category')
-    Debit_account = models.ForeignKey(
-        ChartNoteItems, on_delete=models.SET_NULL, null=True)
-    unit_price = models.FloatField(default=0)
-    amount = models.FloatField(default=0)
-    expense_main_id = models.ForeignKey(
-        ExpenseMain, on_delete=models.CASCADE, default=0)
-    budget_dept = models.ForeignKey(
-        BudgetDepartment, on_delete=models.SET_NULL, null=True)
 
 
 class BudgetMain(models.Model):
@@ -432,6 +393,45 @@ class BudgetDetails(models.Model):
     amount = models.FloatField(default=0)
     budget_main_id = models.ForeignKey(
         BudgetMain, on_delete=models.CASCADE, default=0)
+
+
+# Expense Models
+
+class ExpenseMain(models.Model):
+    date = models.DateTimeField(
+        default=timezone.now, blank=True, verbose_name='Expense Date/Time')
+    voucher_number = models.PositiveIntegerField(default=100)
+    payee = models.ForeignKey(
+        EmployeeProfile, on_delete=models.SET_NULL, null=True, blank=True, default='')
+    description = models.TextField(default='')
+    cash_account = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Cash Account')
+    credit_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    pay_mode = models.CharField(
+        max_length=50, choices=PAYMENT_MODES, default='Cheque')
+    total_amount = models.FloatField(default=0)
+
+    # class Meta:
+    #     get_latest_by = 'receipt_number'
+
+    def __str__(self):
+        return self.voucher_number
+
+
+class ExpenseDetails(models.Model):
+    quantity = models.IntegerField(default=1)
+    description = models.CharField(max_length=256, default='')
+    expense_account = models.ForeignKey(
+        ChartSubCategory, on_delete=models.SET_NULL, null=True, verbose_name='Expense Category')
+    Debit_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True)
+    unit_price = models.FloatField(default=0)
+    amount = models.FloatField(default=0)
+    expense_main_id = models.ForeignKey(
+        ExpenseMain, on_delete=models.CASCADE, default=0)
+    budget_dept = models.ForeignKey(
+        BudgetDetails, on_delete=models.SET_NULL, null=True)
 
 
 class GJournalMain(models.Model):

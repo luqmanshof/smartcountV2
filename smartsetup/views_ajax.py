@@ -194,6 +194,45 @@ class DeleteBudget(View):
         return JsonResponse(data)
 
 
+class DeleteBudgetItem(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+        pk = request.GET.get('mainID', None)
+        voucher_number = request.GET.get('voucher_number', None)
+        description = BudgetDetails.objects.get(id=id1).description
+        amount = BudgetDetails.objects.get(id=id1).amount
+
+        BudgetDetails.objects.get(id=id1).delete()
+        # GeneralLedger.objects.get(debit=amount, description=description,
+        #                           ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
+
+        # get the sum of the receipt detail values
+        total_sum = BudgetDetails.objects.filter(
+            budget_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
+
+        total_amount = float(total_sum)
+
+        # obj3 = GeneralLedger.objects.get(
+        #     ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
+        # obj3.credit = total_amount
+        # obj3.save()
+
+        # Get the cash receipt journal items
+        # journal_list = serializers.serialize(
+        #     "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='CDJ'))
+
+        # journal_list1 = GeneralLedger.objects.filter(
+        #     ref_number=voucher_number, journal_type='CDJ')
+        # print('JOURNAL LIST RETRIEVED : ', journal_list1)
+
+        data = {
+            'deleted': True,
+            'total_sum': total_sum,
+            # 'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
 class DeleteExpense(View):
     def get(self, request):
         id1 = request.GET.get('id', None)
@@ -292,6 +331,24 @@ class DeleteGJournalItem(View):
             'deleted': True,
             'total_debit': total_debit,
             'total_credit': total_credit,
+            'journal_list': journal_list,
+        }
+        return JsonResponse(data)
+
+
+class UnpostGJournal(View):
+    def get(self, request):
+        voucher_number = request.GET.get('voucher_number', None)
+
+        GeneralLedger.objects.filter(
+            ref_number=voucher_number, journal_type='GJ').delete()
+
+        # Get the posted journal items
+        journal_list = serializers.serialize(
+            "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='GJ'))
+
+        data = {
+            'deleted': True,
             'journal_list': journal_list,
         }
         return JsonResponse(data)

@@ -234,11 +234,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="">Department</label>
+                                <label for="">Budget Department</label>
                                 <select name="budget_dept" id="budget_dept" class="form-control" required>
                                     <option></option>
                                     {% for item in department %}
-                                    <option value="{{ item.id }}">{{ item.department_name }}</option>
+                                    <option value="{{ item.id }}">{{ item.budget_dept }} - {{ item.budget_item }}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -270,10 +271,12 @@
                             {% if expenseitems %}
                             {% for item in expenseitems %}
                             <tr id="item-{{item.id}}">
-                                <td class="itemDepartment itemData" name="department">{{item.budget_dept}}</td>
+                                <td class="itemDepartment itemData" name="department">
+                                    {{item.budget_dept__budget_dept__department_name}}</td>
                                 <td class="itemDescription itemData" name="description">{{item.description}}</td>
-                                <td class="itemExpenseAcct itemData" name="expense">{{item.expense_account}}</td>
-                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account}}</td>
+                                <td class="itemExpenseAcct itemData" name="expense">
+                                    {{item.expense_account__sub_category_name}}</td>
+                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account__item_name}}</td>
                                 <td class="itemAmount itemData" style="text-align: right;" name="amount">
                                     {{item.amount|floatformat:2}}
                                 </td>
@@ -592,10 +595,10 @@
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
                     '<td class="itemAmount" name="amount">${rec.amount}</td>
                     '<td align="center">
-                        <button class="btn btn-success form-control" onClick="editItem(${rec.id})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                     </td>
                     <td align="center">
-                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.id})">DELETE</button>
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.Subid})">DELETE</button>
                     </td>
                 </tr>
               `);

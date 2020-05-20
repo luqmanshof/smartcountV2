@@ -194,6 +194,8 @@ urlpatterns = [
     path('budget_edit/(<int:pk>)', views.budgetedit, name='budget_edit'),
     path('ajax/budget/delete/',  views_ajax.DeleteBudget.as_view(),
          name='budget_delete'),
+    path('ajax/budget_items/delete/',  views_ajax.DeleteBudgetItem.as_view(),
+         name='budget_ajax_delete'),
 
 
     # BUDGET DEPARTMENT SETUP
@@ -214,6 +216,8 @@ urlpatterns = [
          name='gjournal_ajax_create'),
     path('gjournal_edit/(<int:pk>)', views.gjournaledit, name='gjournal_edit'),
     path('gjournal_post', views.gjournal_post, name='gjournal_post'),
+    path('gjournal_unpost', views_ajax.UnpostGJournal,
+         name='gjournal_ajax_unpost'),
     path('ajax/gjournal_items/delete/',  views_ajax.DeleteGJournalItem.as_view(),
          name='gjournal_ajax_delete'),
     path('ajax/gjournal/delete/',  views_ajax.DeleteGJournal.as_view(),
