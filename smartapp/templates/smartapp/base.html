@@ -68,6 +68,11 @@
       .noPrint {
         display: none;
       }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
     }
 
     /*
@@ -207,7 +212,9 @@
                 </ul>
               </li>
 
-              <li class="treeview">
+              <li><a href="{% url 'admin:index' %}"><i class="fa fa-gears text-gray"></i> Manage User(s) Account</a>
+              </li>
+              <!-- <li class="treeview">
                 <a href="#">
                   <i class="fa fa-gears text-gray"></i> Manage Users Account
                   <span class="pull-right-container">
@@ -219,9 +226,8 @@
                   </li>
                   <li><a href="{% url 'admin:index' %}"><i class="fa fa-gears text-gray"></i> Manage User Roles</a></li>
                   <li><a href="{% url 'list_signup' %}"><i class="fa fa-gears text-gray"></i> View User Account</a></li>
-                  <!-- @*<li><a href="@Url.Action("Index","SetupBizClasses", new { area = "AppSetup" })"><i class="fa fa-gears text-gray"></i> Setup Roles</a></li>*@ -->
                 </ul>
-              </li>
+              </li> -->
             </ul>
           </li>
           <li class="treeview">

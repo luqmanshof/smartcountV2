@@ -249,6 +249,8 @@ urlpatterns = [
     path('purchase_post', views.purchase_post, name='purchase_post'),
     path('ajax/purchase_items/delete/',  views_ajax.DeletePurchaseItem.as_view(),
          name='purchase_ajax_delete'),
+    path('ajax/purchase/delete/',  views_ajax.DeletePurchase.as_view(),
+         name='purchase_delete'),
 
 
     # VIEW JOURNALS

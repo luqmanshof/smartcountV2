@@ -492,6 +492,22 @@ def populate_purchaseitems(request):
         return redirect('/')
 
 
+class DeletePurchase(View):
+    def get(self, request):
+        id1 = request.GET.get('id', None)
+
+        ref_number1 = PurchaseMain.objects.get(id=id1).voucher_number
+        GeneralLedger.objects.filter(
+            ref_number=ref_number1, journal_type='PJ').delete()
+
+        PurchaseMain.objects.get(id=id1).delete()
+
+        data = {
+            'deleted': True
+        }
+        return JsonResponse(data)
+
+
 class DeletePurchaseItem(View):
     def get(self, request):
         id1 = request.GET.get('id', None)

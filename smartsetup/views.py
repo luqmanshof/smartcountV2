@@ -35,15 +35,19 @@ import json as simplejson
 @login_required
 def signup(request):
     if request.method == 'POST':
+        print("AM HERE!!!")
         form = SignUpForm(request.POST)
         # userprofile_form = UserProfileForm(request.POST)
+        print("FIRST HERE!!!")
         if form.is_valid():
             # form.save()
             # username = form.cleaned_data.get('username')
             # raw_password = form.cleaned_data.get('password')
             # user = authenticate(username=username, password=raw_password)
+            print("SECOND HERE!!!")
             user = form.save()
             # user = userprofile_form.save( instance=request.user.userprofile)
+            print("AM ALSO HERE!!!")
 
             # login immediately with the created user profile
             # login(request, user, backend='django.contrib.auth.backends.ModelBackend')
@@ -2454,8 +2458,9 @@ def financialbudget(request):
         id=1).values('name', 'address', 'phone')
     budgetdept = BudgetDepartment.objects.all()
 
-    # expenses = ExpenseDetails.objects.all().values(
-    #     'sub_category', 'sub_category__sub_category_name', 'sub_category__notes').annotate(debit=Sum('debit'))
+    expenses = ExpenseDetails.objects.all().values(
+        'Debit_account', 'budget_dept__budget_item__item_name', 'budget_dept__budget_dept__department_code',
+        'budget_dept__budget_dept__department_name', 'budget_dept__amount').annotate(amount=Sum('amount'))
 
     # budget = BudgetDetails.objects.all()
     # acctitems = ChartNoteItems.objects.all()
@@ -2464,13 +2469,14 @@ def financialbudget(request):
     #                INNER JOIN smartsetup_GeneralLedger
     #                ON smartsetup_BudgetDetails.budget_item_id = smartsetup_GeneralLedger.account_id_id
     #                ''')
-
+    print('EXTRACTED BUDGET RECORDS :', expenses)
     # print('BUDGET RECORDS : ', budget)
     # print('ACCOUNT ITEMS : ', acctitems)
     print('COMPANY INFO : ', companyinfo)
     print('BUDGET DEPT : ', budgetdept)
 
-    args = {'budgetdept': budgetdept, 'companyinfo': companyinfo}
+    args = {'budgetdept': budgetdept,
+            'companyinfo': companyinfo, 'expenses': expenses}
 
     # args = {'budgetdept': budgetdept, 'budget': budget, 'budget2': budget2,
     #         'acctitems': acctitems, 'companyinfo': companyinfo}
