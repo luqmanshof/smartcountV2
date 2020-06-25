@@ -194,7 +194,7 @@ class SetupClients(models.Model):
     website = models.URLField(default='', blank=True)
     phone = models.CharField(max_length=100, default='')
     account_officer = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, default='')
+        User, on_delete=models.SET_NULL, blank=True, null=True)
     email = models.CharField(max_length=200, default='', blank=True)
 
     def __str__(self):
@@ -326,7 +326,7 @@ class ReceiptMain(models.Model):
     date = models.DateTimeField(verbose_name='Receipt Date/Time')
     receipt_number = models.PositiveIntegerField(default=100)
     client = models.ForeignKey(SetupClients, on_delete=models.SET_NULL,
-                               null=True, blank=True, verbose_name='Client Name', default=1)
+                               null=True, blank=True, verbose_name='Client Name')
     bill_to = models.CharField(
         max_length=256, default='', blank=True, verbose_name='Received from')
     description = models.TextField(default='')

@@ -155,11 +155,13 @@
                                 </div>
                                 <div class="col-xs-6 col-md-2 form-group">
                                     <label for="">Debit</label>
-                                    <input class="form-control" type="text" name="debit_amount" placeholder="0.00">
+                                    <input class="form-control" type="text" name="debit_amount" id="debit_amount"
+                                        placeholder="0.00">
                                 </div>
                                 <div class="col-xs-6 col-md-2 form-group">
                                     <label for="">Credit</label>
-                                    <input class="form-control" type="text" name="credit_amount" placeholder="0.00">
+                                    <input class="form-control" type="text" name="credit_amount" id="credit_amount"
+                                        placeholder="0.00">
                                 </div>
                                 <div class="col-xs-6 col-md-1">
                                     <label for=""></label>
@@ -341,6 +343,25 @@
         $("select#credit_account_edit").change(function () {
             credit_acct = $(this).children("option:selected").val();
             get_cat_item(credit_acct, 'expense_acct_edit');
+        });
+
+        $("#debit_amount").focusout(function () {
+            $(this).val(ReplaceNumberWithCommas($(this).val()));
+        });
+
+        $("#debit_amount").keydown(function (e) {
+            if (e.keyCode == 13) {
+                $(this).val(ReplaceNumberWithCommas($(this).val()));
+            }
+        });
+        $("#credit_amount").focusout(function () {
+            $(this).val(ReplaceNumberWithCommas($(this).val()));
+        });
+
+        $("#credit_amount").keydown(function (e) {
+            if (e.keyCode == 13) {
+                $(this).val(ReplaceNumberWithCommas($(this).val()));
+            }
         });
 
         //DATE PICKER

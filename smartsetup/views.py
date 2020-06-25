@@ -793,8 +793,18 @@ class ReceiptClass(ListView):
             category_code_id='3')
         context['revenue_acct'] = ChartSubCategory.objects.filter(
             category_code_id='1')
-        context['note_acct'] = ChartNoteItems.objects.all()
-
+        # context['note_acct'] = ChartNoteItems.objects.all()
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='3').values_list('id', flat=True)
+        context['note_acct_cash'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='1').values_list('id', flat=True)
+        context['note_acct'] = ChartNoteItems.objects.filter(
+            sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        # context['note_acct'] = ChartNoteItems.objects.all().values(
+        #     'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         return context
 
 
@@ -839,7 +849,7 @@ class CreateReceipt(View):
     # print('receipt AJAX VIEW ')
     def get(self, request):
         print('receipt def AJAX VIEW ')
-
+        ClientID = ""
         receipt_date1 = request.GET.get('receipt_date', None)
         receipt_number1 = request.GET.get('receipt_number', None)
         client_name1 = request.GET.get('client_name', None)
@@ -857,7 +867,11 @@ class CreateReceipt(View):
         print('RECEIPT CASH ACCOUNT ID: ', cash_account1)
         print('RECEIPT CLIENT ID: ', client_name1)
 
-        ClientID = SetupClients.objects.get(id=client_name1).id
+        if client_name1:
+            ClientID = SetupClients.objects.get(id=client_name1).id
+        else:
+            pass
+
         cashAccount = ChartSubCategory.objects.get(
             id=cash_account1).sub_category_name
         cashCategoryID = ChartSubCategory.objects.get(
@@ -898,15 +912,28 @@ class CreateReceipt(View):
             # print('BEFORE : ',receipt_date1)
 
             # print('RETRIEVED CLIENT INFO:  ' , ClientID)
+            if ClientID:
+                obj = ReceiptMain.objects.create(
+                    date=receipt_date1,
+                    receipt_number=receipt_number1,
+                    client_id=ClientID,
+                    bill_to=bill_to1,
+                    cash_account=ChartSubCategory.objects.get(
+                        id=cash_account1),
+                    Debit_account=ChartNoteItems.objects.get(
+                        id=Debit_account1),
+                )
+            else:
+                obj = ReceiptMain.objects.create(
+                    date=receipt_date1,
+                    receipt_number=receipt_number1,
+                    bill_to=bill_to1,
+                    cash_account=ChartSubCategory.objects.get(
+                        id=cash_account1),
+                    Debit_account=ChartNoteItems.objects.get(
+                        id=Debit_account1),
+                )
 
-            obj = ReceiptMain.objects.create(
-                date=receipt_date1,
-                receipt_number=receipt_number1,
-                client_id=ClientID,
-                bill_to=bill_to1,
-                cash_account=ChartSubCategory.objects.get(id=cash_account1),
-                Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
-            )
             # print('AFTER RETRIEVED')
             obj3 = GeneralLedger.objects.create(
                 date=receipt_date1,
@@ -1012,12 +1039,12 @@ class ExpenseClass(ListView):
         ids = ChartSubCategory.objects.filter(
             category_code_id='2').values_list('id', flat=True)
         print('AM HERE NOW!!! :', ids)
-        context['note_acct_exp'] = ChartNoteItems.objects.filter(
-            sub_category__in=ids)
+        context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         ids = ChartSubCategory.objects.filter(
             category_code_id='3').values_list('id', flat=True)
-        context['note_acct_cash'] = ChartNoteItems.objects.filter(
-            sub_category__in=ids)
+        context['note_acct_cash'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         context['department'] = BudgetDetails.objects.all()
         # context['department'] = BudgetDepartment.objects.all()
 
@@ -1052,8 +1079,8 @@ def expenseedit(request, pk=None):
             sub_category__in=ids)
         ids = ChartSubCategory.objects.filter(
             category_code_id='2').values_list('id', flat=True)
-        note_acct_exp = ChartNoteItems.objects.filter(
-            sub_category__in=ids)
+        note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         # department = BudgetDepartment.objects.all()
         department = BudgetDetails.objects.all()
@@ -1228,9 +1255,9 @@ class BudgetClass(ListView):
         context['expense_acct'] = ChartSubCategory.objects.filter(
             category_code_id='2')
         ids = ChartSubCategory.objects.filter(
-            category_code_id='2').values_list('id', flat=True)
-        context['note_acct_exp'] = ChartNoteItems.objects.filter(
-            sub_category__in=ids)
+            Q(category_code_id='1') | Q(category_code_id='2') | Q(category_code_id='3') | Q(category_code_id='4')).values_list('id', flat=True)
+        context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         context['revenue_acct'] = ChartSubCategory.objects.filter(
             category_code_id='1')
@@ -1356,8 +1383,9 @@ def budgetedit(request, pk=None):
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
         expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
         ids = ChartSubCategory.objects.filter(
-            category_code_id='2').values_list('id', flat=True)
-        note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids)
+            Q(category_code_id='1') | Q(category_code_id='2') | Q(category_code_id='3') | Q(category_code_id='4')).values_list('id', flat=True)
+        note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         # note_acct = ChartNoteItems.objects.all()
         # journal_list = GeneralLedger.objects.filter(
         #     ref_number=expense_number1, journal_type='CDJ')

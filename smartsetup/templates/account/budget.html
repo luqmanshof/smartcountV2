@@ -42,7 +42,7 @@
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Period Start</label>
                             <input class="form-control" value="{{budgetmain.period_start}}" type="datetime-local"
-                                onload="" name="period_start" id="date" required>
+                                onload="" name="period_start" id="period_start" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{budgetmain.id}}" />
                         </div>
@@ -50,7 +50,7 @@
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Period End</label>
                             <input class="form-control" value="{{budgetmain.period_end}}" type="datetime-local"
-                                onload="" name="period_end" id="date" required>
+                                onload="" name="period_end" id="period_end" required>
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
@@ -155,17 +155,21 @@
                                 <select name="credit_account" id="credit_account" class="form-control" required>
                                     <option></option>
                                     {% for item in note_acct_exp %}
-                                    <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                    <option value="{{ item.id }}">{{ item.item_name }} |
+                                        {{item.sub_category__sub_category_name}} |
+                                        {{item.sub_category__category_code__category_name}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="">Amount</label>
-                                <input class="form-control" type="text" name="amount" placeholder="0.00" required>
+                                <input class="form-control" type="text" name="amount" id="amount" placeholder="0.00"
+                                    required>
                             </div>
                             <div class="form-group" hidden>
                                 <label for="">Expense Category</label>
-                                <select name="expense_account" id="expense" class="form-control" required>
+                                <select name="expense_account" id="expense" class="form-control">
                                     <option></option>
                                     {% for item in expense_acct %}
                                     <option value="{{ item.id }}">{{ item.sub_category_name }}
@@ -350,6 +354,17 @@
             departmentID = $(this).children("option:selected").val();
             console.log(departmentID)
         });
+
+        $("#amount").focusout(function () {
+            $(this).val(ReplaceNumberWithCommas($(this).val()));
+        });
+
+        $("#amount").keydown(function (e) {
+            if (e.keyCode == 13) {
+                $(this).val(ReplaceNumberWithCommas($(this).val()));
+            }
+        });
+
 
 
         //DATE PICKER
@@ -639,6 +654,7 @@
 
         }
     }
+
 
 </script>
 
