@@ -30,6 +30,7 @@ from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 from django.core import serializers
 import json as simplejson
+import datetime
 
 
 @login_required
@@ -770,7 +771,7 @@ class SetupVendorsDelete(generic.DeleteView):
 @login_required
 def receipt_list(request, pk=None):
     receipts = ReceiptMain.objects.all()
-    fieldCols = ['Receipt No.', 'Date / Time', 'Issued To']
+    fieldCols = ['Receipt No.', 'Date', 'Issued To']
     args = {'fieldCols': fieldCols, 'receipts': receipts}
     return render(request, 'account/receipt_list.html', args)
 
@@ -832,14 +833,23 @@ def receiptedit(request, pk=None):
         client_name = SetupClients.objects.all()
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
         revenue_acct = ChartSubCategory.objects.filter(category_code_id='1')
-        note_acct = ChartNoteItems.objects.all()
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='3').values_list('id', flat=True)
+        note_acct_cash = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        ids = ChartSubCategory.objects.filter(
+            category_code_id='1').values_list('id', flat=True)
+        note_acct = ChartNoteItems.objects.filter(sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        # note_acct = ChartNoteItems.objects.all()
         journal_list = GeneralLedger.objects.filter(
             ref_number=receipt_number1, journal_type='CRJ')
         print('RECEIPT JORNAL ITEMS : ', journal_list)
+        trans_date = receiptmain.date.strftime("%Y-%m-%d")
 
         args = {'receiptmain': receiptmain, 'receiptitems': receiptitems, 'client_name': client_name,
-                'cash_acct': cash_acct, 'revenue_acct': revenue_acct, 'note_acct': note_acct,
-                'total_sum': total_sum, 'journal_list': journal_list, }
+                'cash_acct': cash_acct, 'revenue_acct': revenue_acct, 'note_acct_cash': note_acct_cash, 'note_acct': note_acct,
+                'total_sum': total_sum, 'journal_list': journal_list, 'trans_date': trans_date}
         return render(request, 'account/receipt.html', args)
     else:
         return render(request, 'account/receipt_list.html')
@@ -1076,7 +1086,8 @@ def expenseedit(request, pk=None):
         ids = ChartSubCategory.objects.filter(
             category_code_id='3').values_list('id', flat=True)
         note_acct_cash = ChartNoteItems.objects.filter(
-            sub_category__in=ids)
+            sub_category__in=ids).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         ids = ChartSubCategory.objects.filter(
             category_code_id='2').values_list('id', flat=True)
         note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids).values(
@@ -1088,11 +1099,12 @@ def expenseedit(request, pk=None):
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='CDJ')
         print('EXPENSE JORNAL ITEMS : ', journal_list)
+        trans_date = expensemain.date.strftime("%Y-%m-%d")
 
         args = {'expensemain': expensemain, 'expenseitems': expenseitems, 'staff_name': staff_name,
                 'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
                 'note_acct_cash': note_acct_cash, 'department': department, 'total_sum': total_sum,
-                'journal_list': journal_list, 'note_acct_exp': note_acct_exp, }
+                'journal_list': journal_list, 'note_acct_exp': note_acct_exp, 'trans_date': trans_date}
         return render(request, 'account/expense.html', args)
     else:
         return render(request, 'account/expense_list.html')
@@ -1271,6 +1283,51 @@ class BudgetClass(ListView):
         return context
 
 
+class BudgetSaveMain(View):
+    print('BUDGET SAVE MAIN')
+
+    def get(self, request):
+        print('BUDGET SAVE MAIN VIEW ')
+
+        period_start = request.GET.get('period_start', None)
+        period_end = request.GET.get('period_end', None)
+        voucher_number1 = request.GET.get('voucher_number', None)
+        pkMain = request.GET.get('mainID', None)
+        description = request.GET.get('description', None)
+
+        if pkMain:
+            print('UPDATE EXISTING RECORD ')
+            obj = BudgetMain.objects.get(id=pkMain)
+            obj.period_start = period_start
+            obj.period_end = period_end
+            obj.budget_no = voucher_number1
+            obj.description = description
+            obj.save()
+
+        else:
+            print('ENTER NEW BUDGET RECORD ')
+
+            obj = BudgetMain.objects.create(
+                period_start=period_start,
+                period_end=period_end,
+                budget_no=voucher_number1,
+                description=description,
+            )
+
+        budget_main = {'Mainid': obj.id, 'period_start': obj.period_start,
+                       'period_end': obj.period_end, 'voucher_number': obj.budget_no,
+                       'description': obj.description}
+
+        total_sum = BudgetDetails.objects.filter(
+            budget_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
+
+        data = {
+            'budget_main': budget_main,
+            'total_sum': total_sum,
+        }
+        return JsonResponse(data)
+
+
 class CreateBudget(View):
     # print('receipt AJAX VIEW ')
     def get(self, request):
@@ -1390,10 +1447,14 @@ def budgetedit(request, pk=None):
         # journal_list = GeneralLedger.objects.filter(
         #     ref_number=expense_number1, journal_type='CDJ')
         # print('EXPENSE JORNAL ITEMS : ', journal_list)
+        period_start = budgetmain.period_start.strftime("%Y-%m-%d")
+        period_end = budgetmain.period_end.strftime("%Y-%m-%d")
+        # period_end = budgetmain.period_end.strftime("%Y-%m-%dT%H:%M:%S")
 
         args = {'budgetmain': budgetmain, 'budgetitems': budgetitems, 'department': department,
                 'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct_exp': note_acct_exp,
-                'revenue_acct': revenue_acct, 'note_acct_rev': note_acct_rev, 'total_sum': total_sum, }
+                'revenue_acct': revenue_acct, 'note_acct_rev': note_acct_rev, 'total_sum': total_sum,
+                'period_start': period_start, 'period_end': period_end}
         return render(request, 'account/budget.html', args)
     else:
         return render(request, 'account/budget_list.html')

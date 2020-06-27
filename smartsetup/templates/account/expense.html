@@ -38,8 +38,8 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Voucher Date</label>
-                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
-                                name="trans_date" id="date" required>
+                            <input class="form-control" value="{{trans_date}}" type="date" onload="" name="trans_date"
+                                id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{expensemain.id}}" />
                         </div>
@@ -120,8 +120,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Voucher Date</label>
-                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
-                                required>
+                            <input class="form-control" type="date" onload="" name="trans_date" id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId" />
                         </div>
 
@@ -468,11 +467,14 @@
             return this;
         }
 
-        $(function () {
-            // Handler for .ready() called.
-            $('input[type="datetime-local"]').setNow();
+        if (!$('#main-id').val()) {
+            $(function () {
+                // Handler for .ready() called.
+                $('input[type="datetime-local"]').setNow();
 
-        });
+            });
+        }
+
 
         //DEFAULTS
         if ($('#main-id').val()) {

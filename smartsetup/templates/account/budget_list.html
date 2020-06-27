@@ -43,10 +43,10 @@
                         {% for cat in budget.all %}
                         <tr>
                             <td>
-                                {{ cat.period_start }}
+                                {{ cat.period_start|date:"d/m/Y" }}
                             </td>
                             <td>
-                                {{ cat.period_end }}
+                                {{ cat.period_end|date:"d/m/Y" }}
                             </td>
                             <td>
                                 {{ cat.description }}

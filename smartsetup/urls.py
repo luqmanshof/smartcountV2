@@ -196,7 +196,8 @@ urlpatterns = [
          name='budget_delete'),
     path('ajax/budget_items/delete/',  views_ajax.DeleteBudgetItem.as_view(),
          name='budget_ajax_delete'),
-
+    path('budget_savemain', views.BudgetSaveMain.as_view(),
+         name='budget_savemain'),     # SAVE MAIN FORM RECORDS
 
     # BUDGET DEPARTMENT SETUP
     path('budgetdept_list', views.budgetdept_list,
@@ -251,6 +252,8 @@ urlpatterns = [
          name='purchase_ajax_delete'),
     path('ajax/purchase/delete/',  views_ajax.DeletePurchase.as_view(),
          name='purchase_delete'),
+
+
 
 
     # VIEW JOURNALS

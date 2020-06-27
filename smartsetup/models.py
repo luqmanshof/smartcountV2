@@ -368,8 +368,8 @@ class BudgetDepartment(models.Model):
 
 
 class BudgetMain(models.Model):
-    period_start = models.DateTimeField(default=timezone.now, blank=True)
-    period_end = models.DateTimeField(default=timezone.now, blank=True)
+    period_start = models.DateTimeField(blank=True, null=True)
+    period_end = models.DateTimeField(blank=True, null=True)
     description = models.CharField(max_length=256, default='')
     budget_no = models.IntegerField(default=0)
 

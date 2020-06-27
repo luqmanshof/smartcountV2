@@ -394,11 +394,12 @@
             return this;
         }
 
-        $(function () {
-            // Handler for .ready() called.
-            $('input[type="datetime-local"]').setNow();
+        if (!$('#main-id').val()) {
+            $(function () {
+                $('input[type="datetime-local"]').setNow();
+            });
+        }
 
-        });
 
         //DEFAULTS
         if ($('#main-id').val()) {
@@ -492,7 +493,7 @@
 
         //alert("Stage 3...");
         if (totalDebit == '' && totalCredit == '') {
-            alert("ABORTED!!! No opening balance item to be posted.");
+            alert("ABORTED!!! No opening balance item(s) to be posted.");
         }
         else if (!(totalDebit == totalCredit) && !(totalDebit == '' && totalCredit == '')) {
             alert("ABORTED!!! The total debit value must be equal to total credit value.");

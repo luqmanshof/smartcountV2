@@ -43,7 +43,7 @@
                         {% for cat in expenses.all %}
                         <tr>
                             <td>
-                                {{ cat.date }}
+                                {{ cat.date|date:"d/m/Y" }}
                             </td>
                             <td>
                                 {{ cat.voucher_number }}
