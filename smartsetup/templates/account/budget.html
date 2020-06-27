@@ -3,9 +3,7 @@
 
 
 {% block content %}
-<style>
 
-</style>
 <section class="content-header">
 
     <div class="col-xs-12 col-md-2">
@@ -119,7 +117,6 @@
     </div>
 
 
-
     <div class="box box-primary col-xs-12">
 
         <div class="box-body">
@@ -187,45 +184,55 @@
             </div>
 
             <div class="col-md-8">
+
                 <h4>...</h4>
                 <!-- /.box -->
-                <div class="box">
-                    <div class="box-body">
-                        <table id="itemTable" class="table table-striped">
-                            <tr>
-                                <!-- <th>Description</th> -->
-                                <th>Department</th>
-                                <th>Budget Account</th>
-                                <th colspan="3">Amount</th>
-                            </tr>
-                            <!-- table_list -->
-                            {% if budgetitems %}
-                            {% for item in budgetitems %}
-                            <tr id="item-{{item.id}}">
-                                <td class="itemDescription itemData" name="description">{{item.budget_dept}}</td>
-                                <td class="itemCreditAcct itemData" name="credit">{{item.budget_item}}</td>
-                                <td class="itemAmount itemData" style="text-align: right;" name="amount">
-                                    {{item.amount|floatformat:2}}
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
-                                        data-toggle="modal" data-target="#myModal">EDIT</button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-danger form-control"
-                                        onClick="deleteItem({{item.id}})">DELETE</button>
-                                </td>
-                            </tr>
+                <div class="row" id="divList">
+                    <div class="col-xs-12">
+                        <div class="box">
+                            <div class="box-body">
+                                <table id="itemTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            {% for fieldCol in fieldCols %}
+                                            <th>{{ fieldCol }}</th>
+                                            {% endfor %}
+                                            <th>Event/Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- table_list -->
+                                        {% if budgetitems %}
+                                        {% for item in budgetitems %}
+                                        <tr id="item-{{item.id}}">
+                                            <td class="itemDescription itemData" name="description">{{item.budget_dept}}
+                                            </td>
+                                            <td class="itemCreditAcct itemData" name="credit">{{item.budget_item}}</td>
+                                            <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                                {{item.amount|floatformat:2}}
+                                            </td>
+                                            <td align="center">
+                                                <button class="btn btn-success form-control"
+                                                    onClick="editItem({{item.id}})" data-toggle="modal"
+                                                    data-target="#myModal">EDIT</button>
 
-                            {% endfor %}
-                            {% else %}
-                            <!-- No Item Listed -->
-                            {% endif %}
-                        </table>
+                                                <button class="btn btn-danger form-control"
+                                                    onClick="deleteItem({{item.id}})">DELETE</button>
+                                            </td>
+                                        </tr>
+
+                                        {% endfor %}
+                                        {% else %}
+                                        <!-- No Item Listed -->
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
                     </div>
-                    <!-- /.box-body -->
                 </div>
-
                 <label for="">...</label>
 
                 <!-- /.box -->
@@ -240,6 +247,7 @@
     </div>
 
 </section>
+
 
 <!-- Edit Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -320,8 +328,10 @@
             "scrollCollapse": true,
         }); 
         */
-
-        $('.dataTables_length').addClass('bs-select');
+        $('#itemTable').DataTable({
+            "pageLength": 5,
+        });
+        // $('.dataTables_length').addClass('bs-select');
 
         $("select#cash").change(function () {
             CategoryCode = $(this).children("option:selected").val();
@@ -685,4 +695,4 @@
     }
 </script>
 
-{% endblock %}
+{% endblock javascript %}

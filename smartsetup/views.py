@@ -1451,11 +1451,19 @@ def budgetedit(request, pk=None):
         period_end = budgetmain.period_end.strftime("%Y-%m-%d")
         # period_end = budgetmain.period_end.strftime("%Y-%m-%dT%H:%M:%S")
 
+        fieldCols = ['Department', 'Budget Account', 'Amount']
+
         args = {'budgetmain': budgetmain, 'budgetitems': budgetitems, 'department': department,
                 'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct_exp': note_acct_exp,
                 'revenue_acct': revenue_acct, 'note_acct_rev': note_acct_rev, 'total_sum': total_sum,
-                'period_start': period_start, 'period_end': period_end}
+                'period_start': period_start, 'period_end': period_end, 'fieldCols': fieldCols}
         return render(request, 'account/budget.html', args)
+
+        # budget = BudgetMain.objects
+        # args = {'fieldCols': fieldCols,
+        #         'budget': budget, 'budgetitems': budgetitems}
+        # return render(request, 'account/budgetB.html', args)
+
     else:
         return render(request, 'account/budget_list.html')
 

@@ -1,0 +1,310 @@
+{% extends 'smartapp/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+<section class="content-header">
+
+    <div class="col-xs-12 col-md-2">
+        <label>
+            BUDGET MODULE
+            <small>...</small>
+        </label>
+    </div>
+
+    <div class="col-xs-12 col-md-10 pull-right">
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <a href="{% url 'budget_list' %}"><button class="btn btn-danger form-control"
+                    type="submit">EXIT</button></a>
+        </div>
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <button class="btn btn-primary form-control" onClick="saveMain()">SAVE</button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section>
+
+    <div class="box box-primary col-xs-12 col-md-12">
+        <div class="box-body" style="padding-top:15px">
+            <div class="col-xs-12">
+                <form id="receiptMainForm">
+                    {% if budgetmain %}
+                    <div class="row">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period Start</label>
+                            <input class="form-control" value="{{period_start}}" type="date" onload=""
+                                name="period_start" id="period_start" required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId"
+                                value="{{budgetmain.id}}" />
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Period End</label>
+                            <input class="form-control" value="{{period_end}}" type="date" onload="" name="period_end"
+                                id="period_end" required>
+                        </div>
+
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Ref. No.</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{budgetmain.budget_no}}" required disabled>
+
+                        </div>
+
+                        <div class="col-xs-12 col-md-4 form-group">
+                            <label for="">Description:</label>
+                            <input class="form-control" type="text" name="description" id="description" placeholder=""
+                                value="{{budgetmain.description}}" required>
+                        </div>
+                        <div class="col-xs-3 col-md-2 form-group">
+                            <label for="">Total Amount:</label>
+                            <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                placeholder="0.00" value="{{total_sum}}" required disabled>
+                        </div>
+
+
+                    </div>
+
+                    {% else %}
+                    <div class="row">
+                        <div class="col-xs-4 col-md-2 form-group">
+                            <label for="">Period Start</label>
+                            <input class="form-control" type="date" onload="" name="period_start" id="start_date"
+                                required>
+                            <input class="form-control" id="main-id" type="hidden" name="mainId" />
+                        </div>
+
+                        <div class="col-xs-4 col-md-2 form-group">
+                            <label for="">Period End</label>
+                            <input class="form-control" type="date" onload="" name="period_end" id="end_date" required>
+                        </div>
+
+                        <div class="col-xs-4 col-md-2 form-group">
+                            <label for="">Ref. No.</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{max_budget.max_val|add:1}}" required disabled>
+                        </div>
+
+                        <div class="col-xs-6 col-md-4 form-group">
+                            <label for="">Description:</label>
+                            <input class="form-control" type="text" name="description" id="description" placeholder=""
+                                required>
+                        </div>
+
+                        <div class="col-xs-3 col-md-2 form-group">
+                            <label for="">Total Amount:</label>
+                            <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                placeholder="0.00" value="{{total_sum}}" required disabled>
+                        </div>
+
+                    </div>
+
+
+                    {% endif %}
+
+                    <!-- <button type="submit">Save</button> -->
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="box box-primary col-xs-12">
+
+        <div class="box-body">
+            <div class="col-md-4">
+                <h4>Enter Details</h4>
+                <!-- /.box -->
+                <div class="box">
+                    <div class="box-body">
+                        <!-- <h3>ADD USER</h3> -->
+                        <form id="receiptSub" action="">
+                            <div class="form-group">
+                                <label for="">Budget Type</label>
+                                <select name="budget_type" id="BType" class="form-control">
+                                    <option value="Expense" selected>Expense</option>
+                                    <option value="Revenue">Revenue</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+
+                                <label for="">Department</label>
+                                <select name="department_name" id="department" class="form-control" required>
+                                    <option></option>
+                                    {% for item in department %}
+                                    <option value="{{ item.id }}">{{ item.department_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Budget Account</label>
+                                <select name="credit_account" id="credit_account" class="form-control" required>
+                                    <option></option>
+                                    {% for item in note_acct_exp %}
+                                    <option value="{{ item.id }}">{{ item.item_name }} |
+                                        {{item.sub_category__sub_category_name}} |
+                                        {{item.sub_category__category_code__category_name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Amount</label>
+                                <input class="form-control" type="text" name="amount" id="amount" placeholder="0.00"
+                                    required>
+                            </div>
+                            <div class="form-group" hidden>
+                                <label for="">Expense Category</label>
+                                <select name="expense_account" id="expense" class="form-control">
+                                    <option></option>
+                                    {% for item in expense_acct %}
+                                    <option value="{{ item.id }}">{{ item.sub_category_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
+                            </div>
+                            <button class="btn btn-primary form-control" type="submit">ADD RECORD</button>
+                            <!-- <button class="btn btn-primary form-control" type="submit">SUBMIT</button> -->
+                        </form>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-8">
+
+                <h4>...</h4>
+                <!-- /.box -->
+
+                <div class="row" id="divList">
+                    <div class="col-xs-12">
+                        <!-- /.box -->
+                        <div class="box">
+                            <div class="box-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            {% for fieldCol in fieldCols %}
+                                            <th>{{ fieldCol }}</th>
+                                            {% endfor %}
+                                            <th>Event/Actions</th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        {% if budgetitems %}
+                                        {% for cat in budgetitems %}
+                                        <tr id="item-{{item.id}}">
+                                            <td class="itemDescription itemData" name="description">{{cat.budget_dept}}
+                                            </td>
+                                            <td class="itemCreditAcct itemData" name="credit">{{cat.budget_item}}</td>
+                                            <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                                {{cat.amount|floatformat:2}}
+                                            </td>
+
+                                            <td align="center">
+                                                <button class="btn btn-success form-control"
+                                                    onClick="editItem({{cat.id}})" data-toggle="modal"
+                                                    data-target="#myModal">EDIT</button>
+                                                <button class="btn btn-danger form-control"
+                                                    onClick="deleteItem({{cat.id}})">DELETE</button>
+                                            </td>
+                                            <!-- <td style="text-align:left">
+                                                <a href="{% url 'budget_edit' pk=cat.pk  %}"
+                                                    class="fa fa-edit text-green"> Edit</a>
+                                                |
+                                                <a href="#" class="fa fa-trash text-red"
+                                                    onclick="deleteItem({{cat.id}})"> Delete</a>
+
+                                            </td> -->
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                        <!-- No Item Listed -->
+                                        {% endif %}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+
+                <label for="">...</label>
+
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+
+        </div>
+
+
+
+
+    </div>
+
+</section>
+
+
+<br>
+
+{% endblock %}
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+
+        //table vertical scrolling
+
+        $('#example1').DataTable({
+            "pageLength": 5,
+        });
+    }
+    )
+
+
+    function deleteItem(id) {
+        console.log(id);
+        var action = confirm("Are you sure you want to delete this Budget records?");
+        if (action != false) {
+            $.ajax({
+                url: '{% url "budget_delete" %}',
+                data: {
+                    'id': id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.deleted) {
+                        console.log(id);
+                        $("#itemTable #item-" + id).remove();
+                    }
+
+                    setTimeout(function () {// wait for 5 secs(2)
+                        location.reload(); // then reload the page.(3)
+                    }, 2000);
+
+                }
+            });
+        }
+    }
+
+
+</script>
+
+{% endblock javascript %}
