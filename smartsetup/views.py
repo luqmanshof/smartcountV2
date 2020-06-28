@@ -2557,22 +2557,68 @@ def financialbudget(request):
 
     expenses = ExpenseDetails.objects.all().values(
         'Debit_account', 'budget_dept__budget_item__item_name', 'budget_dept__budget_dept__department_code',
-        'budget_dept__budget_dept__department_name', 'budget_dept__amount').annotate(amount=Sum('amount'))
+        'budget_dept__budget_dept__department_name', 'budget_dept__amount').annotate(
+            amount=Sum('amount')).filter(expense_main_id__date__range=["2020-06-01", "2020-06-30"])
 
-    # budget = BudgetDetails.objects.all()
+    budget = BudgetDetails.objects.all()
+
+    print('BUDGET ITEM NAME', budget)
     # acctitems = ChartNoteItems.objects.all()
 
     # budget2 = BudgetDetails.objects.raw('''SELECT * from smartsetup_BudgetDetails
     #                INNER JOIN smartsetup_GeneralLedger
     #                ON smartsetup_BudgetDetails.budget_item_id = smartsetup_GeneralLedger.account_id_id
     #                ''')
+
+    budget_dict = {}
+    budget_records = []
+
+    for budgetItem in budget:
+        department = budgetItem.budget_dept
+        budgetName = budgetItem.budget_item
+        budgetAmount = budgetItem.amount
+        # print('DEPARTMENT CODE :', departmentCode)
+        Jan = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-01-01", "2019-01-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Feb = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-02-01", "2019-02-28"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Mar = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-03-01", "2019-03-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Apr = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-04-01", "2019-04-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        May = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-05-01", "2019-05-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Jun = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2020-06-01", "2020-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Jul = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-07-01", "2019-07-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Aug = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-08-01", "2019-08-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Sep = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-09-01", "2019-09-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Oct = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-10-01", "2019-10-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Nov = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-11-01", "2019-11-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Dec = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+                                            "2019-12-01", "2019-12-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        Total = float(Jan) + float(Feb) + float(Mar) + \
+            float(Apr) + float(May) + float(Jun)
+        Bal = float(budgetAmount) - float(Total)
+        record = {'department': department, 'budgetName': budgetName, 'budgetAmount': budgetAmount,
+                  'Jan': Jan, 'Feb': Feb, 'Mar': Mar, 'Apr': Apr, 'May': May, 'Jun': Jun, 'Jul': Jul,
+                  'Aug': Aug, 'Sep': Sep, 'Oct': Oct, 'Nov': Nov, 'Dec': Dec, 'Total': Total, 'Bal': Bal
+                  }
+        print('BUDGET ARRAYYY :', record)
+        budget_records.append(record)
+    print('BUDGET ARRAYSSS :', budget_records)
+    # budget_records['budgetItems'] = budget_records
+
     print('EXTRACTED BUDGET RECORDS :', expenses)
-    # print('BUDGET RECORDS : ', budget)
-    # print('ACCOUNT ITEMS : ', acctitems)
     print('COMPANY INFO : ', companyinfo)
     print('BUDGET DEPT : ', budgetdept)
 
-    args = {'budgetdept': budgetdept,
+    args = {'budgetdept': budgetdept, 'budgetItems': budget_records,
             'companyinfo': companyinfo, 'expenses': expenses}
 
     # args = {'budgetdept': budgetdept, 'budget': budget, 'budget2': budget2,

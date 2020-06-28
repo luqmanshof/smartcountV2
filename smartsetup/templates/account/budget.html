@@ -1,5 +1,6 @@
 {% extends 'smartapp/base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 
 {% block content %}
@@ -210,7 +211,7 @@
                                             </td>
                                             <td class="itemCreditAcct itemData" name="credit">{{item.budget_item}}</td>
                                             <td class="itemAmount itemData" style="text-align: right;" name="amount">
-                                                {{item.amount|floatformat:2}}
+                                                {{item.amount|floatformat:2|intcomma}}
                                             </td>
                                             <td align="center">
                                                 <button class="btn btn-success form-control"

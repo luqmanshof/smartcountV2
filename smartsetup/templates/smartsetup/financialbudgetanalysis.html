@@ -110,28 +110,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for act in expenses.all %}
-                            {% if act.budget_dept__budget_dept__department_code == cat.department_code %}
+                            {% for act in budgetItems %}
+                            {% if act.department|stringformat:"s" == cat.department_name|stringformat:"s" %}
                             <tr style="text-align: right;">
                                 <td></td>
                                 <!-- <td></td> -->
                                 <!-- <td>{{sub.budget_item}}</td> -->
-                                <td>{{act.budget_dept__budget_item__item_name}}</td>
-                                <td>{{act.budget_dept__amount|floatformat:2|intcomma}}</td>
-                                <td>{{act.amount|floatformat:2|intcomma}}</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
+                                <td>{{act.budgetName}}</td>
+                                <td>{{act.budgetAmount|floatformat:2|intcomma}}</td>
+                                <td>{{act.Jan|floatformat:2|intcomma}}</td>
+                                <td>{{act.Feb|floatformat:2|intcomma}}</td>
+                                <td>{{act.Mar|floatformat:2|intcomma}}</td>
+                                <td>{{act.Apr|floatformat:2|intcomma}}</td>
+                                <td>{{act.May|floatformat:2|intcomma}}</td>
+                                <td>{{act.Jun|floatformat:2|intcomma}}</td>
+                                <td>{{act.Jul|floatformat:2|intcomma}}</td>
+                                <td>{{act.Aug|floatformat:2|intcomma}}</td>
+                                <td>{{act.Sep|floatformat:2|intcomma}}</td>
+                                <td>{{act.Oct|floatformat:2|intcomma}}</td>
+                                <td>{{act.Nov|floatformat:2|intcomma}}</td>
+                                <td>{{act.Dec|floatformat:2|intcomma}}</td>
+                                <td>{{act.Total|floatformat:2|intcomma}}</td>
+                                <td>{{act.Bal|floatformat:2|intcomma}}</td>
                             </tr>
                             {% endif %}
                             {% endfor %}
