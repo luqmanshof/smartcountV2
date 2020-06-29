@@ -2604,7 +2604,9 @@ def financialbudget(request):
         Dec = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
                                             "2019-12-01", "2019-12-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
         Total = float(Jan) + float(Feb) + float(Mar) + \
-            float(Apr) + float(May) + float(Jun)
+            float(Apr) + float(May) + float(Jun) + \
+            float(Jul) + float(Aug) + float(Sep) + \
+            float(Oct) + float(Nov) + float(Dec)
         Bal = float(budgetAmount) - float(Total)
 
         record = {'department': department, 'budgetName': budgetName, 'budgetAmount': budgetAmount,
