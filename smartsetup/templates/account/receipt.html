@@ -431,19 +431,21 @@
       hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
       minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
       seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
-
-      formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+      alert("STEP 2")
+      //      formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+      formattedDateTime = date + "/" + month + "/" + year;
 
       if (onlyBlank === true && $(this).val()) {
         return this;
       }
-
+      alert(formattedDateTime);
       $(this).val(formattedDateTime);
 
       return this;
     }
 
     if (!$('#main-id').val()) {
+      alert("STEP 1")
       $(function () {
         // Handler for .ready() called.
         $('input[type="datetime-local"]').setNow();

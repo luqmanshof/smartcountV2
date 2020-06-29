@@ -2570,8 +2570,9 @@ def financialbudget(request):
     #                ON smartsetup_BudgetDetails.budget_item_id = smartsetup_GeneralLedger.account_id_id
     #                ''')
 
-    budget_dict = {}
+    # budget_dict = {}
     budget_records = []
+    budget_totals = []
 
     for budgetItem in budget:
         department = budgetItem.budget_dept
@@ -2589,7 +2590,7 @@ def financialbudget(request):
         May = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
                                             "2019-05-01", "2019-05-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
         Jun = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
-                                            "2020-06-01", "2020-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+                                            "2019-06-01", "2019-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
         Jul = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
                                             "2019-07-01", "2019-07-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
         Aug = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
@@ -2605,20 +2606,63 @@ def financialbudget(request):
         Total = float(Jan) + float(Feb) + float(Mar) + \
             float(Apr) + float(May) + float(Jun)
         Bal = float(budgetAmount) - float(Total)
+
         record = {'department': department, 'budgetName': budgetName, 'budgetAmount': budgetAmount,
                   'Jan': Jan, 'Feb': Feb, 'Mar': Mar, 'Apr': Apr, 'May': May, 'Jun': Jun, 'Jul': Jul,
                   'Aug': Aug, 'Sep': Sep, 'Oct': Oct, 'Nov': Nov, 'Dec': Dec, 'Total': Total, 'Bal': Bal
                   }
+
         print('BUDGET ARRAYYY :', record)
         budget_records.append(record)
-    print('BUDGET ARRAYSSS :', budget_records)
+
+    for budget in budgetdept:
+        department = budget.department_name
+        budget_sum = BudgetDetails.objects.filter(
+            budget_dept=budget.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        JanSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-01-01", "2019-01-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        FebSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-02-01", "2019-02-28"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        MarSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-03-01", "2019-03-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        AprSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-04-01", "2019-04-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        MaySum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-05-01", "2019-05-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        JunSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-06-01", "2019-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        JulSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-07-01", "2019-07-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        AugSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-08-01", "2019-08-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        SepSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-09-01", "2019-09-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        OctSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-10-01", "2019-10-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        NovSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-11-01", "2019-11-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        DecSum = ExpenseDetails.objects.filter(budget_dept__budget_dept__department_name=department, expense_main_id__date__range=[
+            "2019-12-01", "2019-12-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+        TotalSum = float(JanSum) + float(FebSum) + float(MarSum) + float(AprSum) + float(MaySum) + float(JunSum) + \
+            float(JulSum) + float(AugSum) + float(SepSum) + \
+            float(OctSum) + float(NovSum) + float(DecSum)
+        BalSum = float(budget_sum) - float(TotalSum)
+
+        recordTotal = {'department': department, 'budget_sum': budget_sum, 'JanSum': JanSum, 'FebSum': FebSum,
+                       'MarSum': MarSum, 'AprSum': AprSum, 'MaySum': MaySum, 'JunSum': JunSum, 'JulSum': JulSum, 'AugSum': AugSum,
+                       'SepSum': SepSum, 'OctSum': OctSum, 'NovSum': NovSum, 'DecSum': DecSum, 'TotalSum': TotalSum, 'BalSum': BalSum
+                       }
+        print('BUDGET SUM ARRAYYY :', recordTotal)
+        budget_totals.append(recordTotal)
+
+    # print('BUDGET ARRAYSSS :', budget_records)
     # budget_records['budgetItems'] = budget_records
 
     print('EXTRACTED BUDGET RECORDS :', expenses)
     print('COMPANY INFO : ', companyinfo)
     print('BUDGET DEPT : ', budgetdept)
 
-    args = {'budgetdept': budgetdept, 'budgetItems': budget_records,
+    args = {'budgetdept': budgetdept, 'budgetItems': budget_records, 'budgetTotals': budget_totals,
             'companyinfo': companyinfo, 'expenses': expenses}
 
     # args = {'budgetdept': budgetdept, 'budget': budget, 'budget2': budget2,

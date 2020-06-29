@@ -203,27 +203,10 @@ class DeleteBudgetItem(View):
         amount = BudgetDetails.objects.get(id=id1).amount
 
         BudgetDetails.objects.get(id=id1).delete()
-        # GeneralLedger.objects.get(debit=amount, description=description,
-        #                           ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
-
-        # get the sum of the receipt detail values
         total_sum = BudgetDetails.objects.filter(
             budget_main_id_id=pk).aggregate(Sum('amount'))['amount__sum'] or 0.00
 
         total_amount = float(total_sum)
-
-        # obj3 = GeneralLedger.objects.get(
-        #     ref_number=voucher_number, journal_type='CDJ', main_Trans=True)
-        # obj3.credit = total_amount
-        # obj3.save()
-
-        # Get the cash receipt journal items
-        # journal_list = serializers.serialize(
-        #     "json", GeneralLedger.objects.filter(ref_number=voucher_number, journal_type='CDJ'))
-
-        # journal_list1 = GeneralLedger.objects.filter(
-        #     ref_number=voucher_number, journal_type='CDJ')
-        # print('JOURNAL LIST RETRIEVED : ', journal_list1)
 
         data = {
             'deleted': True,
@@ -231,6 +214,27 @@ class DeleteBudgetItem(View):
             # 'journal_list': journal_list,
         }
         return JsonResponse(data)
+
+
+# For Expense Module
+def get_budgetexp(request):
+
+    if request.method == 'GET' and request.is_ajax():
+        item_code = request.GET.get('item_code', None)
+        print('ITEM CODE IS:', item_code)
+        budget_exp = BudgetDetails.objects.get(
+            id=item_code).budget_item_id
+        print('BUDGET ITEM ACCOUNT IS:', budget_exp)
+        acct_exp = ChartNoteItems.objects.filter(id=budget_exp).values(
+            'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
+        print('Selected Category Items is: ', acct_exp)
+
+        data = dict(values=list(acct_exp))
+        print('CONVERTED DATA Items is: ', data)
+        return JsonResponse(data)
+
+    else:
+        return redirect('/')
 
 
 class DeleteExpense(View):

@@ -208,6 +208,8 @@ urlpatterns = [
          views.BudgetDeptDetail.as_view(), name='budgetdept_detail'),
     path('budgetdept/(<int:pk>)/delete',
          views.BudgetDeptDelete.as_view(), name='budgetdept_delete'),
+    path('get_budgetexp',  views_ajax.get_budgetexp,
+         name='get_budgetexp'),
 
 
     # GENERAL JOURNAL POSTINGS
