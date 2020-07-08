@@ -2560,7 +2560,7 @@ def financialbudget(request):
         'budget_dept__budget_dept__department_name', 'budget_dept__amount').annotate(
             amount=Sum('amount')).filter(expense_main_id__date__range=["2020-06-01", "2020-06-30"])
 
-    budget = BudgetDetails.objects.all()
+    budget = BudgetDetails.objects.all().order_by('budget_item')
 
     print('BUDGET ITEM NAME', budget)
     # acctitems = ChartNoteItems.objects.all()
@@ -2614,6 +2614,21 @@ def financialbudget(request):
                   'Aug': Aug, 'Sep': Sep, 'Oct': Oct, 'Nov': Nov, 'Dec': Dec, 'Total': Total, 'Bal': Bal
                   }
 
+        Jan = 0.00
+        Feb = 0.00
+        Apr = 0.00
+        Mar = 0.00
+        May = 0.00
+        Jun = 0.00
+        Jul = 0.00
+        Aug = 0.00
+        Sep = 0.00
+        Oct = 0.00
+        Nov = 0.00
+        Dec = 0.00
+        Total = 0.00
+        Bal = 0.00
+
         print('BUDGET ARRAYYY :', record)
         budget_records.append(record)
 
@@ -2654,6 +2669,22 @@ def financialbudget(request):
                        'MarSum': MarSum, 'AprSum': AprSum, 'MaySum': MaySum, 'JunSum': JunSum, 'JulSum': JulSum, 'AugSum': AugSum,
                        'SepSum': SepSum, 'OctSum': OctSum, 'NovSum': NovSum, 'DecSum': DecSum, 'TotalSum': TotalSum, 'BalSum': BalSum
                        }
+
+        JanSum = 0.00
+        FebSum = 0.00
+        AprSum = 0.00
+        MarSum = 0.00
+        MaySum = 0.00
+        JunSum = 0.00
+        JulSum = 0.00
+        AugSum = 0.00
+        SepSum = 0.00
+        OctSum = 0.00
+        NovSum = 0.00
+        DecSum = 0.00
+        TotalSum = 0.00
+        BalSum = 0.00
+
         print('BUDGET SUM ARRAYYY :', recordTotal)
         budget_totals.append(recordTotal)
 

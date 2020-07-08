@@ -89,7 +89,7 @@
                         <tbody>
                             {% for act in budgetItems %}
                             {% if act.department|stringformat:"s" == cat.department_name|stringformat:"s" %}
-                            <tr style="text-align: right;">
+                            <tr style="text-align: right; font-size:11px;">
                                 <td>{{act.budgetName}}</td>
                                 <td>{{act.budgetAmount|floatformat:2|intcomma}}</td>
                                 <td>{{act.Jan|floatformat:2|intcomma}}</td>
@@ -112,23 +112,23 @@
 
                             {% for item in budgetTotals %}
                             {% if item.department|stringformat:"s" == cat.department_name|stringformat:"s" %}
-                            <tr style="text-align: right;">
+                            <tr style="text-align: right; font-size:11px;">
                                 <td><b>Sub Total</b></td>
                                 <td><b>{{item.budget_sum|floatformat:2|intcomma}}</b></td>
-                                <td>{{item.JanSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.FebSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.MarSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.AprSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.MaySum|floatformat:2|intcomma}}</td>
-                                <td>{{item.JunSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.JulSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.AugSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.SepSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.OctSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.NovSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.DecSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.TotalSum|floatformat:2|intcomma}}</td>
-                                <td>{{item.BalSum|floatformat:2|intcomma}}</td>
+                                <td><b>{{item.JanSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.FebSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.MarSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.AprSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.MaySum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.JunSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.JulSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.AugSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.SepSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.OctSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.NovSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.DecSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.TotalSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.BalSum|floatformat:2|intcomma}}</b></td>
                             </tr>
                             {% endif %}
                             {% endfor %}
@@ -138,7 +138,7 @@
                         {% endfor %}
 
                         <tfoot>
-                            <tr style="text-align: right;">
+                            <tr style="text-align: right; font-size:11px;">
                                 <td><b>Total</b></td>
                                 <td><b>0.00</b></td>
                                 <td><b>0.00</b></td>
