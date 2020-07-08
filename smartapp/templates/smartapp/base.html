@@ -789,7 +789,7 @@
   <!-- AdminLTE for demo purposes -->
   <script src="{% static 'dist/js/demo.js' %}"></script>
 
-  <script src="{% static 'myscript.js' %}"></script>
+  <!-- <script src="{% static 'myscript.js' %}"></script> -->
 
   <!-- DataTables -->
   <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
@@ -806,6 +806,8 @@
 
   <script>
     $(function () {
+      $('#example1').DataTable({
+      })
       $('#example2').DataTable({
         'paging': true,
         'lengthChange': false,
