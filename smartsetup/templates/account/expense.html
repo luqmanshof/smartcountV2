@@ -1,5 +1,6 @@
 {% extends 'smartapp/base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 
 {% block content %}
@@ -201,7 +202,7 @@
     <div class="box box-primary col-xs-12">
 
         <div class="box-body">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h4>Enter Details</h4>
                 <!-- /.box -->
                 <div class="box">
@@ -262,48 +263,65 @@
 
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <h4>...</h4>
                 <!-- /.box -->
-                <div class="box">
-                    <div class="box-body">
-                        <table id="itemTable" class="table table-striped">
-                            <tr>
-                                <th>Department</th>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Expense Account</th>
-                                <th colspan="3">Amount</th>
-                            </tr>
-                            <!-- table_list -->
-                            {% if expenseitems %}
-                            {% for item in expenseitems %}
-                            <tr id="item-{{item.id}}">
-                                <td class="itemDepartment itemData" name="department">
-                                    {{item.budget_dept__budget_dept__department_name}}</td>
-                                <td class="itemDescription itemData" name="description">{{item.description}}</td>
-                                <td class="itemExpenseAcct itemData" name="expense">
-                                    {{item.expense_account__sub_category_name}}</td>
-                                <td class="itemCreditAcct itemData" name="credit">{{item.Debit_account__item_name}}</td>
-                                <td class="itemAmount itemData" style="text-align: right;" name="amount">
-                                    {{item.amount|floatformat:2}}
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-success form-control" onClick="editItem({{item.id}})"
-                                        data-toggle="modal" data-target="#myModal">EDIT</button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-danger form-control"
-                                        onClick="deleteItem({{item.id}})">DELETE</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            {% else %}
-                            <!-- No Item Listed -->
-                            {% endif %}
-                        </table>
+                <div class="row" id="divList">
+                    <div class="col-xs-12">
+                        <div class="box">
+                            <div class="box-body">
+                                <table id="itemTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Department</th>
+                                            <th>Description</th>
+                                            <th>Category</th>
+                                            <th>Expense Account</th>
+                                            <th>Amount</th>
+                                            <th style="text-align: center;"> _ </th>
+                                            <th style="text-align: center;"> _ </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- table_list -->
+                                        {% if expenseitems %}
+                                        {% for item in expenseitems %}
+                                        <tr id="item-{{item.id}}">
+                                            <td class="itemDepartment itemData" name="department">
+                                                {{item.budget_dept__budget_dept__department_name}}</td>
+                                            <td class="itemDescription itemData" name="description">{{item.description}}
+                                            </td>
+                                            <td class="itemExpenseAcct itemData" name="expense">
+                                                {{item.expense_account__sub_category_name}}</td>
+                                            <td class="itemCreditAcct itemData" name="credit">
+                                                {{item.Debit_account__item_name}}
+                                            </td>
+                                            <td class="itemAmount itemData" style="text-align: right;" name="amount">
+                                                {{item.amount|floatformat:2}}
+                                            </td>
+                                            <td align="center">
+                                                <button class="btn btn-success form-control"
+                                                    onClick="editItem({{item.id}})" data-toggle="modal"
+                                                    data-target="#myModal">EDIT</button>
+                                            </td>
+                                            <td align="center">
+                                                <button class="btn btn-danger form-control"
+                                                    onClick="deleteItem({{item.id}})">DELETE</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                        <!-- No Item Listed -->
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+
                     </div>
-                    <!-- /.box-body -->
+
                 </div>
 
                 <label for="">...</label>
@@ -392,6 +410,9 @@
     var CategoryCode, CategoryCode2, CategoryId;
     var trans_date, amountInput, debit_acct, credit_acct, clientID, totalAmount, budget_dept;
     $(document).ready(function () {
+        $('#itemTable').DataTable({
+            "pageLength": 10,
+        });
 
         $("select#cash").change(function () {
             CategoryCode = $(this).children("option:selected").val();
