@@ -2670,20 +2670,20 @@ def financialbudget(request):
                        'SepSum': SepSum, 'OctSum': OctSum, 'NovSum': NovSum, 'DecSum': DecSum, 'TotalSum': TotalSum, 'BalSum': BalSum
                        }
 
-        JanSum = 0.00
-        FebSum = 0.00
-        AprSum = 0.00
-        MarSum = 0.00
-        MaySum = 0.00
-        JunSum = 0.00
-        JulSum = 0.00
-        AugSum = 0.00
-        SepSum = 0.00
-        OctSum = 0.00
-        NovSum = 0.00
-        DecSum = 0.00
-        TotalSum = 0.00
-        BalSum = 0.00
+        Jan = 0.00
+        Feb = 0.00
+        Apr = 0.00
+        Mar = 0.00
+        May = 0.00
+        Jun = 0.00
+        Jul = 0.00
+        Aug = 0.00
+        Sep = 0.00
+        Oct = 0.00
+        Nov = 0.00
+        Dec = 0.00
+        Total = 0.00
+        Bal = 0.00
 
         print('BUDGET SUM ARRAYYY :', recordTotal)
         budget_totals.append(recordTotal)
