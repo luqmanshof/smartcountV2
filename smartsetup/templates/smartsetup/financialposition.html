@@ -63,21 +63,23 @@
               {% for cat in curr_assets.all %}
               <tr>
                 <td>
-                  {{cat.sub_category__sub_category_name}}
+                  <a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
+                    {{cat.sub_category__sub_category_name}}</a>
+                    <P class="hide-on-screen">{{cat.sub_category__sub_category_name}}</P>
                 </td>
                 <td><a class="no-print" href="{% url 'note_view' pk=cat.sub_category__notes  %}">
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">{{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_curr_assets|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_curr_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -100,15 +102,15 @@
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">{{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_Ncurr_assets|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_Ncurr_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -134,8 +136,8 @@
               <tr>
                 <td><b>Total Assets</b></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_assets|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
             </tfoot>
           </table>
@@ -180,15 +182,15 @@
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">{{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_curr_liab|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_curr_liab|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
               <tr>
                 <td></td>
@@ -211,15 +213,15 @@
                     {{cat.sub_category__notes}}</a>
                   <P class="hide-on-screen">{{cat.sub_category__notes}}</P>
                 </td>
-                <td style="text-align: right;">${{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">{{cat.debit|add:cat.credit|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
               {% endfor %}
               <tr>
                 <td></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_Ncurr_liab|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_Ncurr_liab|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
 
             </tbody>
@@ -239,8 +241,8 @@
               <tr>
                 <td><b>Total Liabilities</b></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_liabilities|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_liabilities|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
             </tfoot>
           </table>
@@ -260,8 +262,8 @@
               <tr>
                 <td><b>Net assets</b></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{net_assets|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{net_assets|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
             </tfoot>
           </table>
@@ -296,16 +298,16 @@
                   Reserves
                 </td>
                 <td></td>
-                <td style="text-align: right;">$0.00</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">0.00</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
               <tr>
                 <td>
                   Accumulated Surplus / Deficit
                 </td>
                 <td></td>
-                <td style="text-align: right;">${{accum_supplus|floatformat:2|intcomma}}</td>
-                <td style="text-align: right;">$0.00</td>
+                <td style="text-align: right;">{{accum_supplus|floatformat:2|intcomma}}</td>
+                <td style="text-align: right;">0.00</td>
               </tr>
             </tbody>
           </table>
@@ -324,8 +326,8 @@
               <tr>
                 <td><b>Total Net Assets / Equity</b></td>
                 <td></td>
-                <td style="text-align: right;"><b>${{total_net_assetEq|floatformat:2|intcomma}}</b></td>
-                <td style="text-align: right;"><b>$0.00</b></td>
+                <td style="text-align: right;"><b>{{total_net_assetEq|floatformat:2|intcomma}}</b></td>
+                <td style="text-align: right;"><b>0.00</b></td>
               </tr>
             </tfoot>
           </table>
