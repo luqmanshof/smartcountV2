@@ -1284,10 +1284,10 @@ class BudgetClass(ListView):
 
 
 class BudgetSaveMain(View):
-    print('BUDGET SAVE MAIN')
+    # print('BUDGET SAVE MAIN')
 
     def get(self, request):
-        print('BUDGET SAVE MAIN VIEW ')
+        # print('BUDGET SAVE MAIN VIEW ')
 
         period_start = request.GET.get('period_start', None)
         period_end = request.GET.get('period_end', None)
@@ -1427,7 +1427,8 @@ def budgetedit(request, pk=None):
         budget_number1 = BudgetMain.objects.get(id=pk).budget_no
         print('budget NO. RETRIEVED : ', budget_number1)
 
-        budgetitems = BudgetDetails.objects.filter(budget_main_id_id=pk)
+        budgetitems = BudgetDetails.objects.filter(
+            budget_main_id_id=pk).order_by('budget_item')
 
         # staff_name = EmployeeProfile.objects.all()
         department = BudgetDepartment.objects.all()
@@ -2579,29 +2580,29 @@ def financialbudget(request):
         budgetName = budgetItem.budget_item
         budgetAmount = budgetItem.amount
         # print('DEPARTMENT CODE :', departmentCode)
-        Jan = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Jan = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-01-01", "2019-01-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Feb = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Feb = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-02-01", "2019-02-28"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Mar = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Mar = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-03-01", "2019-03-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Apr = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Apr = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-04-01", "2019-04-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        May = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        May = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-05-01", "2019-05-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Jun = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Jun = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-06-01", "2019-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Jul = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Jul = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-07-01", "2019-07-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Aug = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Aug = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-08-01", "2019-08-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Sep = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Sep = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-09-01", "2019-09-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Oct = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Oct = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-10-01", "2019-10-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Nov = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Nov = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-11-01", "2019-11-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
-        Dec = ExpenseDetails.objects.filter(Debit_account=budgetName, expense_main_id__date__range=[
+        Dec = ExpenseDetails.objects.filter(Debit_account=budgetName, budget_dept__budget_dept=department, expense_main_id__date__range=[
                                             "2019-12-01", "2019-12-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
         Total = float(Jan) + float(Feb) + float(Mar) + \
             float(Apr) + float(May) + float(Jun) + \

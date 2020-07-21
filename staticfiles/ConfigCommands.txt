@@ -1,0 +1,205 @@
+
+django-admin startproject ProjectName
+python manage.py startapp AppName
+python manage.py runserver
+python manage.py collectstatic
+--------------------------------------
+
+
+git init
+git status
+git add --all
+git commit -m "describe"
+create repository for ProjectName on git
+git remote add origin https://github.com/luqmanshof/ProjectName.git
+git push -u origin master
+
+https://stackabuse.com/git-merge-branch-into-master/
+https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+Before creating a new branch, pull the changes from upstream. Your master needs to be up to date.
+$ git pull
+
+Create the branch on your local machine and switch in this branch :
+$ git checkout -b [name_of_your_new_branch]
+
+Push the branch on github :
+$ git push origin [name_of_your_new_branch]
+
+--------------------------------------
+HEROKU
+------
+pip freeze
+pip freeze > requirements.txt
+
+**(first download and install the heroku CLI)
+heroku login
+**pipenv install gunicorn psycopg2-binary
+heroku create luqman-portfolio
+heroku git:remote -a luqman-portfolio
+git push heroku master
+
+**(for error logs) -> heroku logs --tail
+
+**(changing database from sqlite3)
+----------
+pipenv install dj-database-url
+(in settings.py) -> import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config()
+}
+
+ (to handle static files)
+** pipenv install whitenoise
+(in settings.py) -> STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+'whitenoise.middleware.WhiteNoiseMiddleware',
+
+
+(if there's issue with static files) heroku config:set DISABLE_COLLECTSTATIC=1
+----------------------------------------
+heroku run bash
+ls
+python manage.py migrate
+python manage.py createsuperuser
+
+TO DELETE HEROKU DATABASE
+-------------heroku pg:reset DATABASE_URL
+heroku pg:push smartcountdb DATABASE_URL --app smartcountapp
+heroku pg:push smartcountdb postgresql-curly-41268
+--------------
+DUMP DATA
+------------
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes > db.json
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude auth.user_user_permissions --exclude smartsetup.userprofile> data.json
+python manage.py dumpdata --exclude contenttypes --exclude smartsetup.userprofile> data.json
+
+LOAD DATA ----> python manage.py loaddata db.json
+-----------------------------------------------
+django-admin startproject ProjectName
+(cd to ProjectName path)
+pip install pipenv
+pipenv install ----> (installs virtual environment)
+pipenv install django
+pipenv shell   ----> (launch virtual environment)
+python manage.py startapp AppName
+
+-----------------------------------------------
+POSTGRES SETTINGS
+-----------------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smartbrokerdb',
+        'USER':'postgres',
+        'PORT':'5432',
+        'PASSWORD':'Password@123',
+        'HOST':'localhost',
+        }
+}
+
+---> from postgres command shell
+postgres=# CREATE DATABASE smartbrokerdb;
+
+---> from project virtual environment
+pip install psycopg2
+pip install psycopg2-binary
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+-----------------------------------------------
+DATA SEEDING
+-------------
+python manage.py dumpdata > data.json
+
+to remove database use -> del db.sqlite3
+
+To restore the database from seed data:
+1) python manage.py makemigrations
+2) python manage.py migrate
+3) python manage.py loaddata seed_data.json
+-----------------------------------------------
+-----------------------------------------------
+In models.py
+
+# from django.core.urlresolvers import reverse
+from django.urls import reverse
+
+foriegn key fields requires the argument: 'on_delete'
+,on_delete=models.CASCADE
+
+
+SUMMARY TO RESET HEROKU DATABASE
+-------------heroku pg:reset DATABASE_URL
+heroku run bash
+ls
+python manage.py migrate
+
+
+---------------------------------------------------------
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes > data_db.json
+
+git add .
+git commit -m "commit message" 	(add and commit all updates to git)
+
+git push heroku master 		(push all updates to heroku)
+
+heroku pg:reset DATABASE_URL 	(reset existing database on heroku)
+heroku run bash			(login to the heroku command line)
+ls				(list all files uploaded to heroku)
+python manage.py migrate	(effect database changes on heroku)
+
+python manage.py loaddata data_db.json
+
+
+---------------------------------------------
+heroku pg:psql			(to fire up a Postgres console)
+\d 				(see all tables)
+\d tablename			(see details for a particular table)
+select * from tablename;	(view a table content)
+
+heroku config 			(DATABASE_URL:  postgres://username:password@host:port/dbname)
+
+
+-----------------------------------------------------
+
+USAGE
+  $ heroku pg:push SOURCE TARGET
+
+OPTIONS
+  -a, --app=app                            (required) [default: smartcountapp] app to run command against
+  -r, --remote=remote                      git remote of app to use
+  --exclude-table-data=exclude-table-data  tables for which data should be excluded (use ';' to split multiple names)
+
+DESCRIPTION
+  Push from SOURCE into TARGET. TARGET must be empty.
+
+  To empty a Heroku database for push run `heroku pg:reset`
+
+  SOURCE must be either the name of a database existing on your localhost or the
+  fully qualified URL of a remote database.
+
+  Examples:
+
+       # push mylocaldb into a Heroku DB named postgresql-swimmingly-100
+       $ heroku pg:push mylocaldb postgresql-swimmingly-100			(heroku pg:push smartcountdb postgresql-curly-41268)
+
+       # push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
+       $ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100
+
+74c9f0259b63decd9fac14832c6ed6a314ce148a313b04ed9dd6a442a33b6219
+
+----------------------------------------------------------------------------------------------
+POSTGRES
+--------
+**Command Line Backup**
+C:\Program Files\PostgreSQL\11\bin>pg_dump -U postgres -d smartcountdb -f C:\Django_App\BACKUP\SmartCount_16_07_20.sql
+
+**Backup Data Files from Heroku**
+heroku pg:backups:capture
+heroku pg:backups:download
+
+**Restoring Dump Files from Heroku (https://coderwall.com/p/acsbpw/heroku-export-postgres-database)**
+** C:\temp\New> **
+pg_restore -U postgres --verbose --clean --no-acl --no-owner -d smartcountdb latest.dump
