@@ -360,7 +360,7 @@ class ReceiptDetails(models.Model):
 
 class BudgetDepartment(models.Model):
     department_code = models.CharField(max_length=256, default='')
-    department_name = models.CharField(max_length=256, default='')
+    department_name = models.CharField(max_length=256)
     description = models.TextField(max_length=256, default='')
 
     def __str__(self):

@@ -265,17 +265,9 @@
                 <div class="box-body">
                     <form id="updateReceiptSub" action="">
                         <input class="form-control" id="form-id" type="hidden" name="formId" />
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-description" name="formdescription"
-                                placeholder="description" required>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-amount" name="formamount"
-                                placeholder="0.00" required>
-                        </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="">Expense Category</label>
-                            <select name="formexpense_account" id="form-expense" class="form-control" required>
+                            <select name="formexpense_account" id="expense_acct_edit" class="form-control" required>
                                 {% for item in expense_acct %}
                                 <option value="{{ item.id }}">{{ item.sub_category_name }}
                                 </option>
@@ -283,24 +275,44 @@
                             </select>
                             <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                         </div>
-                        <div class="form-group">
-                            <label for="">Expense Account</label>
-                            <select name="formcredit_account" id="form-credit_account" class="form-control" required>
+                        <div class="form-group col-md-12">
+                            <input class="form-control" id="sub_id" type="hidden" name="sub_id" />
+                            <label for="">Budget Account</label>
+                            <select name="credit_account_edit" id="credit_account_edit" class="form-control" required>
                                 {% for item in note_acct_exp %}
-                                <option value="{{ item.id }}">{{ item.item_name }}</option>
+                                <option value="{{ item.id }}">{{ item.item_name }} |
+                                    {{item.sub_category__sub_category_name}} |
+                                    {{item.sub_category__category_code__category_name}}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-sm-6">
-                            <button class="btn btn-primary form-control" type="submit">UPDATE RECORD</button>
+                        <div class="form-group col-md-6">
+                            <label for="">Department</label>
+                            <select name="department_edit" id="department_edit" class="form-control" required>
+                                <option></option>
+                                {% for item in department %}
+                                <option value="{{ item.id }}">{{ item.department_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <!-- <input class="form-control" type="text" id="form-description" name="formdescription"
+                                placeholder="description" required disabled> -->
                         </div>
-                        <div class="col-sm-6">
-                            <button type="button" class="btn btn-danger form-control"
-                                data-dismiss="modal">CLOSE</button>
+                        <div class="form-group col-md-6">
+                            <label for="">Amount</label>
+                            <input class="form-control" type="text" id="form-amount" name="formamount"
+                                placeholder="0.00" style="text-align: right;">
                         </div>
-
-
                     </form>
+                    <div class="col-sm-6">
+                        <button class="btn btn-primary form-control" onclick="saveRecordEdit()" type="submit">UPDATE RECORD</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-danger form-control"
+                            data-dismiss="modal">CLOSE</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -340,10 +352,10 @@
             populate_account_items(CategoryCode, 'debit_account');
         });
 
-        $("select#expense,select#form-expense").change(function () {
+        $("select#expense,select#expense_acct_edit").change(function () {
             CategoryCode2 = $(this).children("option:selected").val();
             populate_account_items(CategoryCode2, 'credit_account');
-            populate_account_items(CategoryCode2, 'form-credit_account');
+            populate_account_items(CategoryCode2, 'credit_account_edit');
         });
 
         $("select#debit_account").change(function () {
@@ -358,7 +370,7 @@
             get_cat_item(credit_acct, 'expense');
         });
 
-        $("select#department").change(function () {
+        $("select#department,select#department_edit").change(function () {
             departmentID = $(this).children("option:selected").val();
             console.log(departmentID)
         });
@@ -373,6 +385,16 @@
             }
         });
 
+        $("select#credit_account_edit").change(function () {
+            credit_acct = $(this).children("option:selected").val();
+            item_selected = $(this).find('option:selected').text()
+            n = item_selected.indexOf("|")
+            item_selected = item_selected.substr(0, n - 1)
+            //alert(credit_acct);
+            $('#description_edit').val('Opening Balance - ' + item_selected);
+            console.log(credit_acct)
+            get_cat_item(credit_acct, 'expense_acct_edit');
+        });
 
 
         //DATE PICKER
@@ -545,7 +567,7 @@
                 <tr id="item-${rec.Subid}">
                     <td class="itemDescription" name="description">${rec.department}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
-                    '<td class="itemAmount" name="amount">${rec.amount}</td>
+                    '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
                     '<td align="center">
                         <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                     </td>
@@ -570,6 +592,109 @@
         //$('form#receiptSub').trigger("reset");
         return false;
     });
+
+
+    function saveRecordEdit() {
+        // alert('EDIT RECORD ?');
+        period_start = $('input[name="period_start"]').val().trim();
+        period_end = $('input[name="period_end"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        description = $('input[name="description"]').val().trim();
+        amountInput = $('input[name="formamount"]').val().trim();
+        budget_type = $('#BType').children("option:selected").val();
+        departmentID = $('#department_edit').children("option:selected").val();
+        //departmentID = $('input[name="formdescription"]').val().trim();
+
+        CategoryCode2 = $("#expense_acct_edit").children("option:selected").val();
+        credit_acct = $("#credit_account_edit").children("option:selected").val();
+
+        subID = $('input[name="sub_id"]').val().trim();
+
+
+
+        console.log(period_start);
+        console.log(period_end);
+        console.log(mainID);
+        console.log(voucher_no);
+        console.log(description);
+        console.log(CategoryCode2);
+        console.log(amountInput);
+        console.log(subID);
+
+        //alert("Stage 3...");
+        if (!(amountInput)) {
+            alert("You must enter an Amount or Value.");
+        }
+        else {
+
+            if (period_start && period_end && voucher_no && CategoryCode2) {
+                // Create Ajax Call
+                //alert("Stage 3...");
+                $.ajax({
+                    url: '{% url "budget_ajax_create" %}',
+                    data: {
+                        'period_start': period_start,
+                        'period_end': period_end,
+                        'voucher_number': voucher_no,
+                        'department_name': departmentID,
+                        'mainID': mainID,
+                        'description': description,
+                        'budget_type': budget_type,
+                        'expense_account': CategoryCode2,
+                        'credit_account': credit_acct,
+                        'amount': amountInput,
+                        'total_amount': totalAmount,
+                        'subID': subID,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                    if (data.budget_main) {
+                        alert('Item Edited Successfully')
+                        $("#itemTable #item-" + subID).remove();
+                        
+                        $('#main-id').val(data.budget_main.Mainid);
+                        $('#total_amt').val(data.total_sum);
+                        rec = data.budget_sub
+                        console.log(rec)
+                        $("#itemTable > tbody:last-child").append(`
+                <tr id="item-${rec.Subid}">
+                    <td class="itemDescription" name="description">${rec.department}</td>
+                    '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
+                    '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
+                    '<td align="center">
+                        <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-danger form-control" onClick="deleteItem(${rec.Subid})">DELETE</button>
+                    </td>
+                </tr>
+              `);
+
+                    }
+
+                    if (data.journal_list) {
+                        console.log(data.journal_list)
+                        //populateJournalList(data.journal_list);
+                        viewJournal();
+                    }
+                }
+                });
+
+                //clearList();
+                //clearEditModal();
+
+            } else {
+                alert("All fields must have a valid value.");
+            }
+            $('form#updateReceiptSub').trigger("reset");
+            $('#myModal').modal('hide');
+            return false;
+        }
+        return false;
+
+    }
+
 
     /*
     $('#department').change(function () {
@@ -642,22 +767,26 @@
             description = $(tr_id).find(".itemDescription").text();
             ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text();
             creditAcct = $(tr_id).find(".itemCreditAcct").text();
-            amount = $(tr_id).find(".itemAmount").text();
+            amount = $(tr_id).find(".itemAmount").text().trim();
+
+            departAcct = $(tr_id).find(".itemDescription").text().trim();
 
             $.ajax({
                 url: '{% url "ajax_getacctID" %}',
                 data: {
                     'creditAcct': creditAcct,
+                    'departAcct': departAcct,
                 },
                 dataType: 'json',
                 success: function (data) {
                     //alert('SUCCESS!!!');
 
                     $('#form-id').val(id);
-                    $('#form-description').val(description);
-                    $('#form-expense').val(data.cat_id);
-                    $('#form-credit_account').val(data.note_id);
+                    $('#department_edit').val(data.dept_id);
+                    $('#expense_acct_edit').val(data.cat_id);
+                    $('#credit_account_edit').val(data.note_id);
                     $('#form-amount').val(amount);
+                    $('#sub_id').val(id);
 
                 }
             });

@@ -797,8 +797,8 @@
         console.log(duration);
         console.log(subID);
 
-        if (debitInput == '0.00' || debitInput == '0') { debitInput = '' }
-        if (creditInput == '0.00' || creditInput == '0') { creditInput = '' }
+        if (debitInput == '0.00' || debitInput == '0' || debitInput == '.00') { debitInput = '' }
+        if (creditInput == '0.00' || creditInput == '0' || debitInput == '.00') { creditInput = '' }
 
         //alert("Stage 3...");
         if (debitInput && creditInput) {

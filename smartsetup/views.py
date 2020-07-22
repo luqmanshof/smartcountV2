@@ -1003,19 +1003,29 @@ class CreateReceipt(View):
 class GetAcctIDs(View):
     def get(self, request):
         print('GET ACCOUNT IDs AJAX VIEW ')
-
         creditAcct = request.GET.get('creditAcct', None)
+        departAcct = request.GET.get('departAcct', None)
+
         print('THE NOTE NAME IS : ', creditAcct)
+        print('THE DEPARTMENT NAME IS : ', departAcct)
+
+        if departAcct:
+            departAcct_id = BudgetDepartment.objects.get(department_name=departAcct).id
+        else:
+            departAcct_id = "0"
 
         note_id = ChartNoteItems.objects.get(item_name=creditAcct).id
         cat_id = ChartNoteItems.objects.get(
             item_name=creditAcct).sub_category_id
+            
+        # print('THE DEPARTMENT ID IS : ', departAcct_id)
         print('THE NOTE ID IS : ', note_id)
         print('THE SUB-CATEGORY ID IS : ', cat_id)
 
         data = {
             'note_id': note_id,
-            'cat_id': cat_id
+            'cat_id': cat_id,
+            'dept_id': departAcct_id,
             # 'receipt_sub': receipt_sub
         }
         return JsonResponse(data)
@@ -1264,8 +1274,10 @@ class BudgetClass(ListView):
         context['cash_acct'] = ChartSubCategory.objects.filter(
             category_code_id='3')
 
-        context['expense_acct'] = ChartSubCategory.objects.filter(
-            category_code_id='2')
+        context['expense_acct'] = ChartSubCategory.objects.all()
+        # context['expense_acct'] = ChartSubCategory.objects.filter(
+        #     category_code_id='2')
+            
         ids = ChartSubCategory.objects.filter(
             Q(category_code_id='1') | Q(category_code_id='2') | Q(category_code_id='3') | Q(category_code_id='4')).values_list('id', flat=True)
         context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
@@ -1346,6 +1358,7 @@ class CreateBudget(View):
         budget_type = request.GET.get('budget_type', None)
         amount1 = request.GET.get('amount', None)
         total_amount = float(request.GET.get('total_amount', 0))
+        pkSub = request.GET.get('subID', None)
 
         amount2 = float(amount1.replace(',', ''))
         print('EXPENSE DEPARTMENT ID: ', department_name)
@@ -1383,14 +1396,25 @@ class CreateBudget(View):
                 description=description,
             )
 
-        obj2 = BudgetDetails.objects.create(
-            budget_type=budget_type,
-            budget_dept=BudgetDepartment.objects.get(id=department_name),
-            budget_cat=ChartSubCategory.objects.get(id=expense_account1),
-            budget_item=ChartNoteItems.objects.get(id=Debit_account1),
-            amount=amount2,
-            budget_main_id_id=obj.id,
-        )
+        if pkSub:
+            print('edit details')
+            obj2 = BudgetDetails.objects.get(id=pkSub)
+            obj2.budget_type = budget_type
+            obj2.budget_cat = ChartSubCategory.objects.get(
+                id=expense_account1)
+            obj2.budget_item = ChartNoteItems.objects.get(id=Debit_account1)
+            obj2.amount = amount2
+            obj2.save()
+
+        else:
+            obj2 = BudgetDetails.objects.create(
+                budget_type=budget_type,
+                budget_dept=BudgetDepartment.objects.get(id=department_name),
+                budget_cat=ChartSubCategory.objects.get(id=expense_account1),
+                budget_item=ChartNoteItems.objects.get(id=Debit_account1),
+                amount=amount2,
+                budget_main_id_id=obj.id,
+            )
 
         total_sum = BudgetDetails.objects.filter(
             budget_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
@@ -1439,7 +1463,9 @@ def budgetedit(request, pk=None):
         note_acct_rev = ChartNoteItems.objects.filter(sub_category__in=ids)
 
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
-        expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
+        expense_acct = ChartSubCategory.objects.all()
+        # expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
+
         ids = ChartSubCategory.objects.filter(
             Q(category_code_id='1') | Q(category_code_id='2') | Q(category_code_id='3') | Q(category_code_id='4')).values_list('id', flat=True)
         note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids).values(
