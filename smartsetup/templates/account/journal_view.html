@@ -13,36 +13,45 @@
                 </div>
             </div>
             <!-- /.box -->
-            <div class="box">
-                <div class="box-body">
-                    <table id="journalTable" class="table table-striped">
-                        <tr>
-                            <th>Category</th>
-                            <th>Account</th>
-                            <th>Description</th>
-                            <th>Debit</th>
-                            <th>Credit</th>
-                        </tr>
-                        <!-- table_list -->
-                        {% if journal_list %}
-                        {% for item in journal_list %}
-                        <tr id="item-{{item.id}}">
-                            <td class="itemCategory itemData" name="category">{{item.sub_category}}</td>
-                            <td class="itemExpenseAcct itemData" name="account">{{item.account_id}}</td>
-                            <td class="itemDescription itemData" name="description">{{item.description}}</td>
-                            <td class="itemDebitAcct itemData pull-right" name="debit">{{item.debit|floatformat:2}}</td>
-                            <td class="itemCreditAcct itemData" style="text-align: right;" name="credit">
-                                {{item.credit|floatformat:2}}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        {% else %}
-                        No Item Listed
-                        {% endif %}
-                    </table>
-                </div>
-            </div>
+                <div class="row" id="divList">
+                    <div class="col-xs-12">
+                        <div class="box">
+                            <div class="box-body">
+                                <table id="itemTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Account</th>
+                                        <th>Description</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
+                                    <!-- table_list -->
+                                    {% if journal_list %}
+                                    {% for item in journal_list %}
+                                    <tr id="item-{{item.id}}">
+                                        <td class="itemCategory itemData" name="category">{{item.sub_category}}</td>
+                                        <td class="itemExpenseAcct itemData" name="account">{{item.account_id}}</td>
+                                        <td class="itemDescription itemData" name="description">{{item.description}}</td>
+                                        <td class="itemDebitAcct itemData pull-right" name="debit">{{item.debit|floatformat:2}}</td>
+                                        <td class="itemCreditAcct itemData" style="text-align: right;" name="credit">
+                                            {{item.credit|floatformat:2}}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    No Item Listed
+                                    {% endif %}
+                                </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 </div>

@@ -279,6 +279,7 @@
                                             <th>Category</th>
                                             <th>Expense Account</th>
                                             <th>Amount</th>
+                                            <th hidden>Budget ID</th>
                                             <th style="text-align: center;"> _ </th>
                                             <th style="text-align: center;"> _ </th>
                                         </tr>
@@ -300,6 +301,7 @@
                                             <td class="itemAmount itemData" style="text-align: right;" name="amount">
                                                 {{item.amount|floatformat:2|intcomma}}
                                             </td>
+                                            <td class="itemBudgetID itemData" name="budget" hidden>{{item.budget_dept__id}}</td>
                                             <td align="center">
                                                 <button class="btn btn-success form-control button-small"
                                                     onClick="editItem({{item.id}})" data-toggle="modal"
@@ -535,7 +537,7 @@
             debit_acct = $('#debit_account').children("option:selected").val();
             credit_acct = $('#credit_account').children("option:selected").val();
             clientID = $('#client').children("option:selected").val();
-            budget_dept = $(this).children("option:selected").val();
+            budget_dept = $('#budget_dept').children("option:selected").val();
 
         }
         else {
@@ -637,7 +639,7 @@
         description = $('input[name="description"]').val().trim();
         amountInput = $('input[name="amount"]').val().trim();
         totalAmount = $('input[name="total_amount"]').val().trim();
-
+        budget_dept = $('#budget_dept').children("option:selected").val();
         //alert("Stage 2...");
 
         console.log(trans_date);
@@ -687,6 +689,7 @@
                     '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
                     '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
+                    '<td class="itemBudgetID" name="budget" hidden>${rec.budget_id}</td>
                     '<td align="center">
                         <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                     </td>
@@ -723,6 +726,9 @@
         description = $('input[name="description_edit"]').val().trim();
         amountInput = $('input[name="amount_edit"]').val().trim();
         totalAmount = $('input[name="total_amount"]').val().trim();
+        budget_dept = $('#budget_dept_edit').children("option:selected").val();
+        CategoryCode2 = $('#expense_edit').children("option:selected").val();
+        credit_acct = $('#credit_account_edit').children("option:selected").val();
 
         subID = $('input[name="sub_id"]').val().trim();
         //alert("Stage 2...");
@@ -784,6 +790,7 @@
                         '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
                         '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
                         '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
+                        '<td class="itemBudgetID" name="budget" hidden>${rec.budget_id}</td>
                         '<td align="center">
                             <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                         </td>
@@ -893,14 +900,13 @@
             creditAcct = $(tr_id).find(".itemCreditAcct").text().trim();
             amount = $(tr_id).find(".itemAmount").text().trim();
 
-            budgetDepart = $(tr_id).find(".itemDepartment").text().trim();
-            alert(budgetDepart);
+            budgetDepart = $(tr_id).find(".itemBudgetID").text().trim();
+            //alert(budgetDepart);
 
             $.ajax({
                 url: '{% url "ajax_getacctID" %}',
                 data: {
-                    'creditAcct': creditAcct,
-                    'budgetDepart': budgetDepart
+                    'creditAcct': creditAcct
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -911,7 +917,7 @@
                     $('#expense_edit').val(data.cat_id);
                     $('#credit_account_edit').val(data.note_id);
                     $('#amount_edit').val(amount);
-                    $('#budget_dept_edit').val(data.dept_id);
+                    $('#budget_dept_edit').val(budgetDepart);
 
                 }
             });

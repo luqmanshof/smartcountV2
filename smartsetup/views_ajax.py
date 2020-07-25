@@ -262,7 +262,7 @@ class DeleteExpenseItem(View):
         amount = ExpenseDetails.objects.get(id=id1).amount
 
         ExpenseDetails.objects.get(id=id1).delete()
-        GeneralLedger.objects.get(debit=amount, description=description,
+        GeneralLedger.objects.filter(debit=amount, description=description,
                                   ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
 
         # get the sum of the receipt detail values
