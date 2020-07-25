@@ -219,7 +219,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="">Budget Expense</label>
+                                <label for="">Expense Department</label>
                                 <select name="budget_dept" id="budget_dept" class="form-control" required>
                                     <option></option>
                                     {% for item in department %}
@@ -231,7 +231,8 @@
 
                             <div class="form-group">
                                 <label for="">Expense Account</label>
-                                <select name="credit_account" id="credit_account" class="form-control" required>
+                                <select name="credit_account" id="credit_account" class="form-control" required
+                                    disabled>
                                     <option></option>
                                     {% for item in note_acct_exp %}
                                     <option value="{{ item.id }}">{{ item.item_name }} |
@@ -352,18 +353,43 @@
             <div class="box">
                 <div class="box-body">
                     <form id="updateReceiptSub" action="">
-                        <input class="form-control" id="form-id" type="hidden" name="formId" />
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-description" name="formdescription"
+                        <input class="form-control" id="sub_id" type="hidden" name="sub_id" />
+                        <div class="form-group col-md-6">
+                            <label for="">Description</label>
+                            <input class="form-control" type="text" id="description_edit" name="description_edit"
                                 placeholder="description" required>
                         </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" id="form-amount" name="formamount"
+                        <div class="form-group col-md-6">
+                            <label for="">Amount</label>
+                            <input class="form-control" type="text" id="amount_edit" name="amount_edit"
                                 placeholder="0.00" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-md-12">
+                            <label for="">Expense Department</label>
+                            <select name="budget_dept_edit" id="budget_dept_edit" class="form-control" required>
+                                <option></option>
+                                {% for item in department %}
+                                <option value="{{ item.id }}">{{ item.budget_dept }} - {{ item.budget_item }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="">Expense Account</label>
+                            <select name="credit_account_edit" id="credit_account_edit" class="form-control" required
+                                disabled>
+                                <option></option>
+                                {% for item in note_acct_exp %}
+                                <option value="{{ item.id }}">{{ item.item_name }} |
+                                    {{item.sub_category__sub_category_name}} |
+                                    {{item.sub_category__category_code__category_name}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" hidden>
                             <label for="">Expense Category</label>
-                            <select name="formexpense_account" id="form-expense" class="form-control" required>
+                            <select name="expense_edit" id="expense_edit" class="form-control" required>
                                 {% for item in expense_acct %}
                                 <option value="{{ item.id }}">{{ item.sub_category_name }}
                                 </option>
@@ -371,24 +397,14 @@
                             </select>
                             <!-- <input class="form-control" type="number" name="age" min="10" max="100" placeholder="Age" required> -->
                         </div>
-                        <div class="form-group">
-                            <label for="">Expense Account</label>
-                            <select name="formcredit_account" id="form-credit_account" class="form-control" required>
-                                {% for item in note_acct_exp %}
-                                <option value="{{ item.id }}">{{ item.item_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-sm-6">
-                            <button class="btn btn-primary form-control" type="submit">UPDATE RECORD</button>
-                        </div>
-                        <div class="col-sm-6">
-                            <button type="button" class="btn btn-danger form-control"
-                                data-dismiss="modal">CLOSE</button>
-                        </div>
-
-
                     </form>
+                    <div class="col-sm-6">
+                        <button class="btn btn-primary form-control" onclick="saveRecordEdit()" type="submit">UPDATE
+                            RECORD</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-danger form-control" data-dismiss="modal">CLOSE</button>
+                    </div>
                 </div>
             </div>
 
@@ -419,10 +435,10 @@
             populate_account_items(CategoryCode, 'debit_account');
         });
 
-        $("select#expense,select#form-expense").change(function () {
+        $("select#expense,select#expense_edit").change(function () {
             CategoryCode2 = $(this).children("option:selected").val();
             populate_account_items(CategoryCode2, 'credit_account');
-            populate_account_items(CategoryCode2, 'form-credit_account');
+            populate_account_items(CategoryCode2, 'credit_account_edit');
         });
 
         $("select#debit_account").change(function () {
@@ -437,23 +453,33 @@
             get_cat_item(credit_acct, 'expense');
         });
 
+        $("select#credit_account_edit").change(function () {
+            credit_acct = $(this).children("option:selected").val();
+            console.log('ITEM CHANGED' + credit_acct)
+            get_cat_item(credit_acct, 'expense_edit');
+        });
+
         //budget_dept
         $("select#budget_dept").change(function () {
             budget_dept = $(this).children("option:selected").val();
             get_budget_exp(budget_dept, 'credit_account');
         });
 
+        $("select#budget_dept_edit").change(function () {
+            budget_dept = $(this).children("option:selected").val();
+            get_budget_exp(budget_dept, 'credit_account_edit');
+        });
 
         $("select#client").change(function () {
             clientID = $(this).children("option:selected").val();
             console.log(clientID)
         });
 
-        $("#amount").focusout(function () {
+        $("#amount, #amount_edit").focusout(function () {
             $(this).val(ReplaceNumberWithCommas($(this).val()));
         });
 
-        $("#amount").keydown(function (e) {
+        $("#amount, #amount_edit").keydown(function (e) {
             if (e.keyCode == 13) {
                 $(this).val(ReplaceNumberWithCommas($(this).val()));
             }
@@ -571,9 +597,14 @@
                 console.log(data.values[0].id);
                 itemID = data.values[0].id;
                 $("#" + acctId).val(itemID);
-                credit_acct = $('#credit_account').children("option:selected").val();
+                credit_acct = $("#" + acctId).children("option:selected").val();
                 console.log('CREDIT ACCOUNT : ' + credit_acct);
-                get_cat_item(credit_acct, 'expense');
+                if (acctId == 'credit_account') {
+                    get_cat_item(credit_acct, 'expense');
+                } else {
+                    get_cat_item(credit_acct, 'expense_edit');
+                }
+
             },
         });
 
@@ -651,11 +682,11 @@
                         rec = data.expense_sub
                         $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
-                    <td class="itemDescription" name="department">${rec.budget_dept}</td>
+                    <td class="itemDepartment" name="department">${rec.budget_dept}</td>
                     '<td class="itemDescription" name="description">${rec.description}</td>
                     '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
-                    '<td class="itemAmount" name="amount">${rec.amount}</td>
+                    '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
                     '<td align="center">
                         <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
                     </td>
@@ -680,6 +711,112 @@
         //$('form#receiptSub').trigger("reset");
         return false;
     });
+
+
+
+    function saveRecordEdit() {
+        // alert('EDIT RECORD ?');
+        trans_date = $('input[name="trans_date"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+        received_from = $('input[name="bill_to"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+        description = $('input[name="description_edit"]').val().trim();
+        amountInput = $('input[name="amount_edit"]').val().trim();
+        totalAmount = $('input[name="total_amount"]').val().trim();
+
+        subID = $('input[name="sub_id"]').val().trim();
+        //alert("Stage 2...");
+
+        console.log(trans_date);
+        console.log(voucher_no);
+        console.log(amountInput);
+        console.log('START');
+        console.log(debit_acct);
+        console.log(credit_acct);
+        console.log('END');
+        console.log(received_from);
+        console.log(CategoryCode);
+        console.log(CategoryCode2);
+        //alert("Stage 3...");
+
+        if (!(amountInput)) {
+            alert("You must enter an Amount or Value.");
+        }
+        else {
+
+            if (trans_date && voucher_no && CategoryCode && received_from) {
+                // Create Ajax Call
+                //alert("Stage 3...");
+                $.ajax({
+                    url: '{% url "expense_ajax_create" %}',
+                    data: {
+                        'trans_date': trans_date,
+                        'voucher_number': voucher_no,
+                        'client_name': clientID,
+                        'bill_to': received_from,
+                        'cash_account': CategoryCode,
+                        'Debit_account': debit_acct,
+                        'mainID': mainID,
+                        'description': description,
+                        'expense_account': CategoryCode2,
+                        'credit_account': credit_acct,
+                        'amount': amountInput,
+                        'total_amount': totalAmount,
+                        'budget_dept': budget_dept,
+                        'subID': subID,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.expense_main) {
+                            alert('Record Edited Successfully')
+                            $("#itemTable #item-" + subID).remove();
+
+                            //clearList();
+                            console.log(data.expense_sub)
+                            console.log(data.expense_main.Mainid)
+                            $('#main-id').val(data.expense_main.Mainid);
+                            $('#total_amt').val(data.total_sum);
+                            rec = data.expense_sub
+                            $("#itemTable > tbody:last-child").append(`
+                    <tr id="item-${rec.Subid}">
+                        <td class="itemDepartment" name="department">${rec.budget_dept}</td>
+                        '<td class="itemDescription" name="description">${rec.description}</td>
+                        '<td class="itemExpenseAcct" name="expense">${rec.expense_account}</td>
+                        '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
+                        '<td class="itemAmount" name="amount">${ReplaceNumberWithCommas(rec.amount)}</td>
+                        '<td align="center">
+                            <button class="btn btn-success form-control" onClick="editItem(${rec.Subid})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+                        </td>
+                        <td align="center">
+                            <button class="btn btn-danger form-control" onClick="deleteItem(${rec.Subid})">DELETE</button>
+                        </td>
+                    </tr>
+                  `);
+
+                        }
+
+                        if (data.journal_list) {
+                            console.log(data.journal_list)
+                            //populateJournalList(data.journal_list);
+                            viewJournal();
+                        }
+                    }
+                });
+
+                //clearList();
+                //clearEditModal();
+
+            } else {
+                alert("All fields must have a valid value.");
+            }
+            $('form#updateReceiptSub').trigger("reset");
+            $('#myModal').modal('hide');
+            return false;
+        }
+        return false;
+
+    }
+
 
     $('#client').change(function () {
         $('#bill_to').val($(this).find('option:selected').text());
@@ -751,25 +888,30 @@
     function editItem(id) {
         if (id) {
             tr_id = "#item-" + id;
-            description = $(tr_id).find(".itemDescription").text();
-            ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text();
-            creditAcct = $(tr_id).find(".itemCreditAcct").text();
-            amount = $(tr_id).find(".itemAmount").text();
+            description = $(tr_id).find(".itemDescription").text().trim();
+            ExpenseAcct = $(tr_id).find(".itemExpenseAcct").text().trim();
+            creditAcct = $(tr_id).find(".itemCreditAcct").text().trim();
+            amount = $(tr_id).find(".itemAmount").text().trim();
+
+            budgetDepart = $(tr_id).find(".itemDepartment").text().trim();
+            alert(budgetDepart);
 
             $.ajax({
                 url: '{% url "ajax_getacctID" %}',
                 data: {
                     'creditAcct': creditAcct,
+                    'budgetDepart': budgetDepart
                 },
                 dataType: 'json',
                 success: function (data) {
                     //alert('SUCCESS!!!');
 
-                    $('#form-id').val(id);
-                    $('#form-description').val(description);
-                    $('#form-expense').val(data.cat_id);
-                    $('#form-credit_account').val(data.note_id);
-                    $('#form-amount').val(amount);
+                    $('#sub_id').val(id);
+                    $('#description_edit').val(description);
+                    $('#expense_edit').val(data.cat_id);
+                    $('#credit_account_edit').val(data.note_id);
+                    $('#amount_edit').val(amount);
+                    $('#budget_dept_edit').val(data.dept_id);
 
                 }
             });

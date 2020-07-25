@@ -306,11 +306,11 @@
                         </div>
                     </form>
                     <div class="col-sm-6">
-                        <button class="btn btn-primary form-control" onclick="saveRecordEdit()" type="submit">UPDATE RECORD</button>
+                        <button class="btn btn-primary form-control" onclick="saveRecordEdit()" type="submit">UPDATE
+                            RECORD</button>
                     </div>
                     <div class="col-sm-6">
-                        <button type="button" class="btn btn-danger form-control"
-                            data-dismiss="modal">CLOSE</button>
+                        <button type="button" class="btn btn-danger form-control" data-dismiss="modal">CLOSE</button>
                     </div>
 
                 </div>
@@ -649,15 +649,15 @@
                     },
                     dataType: 'json',
                     success: function (data) {
-                    if (data.budget_main) {
-                        alert('Item Edited Successfully')
-                        $("#itemTable #item-" + subID).remove();
-                        
-                        $('#main-id').val(data.budget_main.Mainid);
-                        $('#total_amt').val(data.total_sum);
-                        rec = data.budget_sub
-                        console.log(rec)
-                        $("#itemTable > tbody:last-child").append(`
+                        if (data.budget_main) {
+                            alert('Record Edited Successfully')
+                            $("#itemTable #item-" + subID).remove();
+
+                            $('#main-id').val(data.budget_main.Mainid);
+                            $('#total_amt').val(data.total_sum);
+                            rec = data.budget_sub
+                            console.log(rec)
+                            $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
                     <td class="itemDescription" name="description">${rec.department}</td>
                     '<td class="itemCreditAcct" name="credit">${rec.debit_account}</td>
@@ -671,14 +671,14 @@
                 </tr>
               `);
 
-                    }
+                        }
 
-                    if (data.journal_list) {
-                        console.log(data.journal_list)
-                        //populateJournalList(data.journal_list);
-                        viewJournal();
+                        if (data.journal_list) {
+                            console.log(data.journal_list)
+                            //populateJournalList(data.journal_list);
+                            viewJournal();
+                        }
                     }
-                }
                 });
 
                 //clearList();

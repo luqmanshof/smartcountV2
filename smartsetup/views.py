@@ -1005,6 +1005,7 @@ class GetAcctIDs(View):
         print('GET ACCOUNT IDs AJAX VIEW ')
         creditAcct = request.GET.get('creditAcct', None)
         departAcct = request.GET.get('departAcct', None)
+        budgetDepart = request.GET.get('budgetDepart', None)
 
         print('THE NOTE NAME IS : ', creditAcct)
         print('THE DEPARTMENT NAME IS : ', departAcct)
@@ -1013,6 +1014,11 @@ class GetAcctIDs(View):
             departAcct_id = BudgetDepartment.objects.get(department_name=departAcct).id
         else:
             departAcct_id = "0"
+
+        if budgetDepart:
+            budgetDepart_id = BudgetDetails.objects.get(budget_item=budgetDepart).id
+        else:
+            budgetDepart_id = "0"
 
         note_id = ChartNoteItems.objects.get(item_name=creditAcct).id
         cat_id = ChartNoteItems.objects.get(
@@ -1135,11 +1141,12 @@ class CreateExpense(View):
         description = request.GET.get('description', None)
         expense_account1 = request.GET.get('expense_account', None)
         credit_account1 = request.GET.get('Debit_account', None)
-        amount1 = request.GET.get('amount', None)
-        total_amount = float(request.GET.get('total_amount', 0))
+        amount1 = request.GET.get('amount', 0)
+        total_amount1 = request.GET.get('total_amount', 0)
         budget_dept2 = request.GET.get('budget_dept', None)
 
         amount2 = float(amount1.replace(',', ''))
+        total_amount = float(total_amount1.replace(',', ''))
         print('EXPENSE CASH ACCOUNT ID: ', cash_account1)
         print('EXPENSE CLIENT ID: ', client_name1)
 
