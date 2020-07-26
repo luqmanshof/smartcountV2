@@ -412,8 +412,8 @@ class ExpenseMain(models.Model):
         max_length=50, choices=PAYMENT_MODES, default='Cheque')
     total_amount = models.FloatField(default=0)
 
-    # class Meta:
-    #     get_latest_by = 'receipt_number'
+    class Meta:
+        ordering = ["-date"]
 
     def __str__(self):
         return self.voucher_number

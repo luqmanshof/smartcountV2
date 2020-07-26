@@ -1041,8 +1041,8 @@ class GetAcctIDs(View):
 # EXPENSE TRANSACTION
 @login_required
 def expense_list(request, pk=None):
-    expenses = ExpenseMain.objects.all().order_by('-date')
-    fieldCols = ['Date', 'Expense No.', 'Description']
+    expenses = ExpenseMain.objects.order_by('date', 'voucher_number')
+    fieldCols = ['Date (Month/Day/Year)', 'Expense No.', 'Description']
     args = {'fieldCols': fieldCols, 'expenses': expenses}
     return render(request, 'account/expense_list.html', args)
 
