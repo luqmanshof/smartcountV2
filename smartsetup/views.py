@@ -1147,7 +1147,11 @@ class CreateExpense(View):
         budget_dept2 = request.GET.get('budget_dept', None)
         pkSub = request.GET.get('subID', None)
 
+        Debit_account1_old = request.GET.get('credit_account_old', None)
+        amount1_old = request.GET.get('amount_old', 0)
+
         amount2 = float(amount1.replace(',', ''))
+        amount2_old = float(amount1_old.replace(',', ''))
         total_amount = float(total_amount1.replace(',', ''))
         print('EXPENSE CASH ACCOUNT ID: ', cash_account1)
         print('EXPENSE BUDGET ID: ', budget_dept2)
@@ -1193,7 +1197,7 @@ class CreateExpense(View):
             obj3.sub_category = ChartSubCategory.objects.get(id=cash_account1)
             obj3.category = ChartCategory.objects.get(id=cashCategoryID)
             obj3.description = bill_to1
-            obj3.credit = total_amount + amount2
+            obj3.credit = total_amount + amount2 - amount2_old
             obj3.save()
 
         else:
@@ -1231,6 +1235,18 @@ class CreateExpense(View):
             obj2.budget_dept = BudgetDetails.objects.get(id=budget_dept2)
             obj2.save()
 
+
+            obj4 = GeneralLedger.objects.get(account_id_id=Debit_account1_old, ref_number=voucher_number1, journal_type='CDJ', main_Trans=False)
+            obj4.date = expense_date1
+            obj4.ref_number = voucher_number1
+            obj4.journal_type = 'CDJ'
+            obj4.account_id = ChartNoteItems.objects.get(id=Debit_account1)
+            obj4.sub_category = ChartSubCategory.objects.get(id=expense_account1)
+            obj4.category = ChartCategory.objects.get(id=expenseCategoryID)
+            obj4.description = description
+            obj4.debit = amount2
+            obj4.save()
+
         else:
             print('ADD EXPENSE DETAILS RECORD ')
             obj2 = ExpenseDetails.objects.create(
@@ -1242,16 +1258,16 @@ class CreateExpense(View):
                 expense_main_id_id=obj.id,
             )
 
-        obj4 = GeneralLedger.objects.create(
-            date=expense_date1,
-            ref_number=voucher_number1,
-            journal_type='CDJ',
-            account_id=ChartNoteItems.objects.get(id=Debit_account1),
-            sub_category=ChartSubCategory.objects.get(id=expense_account1),
-            category=ChartCategory.objects.get(id=expenseCategoryID),
-            description=description,
-            debit=amount2,
-        )
+            obj4 = GeneralLedger.objects.create(
+                date=expense_date1,
+                ref_number=voucher_number1,
+                journal_type='CDJ',
+                account_id=ChartNoteItems.objects.get(id=Debit_account1),
+                sub_category=ChartSubCategory.objects.get(id=expense_account1),
+                category=ChartCategory.objects.get(id=expenseCategoryID),
+                description=description,
+                debit=amount2,
+            )
 
         total_sum = ExpenseDetails.objects.filter(
             expense_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00

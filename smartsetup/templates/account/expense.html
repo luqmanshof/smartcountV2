@@ -377,6 +377,10 @@
                             <input class="form-control" type="text" id="amount_edit" name="amount_edit"
                                 placeholder="0.00" required>
                         </div>
+                        <div class="form-group col-md-6" hidden>
+                            <input class="form-control" type="text" id="amount_edit_old" name="amount_edit_old"
+                                placeholder="0.00">
+                        </div>
                         <div class="form-group col-md-12">
                             <label for="">Expense Department</label>
                             <select name="budget_dept_edit" id="budget_dept_edit" class="form-control" required>
@@ -387,6 +391,7 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        
                         <div class="form-group col-md-12">
                             <label for="">Expense Account</label>
                             <select name="credit_account_edit" id="credit_account_edit" class="form-control" required
@@ -400,6 +405,18 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        <div class="form-group col-md-12" hidden>
+                            <select name="credit_account_edit_old" id="credit_account_edit_old" class="form-control">
+                                <option></option>
+                                {% for item in note_acct_exp %}
+                                <option value="{{ item.id }}">{{ item.item_name }} |
+                                    {{item.sub_category__sub_category_name}} |
+                                    {{item.sub_category__category_code__category_name}}
+                                </option>
+                                {% endfor %}
+                            </select>                        
+                        </div>
+
                         <div class="form-group" hidden>
                             <label for="">Expense Category</label>
                             <select name="expense_edit" id="expense_edit" class="form-control" required>
@@ -739,10 +756,12 @@
         mainID = $('input[name="mainId"]').val().trim();
         description = $('input[name="description_edit"]').val().trim();
         amountInput = $('input[name="amount_edit"]').val().trim();
+        amountInput_old = $('input[name="amount_edit_old"]').val().trim();
         totalAmount = $('input[name="total_amount"]').val().trim();
         budget_dept = $('#budget_dept_edit').children("option:selected").val();
         CategoryCode2 = $('#expense_edit').children("option:selected").val();
         credit_acct = $('#credit_account_edit').children("option:selected").val();
+        credit_acct_old = $('#credit_account_edit_old').children("option:selected").val();
 
         subID = $('input[name="sub_id"]').val().trim();
         //alert("Stage 2...");
@@ -785,6 +804,8 @@
                         'total_amount': totalAmount,
                         'budget_dept': budget_dept,
                         'subID': subID,
+                        'credit_account_old': credit_acct_old,
+                        'amount_old': amountInput_old,
                     },
                     dataType: 'json',
                     success: function (data) {
@@ -966,6 +987,8 @@
                     $('#credit_account_edit').val(data.note_id);
                     $('#amount_edit').val(amount);
                     $('#budget_dept_edit').val(budgetDepart);
+                    $('#amount_edit_old').val(amount);
+                    $('#credit_account_edit_old').val(data.note_id);
 
                 }
             });
