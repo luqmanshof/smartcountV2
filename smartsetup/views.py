@@ -401,7 +401,7 @@ class ChartNoteItemsDelete(generic.DeleteView):
 @login_required
 def setupinventorycat_list(request, pk=None):
     setupinventorycategory = SetupInventoryCategory.objects
-    fieldCols = ['Category Code', 'Category Name']
+    fieldCols = ['Category Code', 'Category Name', 'Inventory Account']
     args = {'fieldCols': fieldCols,
             'setupinventorycategory': setupinventorycategory}
     return render(request, 'smartsetup/setupinvetorycat_list.html', args)
@@ -409,14 +409,14 @@ def setupinventorycat_list(request, pk=None):
 
 class SetupInventoryCat(generic.CreateView):
     model = SetupInventoryCategory
-    fields = ['inventory_category_code', 'inventory_category_name']
+    fields = ['inventory_category_code', 'inventory_category_name', 'inventory_account']
     template_name = 'smartsetup/SetupInventoryCat.html'
     success_url = reverse_lazy('setupinventorycategory_list')
 
 
 class SetupInventoryCatUpdate(generic.UpdateView):
     model = SetupInventoryCategory
-    fields = ['inventory_category_code', 'inventory_category_name']
+    fields = ['inventory_category_code', 'inventory_category_name', 'inventory_account']
     template_name = 'smartsetup/SetupInventoryCat.html'
     success_url = reverse_lazy('setupinventorycategory_list')
 
@@ -581,23 +581,17 @@ class CreateFixedAsset(View):
     def get(self, request):
         print('FixedAsset AJAX CREATE ')
 
-        # ClientID = EmployeeProfile.objects.get(id = client_name1).id
-        # cashAccount = ChartSubCategory.objects.get(id = cash_account1).sub_category_name
-        # cashCategoryID = ChartSubCategory.objects.get(id = cash_account1).category_code_id
-        # creditAccount = ChartNoteItems.objects.get(id = credit_account1).item_name
-        # expenseAccount = ChartSubCategory.objects.get(id = expense_account1).sub_category_name
-        # expenseCategoryID = ChartSubCategory.objects.get(id = expense_account1).category_code_id
-        # DebitAccount = ChartNoteItems.objects.get(id = Debit_account1).item_name
-
         trans_date1 = request.GET.get('trans_date', None)
         asset_id1 = request.GET.get('asset_id', None)
         description = request.GET.get('description', None)
-        depart_name = request.GET.get('depart_name', None)
+        # depart_name = request.GET.get('depart_name', None)
         asset_account = request.GET.get('asset_account', None)
         expense_account = request.GET.get('expense_account', None)
         depr_account = request.GET.get('depr_account', None)
         depr_method = request.GET.get('depr_method', None)
         pkMain = request.GET.get('mainID', None)
+        purchase_date = request.GET.get('trans_date', None)
+        # purchase_value = request.GET.get('purchase_value', None)
 
         print('ASSET ACCOUNT : ', asset_account)
 
@@ -607,13 +601,15 @@ class CreateFixedAsset(View):
             obj.acquisition_date = trans_date1
             obj.asset_id = asset_id1
             obj.description = description
-            obj.department = SetupDepartment.objects.get(id=depart_name)
+            # obj.department = SetupDepartment.objects.get(id=depart_name)
             obj.asset_account = ChartNoteItems.objects.get(id=asset_account)
             obj.expense_account = ChartNoteItems.objects.get(
                 id=expense_account)
             obj.accumulated_account = ChartNoteItems.objects.get(
                 id=depr_account)
             obj.depreciation_method = depr_method
+            obj.purchase_date = purchase_date
+            # obj.purchase_value = purchase_value
             obj.save()
 
         else:
@@ -623,12 +619,14 @@ class CreateFixedAsset(View):
                 acquisition_date=trans_date1,
                 asset_id=asset_id1,
                 description=description,
-                department=SetupDepartment.objects.get(id=depart_name),
+                # department=SetupDepartment.objects.get(id=depart_name),
                 asset_account=ChartNoteItems.objects.get(id=asset_account),
                 expense_account=ChartNoteItems.objects.get(id=expense_account),
                 accumulated_account=ChartNoteItems.objects.get(
                     id=depr_account),
-                depreciation_method=depr_method
+                depreciation_method=depr_method,
+                purchase_date = purchase_date,
+                # purchase_value = purchase_value
             )
 
         fixedasset_main = {'Mainid': obj.id, 'date': obj.acquisition_date,
@@ -1042,7 +1040,7 @@ class GetAcctIDs(View):
 @login_required
 def expense_list(request, pk=None):
     expenses = ExpenseMain.objects.order_by('date', 'voucher_number')
-    fieldCols = ['Date (Month/Day/Year)', 'Expense No.', 'Description']
+    fieldCols = ['Date (Month/Day/Year)', 'Ref No.', 'Voucher No.', 'Description']
     args = {'fieldCols': fieldCols, 'expenses': expenses}
     return render(request, 'account/expense_list.html', args)
 
@@ -1135,6 +1133,7 @@ class CreateExpense(View):
 
         expense_date1 = request.GET.get('trans_date', None)
         voucher_number1 = request.GET.get('voucher_number', None)
+        voucher_number2 = request.GET.get('voucher_number2', None)
         client_name1 = request.GET.get('client_name', None)
         bill_to1 = request.GET.get('bill_to', None)
         cash_account1 = request.GET.get('cash_account', None)
@@ -1178,6 +1177,7 @@ class CreateExpense(View):
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
             obj.voucher_number = voucher_number1
+            obj.voucher_number2 = voucher_number2
             # obj.payee = EmployeeProfile.objects.get(id=client_name1)
             obj.description = bill_to1
             obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
@@ -1202,6 +1202,7 @@ class CreateExpense(View):
             obj = ExpenseMain.objects.create(
                 date=expense_date1,
                 voucher_number=voucher_number1,
+                voucher_number2=voucher_number2,
                 # payee_id=ClientID,
                 description=bill_to1,
                 cash_account=ChartSubCategory.objects.get(id=cash_account1),
@@ -1259,7 +1260,7 @@ class CreateExpense(View):
         journal_list = serializers.serialize(
             "json", GeneralLedger.objects.filter(ref_number=voucher_number1, journal_type='CDJ'))
 
-        expense_main = {'Mainid': obj.id, 'date': obj.date,
+        expense_main = {'Mainid': obj.id, 'date': obj.date, 'voucher_number2': obj.voucher_number2,
                         'voucher_number': obj.voucher_number, 'bill_to': obj.description}
 
         expense_sub = {'Subid': obj2.id, 'description': obj2.description, 'expense_account': expenseAccount,
@@ -1272,6 +1273,63 @@ class CreateExpense(View):
             'journal_list': journal_list
         }
         return JsonResponse(data)
+
+
+
+class ExpenseSaveMain(View):
+    # print('BUDGET SAVE MAIN')
+
+    def get(self, request):
+        # print('BUDGET SAVE MAIN VIEW ')
+
+        expense_date1 = request.GET.get('trans_date', None)
+        voucher_number1 = request.GET.get('voucher_number', None)
+        voucher_number2 = request.GET.get('voucher_number2', None)
+        client_name1 = request.GET.get('client_name', None)
+        bill_to1 = request.GET.get('bill_to', None)
+        cash_account1 = request.GET.get('cash_account', None)
+        credit_account1 = request.GET.get('Debit_account', None)
+        pkMain = request.GET.get('mainID', None)
+
+        if pkMain:
+            print('VOUCHER NUMBER', voucher_number1)
+            print('UPDATE EXISTING RECORD ')
+            obj = ExpenseMain.objects.get(id=pkMain)
+            obj.date = expense_date1
+            obj.voucher_number = voucher_number1
+            obj.voucher_number2 = voucher_number2
+            # obj.payee = EmployeeProfile.objects.get(id=client_name1)
+            obj.description = bill_to1
+            obj.cash_account = ChartSubCategory.objects.get(id=cash_account1)
+            obj.credit_account = ChartNoteItems.objects.get(id=credit_account1)
+            obj.save()
+
+        else:
+            print('ENTER NEW EXPENSE RECORD ')
+
+            obj = ExpenseMain.objects.create(
+                date=expense_date1,
+                voucher_number=voucher_number1,
+                voucher_number2=voucher_number2,
+                # payee_id=ClientID,
+                description=bill_to1,
+                cash_account=ChartSubCategory.objects.get(id=cash_account1),
+                credit_account=ChartNoteItems.objects.get(id=Debit_account1),
+            )
+
+
+        expense_main = {'Mainid': obj.id, 'date': obj.date, 'voucher_number2': obj.voucher_number2,
+                        'voucher_number': obj.voucher_number, 'bill_to': obj.description}
+
+        total_sum = ExpenseDetails.objects.filter(
+            expense_main_id_id=obj.id).aggregate(Sum('amount'))['amount__sum'] or 0.00
+
+        data = {
+            'expense_main': expense_main,
+            'total_sum': total_sum,
+        }
+        return JsonResponse(data)
+
 
 
 # BUDGET TRANSACTION

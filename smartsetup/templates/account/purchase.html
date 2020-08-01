@@ -79,7 +79,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-6 col-md-6 form-group">
-                                <label for="">Total Amount:</label>
+                                <label for="" style="text-align: right;">Total Amount Due:</label>
                                 <input class="form-control" type="text" name="total_amount" id="total_amt"
                                     placeholder="0.00" value="{{total_sum}}" required disabled>
                             </div>
@@ -100,7 +100,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-12 col-md-4 form-group" hidden>
                             <label for="">Credit Category</label>
                             <select name="cash_account" id="cash" class="form-control" disabled>
                                 {% for item in cash_acct %}
@@ -112,12 +112,17 @@
                             </select>
                         </div>
 
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-12 col-md-6 form-group">
                             <label for="">Narrative:</label>
                             <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
-                                value="{{expensemain.description}}" required disabled>
+                                value="{{expensemain.description}}" required>
                         </div>
 
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Total Amount Paid:</label>
+                            <input class="form-control" type="text" name="total_amt_pd" id="total_amt_pd"
+                                placeholder="0.00" value="{{total_sum}}" required >
+                        </div>
                     </div>
 
                     {% else %}
@@ -136,7 +141,7 @@
                                 <option value="Cash">Transfer</option>
                             </select>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Vendor / Supplier</label>
                             <select name="vendor_name" id="vendor" class="form-control">
                                 <option></option>
@@ -146,25 +151,23 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
-
-                            <div class="col-xs-6 col-md-6 form-group">
+                            <div class="col-xs-6 col-md-2 form-group">
                                 <label for="">Voucher Number</label>
                                 <input class="form-control" type="text" id="voucher_no" name="voucher_number"
                                     value="{{max_expense.max_val|add:1}}" required disabled>
                             </div>
-                            <div class="col-xs-6 col-md-6 form-group">
-                                <label for="">Total Amount:</label>
+                            <div class="col-xs-6 col-md-2 form-group">
+                                <label for="" style="text-align: right;">Total Amount Due:</label>
                                 <input class="form-control" type="text" name="total_amount" id="total_amt"
                                     placeholder="0.00" required disabled>
                             </div>
 
-                        </div>
+                    
 
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Credit Account <b>**</b></label>
                             <select name="debit_account" id="debit_account" class="form-control">
                                 <option></option>
@@ -176,7 +179,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-12 col-md-4 form-group" hidden>
                             <label for="">Credit Category</label>
                             <select name="cash_account" id="cash" class="form-control" disabled>
                                 <option></option>
@@ -187,11 +190,17 @@
                             </select>
                         </div>
 
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-6 form-group">
                             <label for="">Narrative:</label>
                             <input class="form-control" type="text" name="bill_to" id="bill_to"
                                 value="Purchase transaction on voucher No: {{max_expense.max_val|add:1}}" required
-                                disabled>
+                            >
+                        </div>
+                        
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Total Amount Paid:</label>
+                            <input class="form-control" type="text" name="total_amt_pd" id="total_amt_pd"
+                                placeholder="0.00" value="{{total_sum}}" required >
                         </div>
 
                     </div>
@@ -655,7 +664,7 @@
 
 
         //alert("Stage 3...");
-        if (trans_date && voucher_no && CategoryCode && received_from && pay_mode) {
+        if (trans_date && voucher_no && CategoryCode && vendorID && received_from && pay_mode) {
 
             $.ajax({
                 url: '{% url "purchase_post" %}',
@@ -729,7 +738,7 @@
         console.log(credit_acct);
         console.log(pay_mode);
         alert("Stage 5...");
-        if (trans_date && voucher_no && CategoryCode && received_from) {
+        if (trans_date && voucher_no && CategoryCode && vendorID && received_from) {
             // Create Ajax Call
             //alert("Stage 3...");
             $.ajax({
@@ -796,7 +805,7 @@
     });
 
     $('#vendor').change(function () {
-        //$('#bill_to').val("Purchase from " + $(this).find('option:selected').text());
+        $('#bill_to').val("Purchase from " + $(this).find('option:selected').text().trim() + " on Voucher No: " + $('input[name="voucher_number"]').val().trim());
     });
 
     $('#inventory').change(function () {

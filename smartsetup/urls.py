@@ -185,6 +185,8 @@ urlpatterns = [
          name='expense_ajax_delete'),
     path('ajax/expense/delete/',  views_ajax.DeleteExpense.as_view(),
          name='expense_delete'),
+    path('expense_savemain', views.ExpenseSaveMain.as_view(),
+         name='expense_savemain'),     # SAVE MAIN FORM RECORDS
 
     # BUDGET
     path('budget_list', views.budget_list, name='budget_list'),

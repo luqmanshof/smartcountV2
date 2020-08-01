@@ -18,9 +18,15 @@
             <a href="{% url 'expense_list' %}"><button class="btn btn-danger form-control"
                     type="submit">EXIT</button></a>
         </div>
+        
         <div class="pull-right form-group col-xs-4 col-md-3 button-small">
             <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
                 data-target="#journalModal">JOURNAL</button>
+        </div>
+        
+        <div class="pull-right form-group col-xs-4 col-md-3">
+            <button class="btn btn-success form-control" onClick="saveMain()">SAVE</button>
+
         </div>
 
     </div>
@@ -45,12 +51,17 @@
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Voucher Number</label>
+                            <label for="">Ref Number</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
                                 value="{{expensemain.voucher_number}}" required disabled>
-
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no2" name="voucher_number2"
+                                value="{{expensemain.voucher_number2}}" required>
+                        </div>
+
+                        <div class="col-xs-12 col-md-2 form-group">
                             <label for="">Payee</label>
                             <select name="client_name" id="client" class="form-control">
                                 {% for item in staff_name %}
@@ -125,11 +136,15 @@
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Voucher Number</label>
+                            <label for="">Ref Number</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
                                 value="{{max_expense.max_val|add:1}}" required disabled>
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no2" name="voucher_number2">
+                        </div>
+                        <div class="col-xs-12 col-md-2 form-group">
                             <label for="">Payee</label>
                             <select name="client_name" id="client" class="form-control">
                                 {% for item in staff_name %}
@@ -630,6 +645,7 @@
 
         trans_date = $('input[name="trans_date"]').val().trim();
         voucher_no = $('input[name="voucher_number"]').val().trim();
+        voucher_no2 = $('input[name="voucher_number2"]').val().trim();
         received_from = $('input[name="bill_to"]').val().trim();
         mainID = $('input[name="mainId"]').val().trim();
         description = $('input[name="description"]').val().trim();
@@ -656,6 +672,7 @@
                 data: {
                     'trans_date': trans_date,
                     'voucher_number': voucher_no,
+                    'voucher_number2': voucher_no2,
                     'client_name': clientID,
                     'bill_to': received_from,
                     'cash_account': CategoryCode,
@@ -717,6 +734,7 @@
         // alert('EDIT RECORD ?');
         trans_date = $('input[name="trans_date"]').val().trim();
         voucher_no = $('input[name="voucher_number"]').val().trim();
+        voucher_no2 = $('input[name="voucher_number2"]').val().trim();
         received_from = $('input[name="bill_to"]').val().trim();
         mainID = $('input[name="mainId"]').val().trim();
         description = $('input[name="description_edit"]').val().trim();
@@ -754,6 +772,7 @@
                     data: {
                         'trans_date': trans_date,
                         'voucher_number': voucher_no,
+                        'voucher_number2': voucher_no2,
                         'client_name': clientID,
                         'bill_to': received_from,
                         'cash_account': CategoryCode,
@@ -820,6 +839,39 @@
 
     }
 
+
+    function saveMain() {
+        trans_date = $('input[name="trans_date"]').val().trim();
+        voucher_no = $('input[name="voucher_number"]').val().trim();
+        voucher_no2 = $('input[name="voucher_number2"]').val().trim();
+        received_from = $('input[name="bill_to"]').val().trim();
+        mainID = $('input[name="mainId"]').val().trim();
+
+        if (received_from) {
+            console.log("I GOT HERE");
+            $.ajax({
+                url: '{% url "expense_savemain" %}',
+                data: {
+                        'trans_date': trans_date,
+                        'voucher_number': voucher_no,
+                        'voucher_number2': voucher_no2,
+                        'client_name': clientID,
+                        'bill_to': received_from,
+                        'cash_account': CategoryCode,
+                        'Debit_account': debit_acct,
+                        'mainID': mainID,
+                },
+                dataType: 'json',
+                success: function () {
+                    alert("Record Saved Successfully")
+                    // $("#journalview").load(journal_url);
+                },
+            });
+        } else {
+            alert("RECORD NOT SAVED. Please enter the Narrative")
+        }
+
+    }
 
     $('#client').change(function () {
         $('#bill_to').val($(this).find('option:selected').text());

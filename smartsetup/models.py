@@ -264,6 +264,8 @@ class SetupInventoryCategory(models.Model):
     inventory_category_code = models.PositiveSmallIntegerField(blank=True)
     inventory_category_name = models.CharField(max_length=256)
     description = models.TextField(blank=True)
+    inventory_account = models.ForeignKey(
+        ChartNoteItems, on_delete=models.SET_NULL, null=True, related_name='inventory_account')
 
     def __str__(self):
         return self.inventory_category_name
@@ -401,6 +403,7 @@ class ExpenseMain(models.Model):
     date = models.DateTimeField(
         default=timezone.now, blank=True, verbose_name='Expense Date/Time')
     voucher_number = models.PositiveIntegerField(default=100)
+    voucher_number2 = models.CharField(max_length=256, default='', null=True)
     payee = models.ForeignKey(
         EmployeeProfile, on_delete=models.SET_NULL, null=True, blank=True, default='')
     description = models.TextField(default='')

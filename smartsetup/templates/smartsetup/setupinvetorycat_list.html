@@ -47,6 +47,9 @@
                                 <td>
                                     {{ cat.inventory_category_name }}
                                 </td>
+                                <td>
+                                    {{ cat.inventory_account }}
+                                </td>
                                 <td style="text-align:left">
                                   <a href="{% url 'setupinventorycat_update' cat.pk %}" class = "fa fa-edit text-green"> Edit</a> |
                                   <a href="{% url 'setupinventorycat_detail' cat.pk %}" class = "fa fa-eye text-blue"> View</a> |

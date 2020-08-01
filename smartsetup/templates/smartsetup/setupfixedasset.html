@@ -171,12 +171,12 @@
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Purchase Date:</label>
                             <input class="form-control" type="datetime-local" onload="" name="purchase_date"
-                                id="purchase_date" disabled>
+                                id="purchase_date">
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Purchase Value:</label>
                             <input class="form-control" type="text" name="purchase_value" id="purchase_value"
-                                placeholder="0.00" disabled>
+                                placeholder="0.00">
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Depreciated Value:</label>
@@ -451,13 +451,14 @@
 
 
     $("#saverec").click(function () {
-        alert("Saving Record...");
+        // alert("Saving Record...");
 
         trans_date = $('input[name="trans_date"]').val().trim();
         asset_id = $('input[name="voucher_number"]').val().trim();
         description = $('input[name="description"]').val().trim();
         console.log('Stage1');
         mainID = $('input[name="mainId"]').val().trim();
+        purchase_date = $('input[name="purchase_date"]').val().trim();
         //amountInput = $('input[name="amount"]').val().trim();
         //totalAmount = $('input[name="total_amount"]').val().trim();
 
@@ -479,12 +480,12 @@
                     'trans_date': trans_date,
                     'asset_id': asset_id,
                     'description': description,
-                    'depart_name': depart_name,
                     'asset_account': asset_acct,
                     'expense_account': expense_account,
                     'depr_account': depr_account,
                     'depr_method': depr_method,
                     'mainID': mainID,
+                    'purchase_date': purchase_date
                 },
                 dataType: 'json',
                 success: function (data) {
