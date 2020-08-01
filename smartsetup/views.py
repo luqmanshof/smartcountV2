@@ -1151,7 +1151,6 @@ class CreateExpense(View):
         amount1_old = request.GET.get('amount_old', 0)
 
         amount2 = float(amount1.replace(',', ''))
-        amount2_old = float(amount1_old.replace(',', ''))
         total_amount = float(total_amount1.replace(',', ''))
         print('EXPENSE CASH ACCOUNT ID: ', cash_account1)
         print('EXPENSE BUDGET ID: ', budget_dept2)
@@ -1178,6 +1177,8 @@ class CreateExpense(View):
         if pkMain:
             print('VOUCHER NUMBER', voucher_number1)
             print('UPDATE EXISTING RECORD ')
+            amount2_old = float(amount1_old.replace(',', ''))
+            
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
             obj.voucher_number = voucher_number1

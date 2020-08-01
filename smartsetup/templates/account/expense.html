@@ -658,7 +658,7 @@
 
     // Create Django Ajax Call
     $("#receiptSub").submit(function () {
-        //alert("Stage 1...");
+        // alert("Stage 1...");
 
         trans_date = $('input[name="trans_date"]').val().trim();
         voucher_no = $('input[name="voucher_number"]').val().trim();
@@ -667,9 +667,10 @@
         mainID = $('input[name="mainId"]').val().trim();
         description = $('input[name="description"]').val().trim();
         amountInput = $('input[name="amount"]').val().trim();
+        amountInput_old = $('input[name="amount_edit_old"]').val().trim();
         totalAmount = $('input[name="total_amount"]').val().trim();
         budget_dept = $('#budget_dept').children("option:selected").val();
-        //alert("Stage 2...");
+        // alert("Stage 2...");
 
         console.log(trans_date);
         console.log(voucher_no);
@@ -683,7 +684,7 @@
         console.log(CategoryCode2);
         if (trans_date && voucher_no && CategoryCode && received_from) {
             // Create Ajax Call
-            //alert("Stage 3...");
+            // alert("Stage 3...");
             $.ajax({
                 url: '{% url "expense_ajax_create" %}',
                 data: {
@@ -699,6 +700,7 @@
                     'expense_account': CategoryCode2,
                     'credit_account': credit_acct,
                     'amount': amountInput,
+                    'amount_old': amountInput_old,
                     'total_amount': totalAmount,
                     'budget_dept': budget_dept,
                 },
