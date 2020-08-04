@@ -409,14 +409,16 @@ def setupinventorycat_list(request, pk=None):
 
 class SetupInventoryCat(generic.CreateView):
     model = SetupInventoryCategory
-    fields = ['inventory_category_code', 'inventory_category_name', 'inventory_account']
+    fields = ['inventory_category_code',
+              'inventory_category_name', 'inventory_account']
     template_name = 'smartsetup/SetupInventoryCat.html'
     success_url = reverse_lazy('setupinventorycategory_list')
 
 
 class SetupInventoryCatUpdate(generic.UpdateView):
     model = SetupInventoryCategory
-    fields = ['inventory_category_code', 'inventory_category_name', 'inventory_account']
+    fields = ['inventory_category_code',
+              'inventory_category_name', 'inventory_account']
     template_name = 'smartsetup/SetupInventoryCat.html'
     success_url = reverse_lazy('setupinventorycategory_list')
 
@@ -625,7 +627,7 @@ class CreateFixedAsset(View):
                 accumulated_account=ChartNoteItems.objects.get(
                     id=depr_account),
                 depreciation_method=depr_method,
-                purchase_date = purchase_date,
+                purchase_date=purchase_date,
                 # purchase_value = purchase_value
             )
 
@@ -1010,7 +1012,8 @@ class GetAcctIDs(View):
         # print('THE BUDGET DEPARTMENT NAME IS : ', budgetDepart)
 
         if departAcct:
-            departAcct_id = BudgetDepartment.objects.get(department_name=departAcct).id
+            departAcct_id = BudgetDepartment.objects.get(
+                department_name=departAcct).id
         else:
             departAcct_id = "0"
 
@@ -1022,7 +1025,7 @@ class GetAcctIDs(View):
         note_id = ChartNoteItems.objects.get(item_name=creditAcct).id
         cat_id = ChartNoteItems.objects.get(
             item_name=creditAcct).sub_category_id
-            
+
         # print('THE DEPARTMENT ID IS : ', departAcct_id)
         print('THE NOTE ID IS : ', note_id)
         print('THE SUB-CATEGORY ID IS : ', cat_id)
@@ -1040,7 +1043,8 @@ class GetAcctIDs(View):
 @login_required
 def expense_list(request, pk=None):
     expenses = ExpenseMain.objects.order_by('date', 'voucher_number')
-    fieldCols = ['Date (Month/Day/Year)', 'Ref No.', 'Voucher No.', 'Description']
+    fieldCols = ['Date (Month/Day/Year)', 'Ref No.',
+                 'Voucher No.', 'Description']
     args = {'fieldCols': fieldCols, 'expenses': expenses}
     return render(request, 'account/expense_list.html', args)
 
@@ -1092,7 +1096,7 @@ def expenseedit(request, pk=None):
 
         expenseitems = ExpenseDetails.objects.filter(
             expense_main_id_id=pk).values('budget_dept__budget_dept__department_name',
-                                          'description', 'expense_account__sub_category_name', 
+                                          'description', 'expense_account__sub_category_name',
                                           'Debit_account__item_name', 'amount', 'id', 'budget_dept__id')
 
         staff_name = EmployeeProfile.objects.all()
@@ -1178,7 +1182,7 @@ class CreateExpense(View):
             print('VOUCHER NUMBER', voucher_number1)
             print('UPDATE EXISTING RECORD ')
             amount2_old = float(amount1_old.replace(',', ''))
-            
+
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
             obj.voucher_number = voucher_number1
@@ -1230,19 +1234,21 @@ class CreateExpense(View):
             print('EDIT EXPENSE DETAILS RECORD')
             obj2 = ExpenseDetails.objects.get(id=pkSub)
             obj2.description = description
-            obj2.expense_account = ChartSubCategory.objects.get(id=expense_account1)
+            obj2.expense_account = ChartSubCategory.objects.get(
+                id=expense_account1)
             obj2.Debit_account = ChartNoteItems.objects.get(id=Debit_account1)
             obj2.amount = amount2
             obj2.budget_dept = BudgetDetails.objects.get(id=budget_dept2)
             obj2.save()
 
-
-            obj4 = GeneralLedger.objects.get(account_id_id=Debit_account1_old, ref_number=voucher_number1, journal_type='CDJ', main_Trans=False)
+            obj4 = GeneralLedger.objects.get(
+                account_id_id=Debit_account1_old, ref_number=voucher_number1, journal_type='CDJ', main_Trans=False)
             obj4.date = expense_date1
             obj4.ref_number = voucher_number1
             obj4.journal_type = 'CDJ'
             obj4.account_id = ChartNoteItems.objects.get(id=Debit_account1)
-            obj4.sub_category = ChartSubCategory.objects.get(id=expense_account1)
+            obj4.sub_category = ChartSubCategory.objects.get(
+                id=expense_account1)
             obj4.category = ChartCategory.objects.get(id=expenseCategoryID)
             obj4.description = description
             obj4.debit = amount2
@@ -1252,7 +1258,8 @@ class CreateExpense(View):
             print('ADD EXPENSE DETAILS RECORD ')
             obj2 = ExpenseDetails.objects.create(
                 description=description,
-                expense_account=ChartSubCategory.objects.get(id=expense_account1),
+                expense_account=ChartSubCategory.objects.get(
+                    id=expense_account1),
                 Debit_account=ChartNoteItems.objects.get(id=Debit_account1),
                 amount=amount2,
                 budget_dept=BudgetDetails.objects.get(id=budget_dept2),
@@ -1290,7 +1297,6 @@ class CreateExpense(View):
             'journal_list': journal_list
         }
         return JsonResponse(data)
-
 
 
 class ExpenseSaveMain(View):
@@ -1334,7 +1340,6 @@ class ExpenseSaveMain(View):
                 credit_account=ChartNoteItems.objects.get(id=Debit_account1),
             )
 
-
         expense_main = {'Mainid': obj.id, 'date': obj.date, 'voucher_number2': obj.voucher_number2,
                         'voucher_number': obj.voucher_number, 'bill_to': obj.description}
 
@@ -1346,7 +1351,6 @@ class ExpenseSaveMain(View):
             'total_sum': total_sum,
         }
         return JsonResponse(data)
-
 
 
 # BUDGET TRANSACTION
@@ -1376,7 +1380,7 @@ class BudgetClass(ListView):
         context['expense_acct'] = ChartSubCategory.objects.all()
         # context['expense_acct'] = ChartSubCategory.objects.filter(
         #     category_code_id='2')
-            
+
         ids = ChartSubCategory.objects.filter(
             Q(category_code_id='1') | Q(category_code_id='2') | Q(category_code_id='3') | Q(category_code_id='4')).values_list('id', flat=True)
         context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
@@ -2699,6 +2703,7 @@ def financialbudget(request):
     # budget_dict = {}
     budget_records = []
     budget_totals = []
+    budgetSum_totals = []
 
     for budgetItem in budget:
         department = budgetItem.budget_dept
@@ -2739,21 +2744,6 @@ def financialbudget(request):
                   'Jan': Jan, 'Feb': Feb, 'Mar': Mar, 'Apr': Apr, 'May': May, 'Jun': Jun, 'Jul': Jul,
                   'Aug': Aug, 'Sep': Sep, 'Oct': Oct, 'Nov': Nov, 'Dec': Dec, 'Total': Total, 'Bal': Bal
                   }
-
-        Jan = 0.00
-        Feb = 0.00
-        Apr = 0.00
-        Mar = 0.00
-        May = 0.00
-        Jun = 0.00
-        Jul = 0.00
-        Aug = 0.00
-        Sep = 0.00
-        Oct = 0.00
-        Nov = 0.00
-        Dec = 0.00
-        Total = 0.00
-        Bal = 0.00
 
         print('BUDGET ARRAYYY :', record)
         budget_records.append(record)
@@ -2796,23 +2786,47 @@ def financialbudget(request):
                        'SepSum': SepSum, 'OctSum': OctSum, 'NovSum': NovSum, 'DecSum': DecSum, 'TotalSum': TotalSum, 'BalSum': BalSum
                        }
 
-        Jan = 0.00
-        Feb = 0.00
-        Apr = 0.00
-        Mar = 0.00
-        May = 0.00
-        Jun = 0.00
-        Jul = 0.00
-        Aug = 0.00
-        Sep = 0.00
-        Oct = 0.00
-        Nov = 0.00
-        Dec = 0.00
-        Total = 0.00
-        Bal = 0.00
-
         print('BUDGET SUM ARRAYYY :', recordTotal)
         budget_totals.append(recordTotal)
+
+    budget_sum = BudgetDetails.objects.aggregate(
+        Sum('amount'))['amount__sum'] or 0.00
+    JanSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-01-01", "2019-01-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    FebSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-02-01", "2019-02-28"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    MarSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-03-01", "2019-03-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    AprSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-04-01", "2019-04-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    MaySum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-05-01", "2019-05-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    JunSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-06-01", "2019-06-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    JulSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-07-01", "2019-07-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    AugSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-08-01", "2019-08-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    SepSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-09-01", "2019-09-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    OctSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-10-01", "2019-10-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    NovSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-11-01", "2019-11-30"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    DecSum = ExpenseDetails.objects.filter(expense_main_id__date__range=[
+        "2019-12-01", "2019-12-31"]).aggregate(Sum('amount'))['amount__sum'] or 0.00
+    TotalSum = float(JanSum) + float(FebSum) + float(MarSum) + float(AprSum) + float(MaySum) + float(JunSum) + \
+        float(JulSum) + float(AugSum) + float(SepSum) + \
+        float(OctSum) + float(NovSum) + float(DecSum)
+    BalSum = float(budget_sum) - float(TotalSum)
+
+    recordSumTotal = {'department': department, 'budget_sum': budget_sum, 'JanSum': JanSum, 'FebSum': FebSum,
+                      'MarSum': MarSum, 'AprSum': AprSum, 'MaySum': MaySum, 'JunSum': JunSum, 'JulSum': JulSum, 'AugSum': AugSum,
+                      'SepSum': SepSum, 'OctSum': OctSum, 'NovSum': NovSum, 'DecSum': DecSum, 'TotalSum': TotalSum, 'BalSum': BalSum
+                      }
+
+    print('BUDGET SUM TOTAL :', recordSumTotal)
+    budgetSum_totals.append(recordSumTotal)
 
     # print('BUDGET ARRAYSSS :', budget_records)
     # budget_records['budgetItems'] = budget_records
@@ -2822,7 +2836,7 @@ def financialbudget(request):
     print('BUDGET DEPT : ', budgetdept)
 
     args = {'budgetdept': budgetdept, 'budgetItems': budget_records, 'budgetTotals': budget_totals,
-            'companyinfo': companyinfo, 'expenses': expenses}
+            'budgetSumTotals': budgetSum_totals, 'companyinfo': companyinfo, 'expenses': expenses}
 
     # args = {'budgetdept': budgetdept, 'budget': budget, 'budget2': budget2,
     #         'acctitems': acctitems, 'companyinfo': companyinfo}

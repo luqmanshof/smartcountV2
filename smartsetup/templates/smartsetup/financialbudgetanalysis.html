@@ -44,7 +44,7 @@
                 <div class="box-body">
                     <table class="table table-striped">
                         <thead>
-                            <tr>
+                            <tr style="font-size:12px;">
                                 <th></th>
                                 <th style="text-align: center;">BUDGET</th>
                                 <th style="text-align: center;">JAN</th>
@@ -89,7 +89,7 @@
                         <tbody>
                             {% for act in budgetItems %}
                             {% if act.department|stringformat:"s" == cat.department_name|stringformat:"s" %}
-                            <tr style="text-align: right; font-size:11px;">
+                            <tr style="text-align: right; font-size:9px;">
                                 <td>{{act.budgetName}}</td>
                                 <td>{{act.budgetAmount|floatformat:2|intcomma}}</td>
                                 <td>{{act.Jan|floatformat:2|intcomma}}</td>
@@ -112,7 +112,7 @@
 
                             {% for item in budgetTotals %}
                             {% if item.department|stringformat:"s" == cat.department_name|stringformat:"s" %}
-                            <tr style="text-align: right; font-size:11px;">
+                            <tr style="text-align: right; font-size:9px;">
                                 <td><b>Sub Total</b></td>
                                 <td><b>{{item.budget_sum|floatformat:2|intcomma}}</b></td>
                                 <td><b>{{item.JanSum|floatformat:2|intcomma}}</b></td>
@@ -138,24 +138,28 @@
                         {% endfor %}
 
                         <tfoot>
-                            <tr style="text-align: right; font-size:11px;">
+
+                            {% for item in budgetSumTotals %}
+                            <tr style="text-align: right; font-size:9px;">
                                 <td><b>Total</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
-                                <td><b>0.00</b></td>
+                                <td><b>{{item.budget_sum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.JanSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.FebSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.MarSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.AprSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.MaySum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.JunSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.JulSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.AugSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.SepSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.OctSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.NovSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.DecSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.TotalSum|floatformat:2|intcomma}}</b></td>
+                                <td><b>{{item.BalSum|floatformat:2|intcomma}}</b></td>
                             </tr>
+                            {% endfor %}
+
                         </tfoot>
                     </table>
                 </div>
