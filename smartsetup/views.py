@@ -534,7 +534,7 @@ def fixedassetedit(request, pk=None):
         expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
         note_acct = ChartNoteItems.objects.all()
         # journal_list = GeneralLedger.objects.filter(ref_number=expense_number1, journal_type='CDJ')
-        # print('EXPENSE JORNAL ITEMS : ', journal_list)
+        # print('FIXED ASSET MAIN : ', fixedasset_main)
 
         args = {'fixedasset_main': fixedasset_main, 'dept_name': dept_name,
                 'asset_acct': asset_acct, 'expense_acct': expense_acct,
@@ -1074,7 +1074,7 @@ class ExpenseClass(ListView):
             category_code_id='3').values_list('id', flat=True)
         context['note_acct_cash'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
-        context['department'] = BudgetDetails.objects.all()
+        context['department'] = BudgetDetails.objects.all().order_by('budget_dept')
         # context['department'] = BudgetDepartment.objects.all()
 
         return context
@@ -1090,6 +1090,7 @@ def expenseedit(request, pk=None):
         print('TOTAL SUM GENERATED CREATED : ', total_sum)
 
         expensemain = ExpenseMain.objects.get(id=pk)
+
         expense_number1 = ExpenseMain.objects.get(id=pk).voucher_number
         # acct_cash = ExpenseMain.objects.get(id=pk).voucher_number
         print('EXPENSE NO. RETRIEVED : ', expense_number1)
@@ -1114,7 +1115,7 @@ def expenseedit(request, pk=None):
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
         # department = BudgetDepartment.objects.all()
-        department = BudgetDetails.objects.all()
+        department = BudgetDetails.objects.all().order_by('budget_dept')
 
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='CDJ')
@@ -1181,7 +1182,10 @@ class CreateExpense(View):
         if pkMain:
             print('VOUCHER NUMBER', voucher_number1)
             print('UPDATE EXISTING RECORD ')
-            amount2_old = float(amount1_old.replace(',', ''))
+            if amount1_old:
+                amount2_old = float(amount1_old.replace(',', ''))
+            else:
+                amount2_old = 0
 
             obj = ExpenseMain.objects.get(id=pkMain)
             obj.date = expense_date1
