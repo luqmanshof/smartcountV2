@@ -519,6 +519,10 @@ def fixedassetedit(request, pk=None):
         # print('TOTAL SUM GENERATED CREATED : ', total_sum)
 
         fixedasset_main = SetupFixedAssets.objects.get(id=pk)
+        acquisition_date = fixedasset_main.acquisition_date.strftime(
+            "%Y-%m-%d")
+        purchase_date = fixedasset_main.purchase_date.strftime("%Y-%m-%d")
+
         # expense_number1 = SetupFixedAssets.objects.get(id=pk).voucher_number
         # print('EXPENSE NO. RETRIEVED : ', expense_number1)
 
@@ -531,14 +535,15 @@ def fixedassetedit(request, pk=None):
 
         staff_name = EmployeeProfile.objects.all()
         cash_acct = ChartSubCategory.objects.filter(category_code_id='3')
-        expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
+        # expense_acct = ChartSubCategory.objects.filter(category_code_id='2')
         note_acct = ChartNoteItems.objects.all()
         # journal_list = GeneralLedger.objects.filter(ref_number=expense_number1, journal_type='CDJ')
         # print('FIXED ASSET MAIN : ', fixedasset_main)
 
         args = {'fixedasset_main': fixedasset_main, 'dept_name': dept_name,
                 'asset_acct': asset_acct, 'expense_acct': expense_acct,
-                'depreciation_acct': depreciation_acct,
+                'depreciation_acct': depreciation_acct, 'purchase_date': purchase_date,
+                'acquisition_date': acquisition_date
                 }
         return render(request, 'smartsetup/setupfixedasset.html', args)
     else:
@@ -592,8 +597,10 @@ class CreateFixedAsset(View):
         depr_account = request.GET.get('depr_account', None)
         depr_method = request.GET.get('depr_method', None)
         pkMain = request.GET.get('mainID', None)
-        purchase_date = request.GET.get('trans_date', None)
-        # purchase_value = request.GET.get('purchase_value', None)
+        purchase_date = request.GET.get('purchase_date', None)
+        purchase_value = request.GET.get('purchase_value', None)
+        useful_life = request.GET.get('useful_life', None)
+        salvage_value = request.GET.get('salvage_value', None)
 
         print('ASSET ACCOUNT : ', asset_account)
 
@@ -611,7 +618,9 @@ class CreateFixedAsset(View):
                 id=depr_account)
             obj.depreciation_method = depr_method
             obj.purchase_date = purchase_date
-            # obj.purchase_value = purchase_value
+            obj.purchase_value = purchase_value
+            obj.useful_life = useful_life
+            obj.salvage_value = salvage_value
             obj.save()
 
         else:
@@ -628,7 +637,9 @@ class CreateFixedAsset(View):
                     id=depr_account),
                 depreciation_method=depr_method,
                 purchase_date=purchase_date,
-                # purchase_value = purchase_value
+                purchase_value = purchase_value,
+                useful_life = useful_life,
+                salvage_value = salvage_value
             )
 
         fixedasset_main = {'Mainid': obj.id, 'date': obj.acquisition_date,
@@ -1074,7 +1085,8 @@ class ExpenseClass(ListView):
             category_code_id='3').values_list('id', flat=True)
         context['note_acct_cash'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
-        context['department'] = BudgetDetails.objects.all().order_by('budget_dept')
+        context['department'] = BudgetDetails.objects.all().order_by(
+            'budget_dept')
         # context['department'] = BudgetDepartment.objects.all()
 
         return context

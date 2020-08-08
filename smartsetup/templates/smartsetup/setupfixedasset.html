@@ -39,8 +39,8 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Acquisition Date</label>
-                            <input class="form-control" value="{{fixedasset_main.acquisition_date}}"
-                                type="datetime-local" onload="" name="trans_date" id="date" required>
+                            <input class="form-control" value="{{acquisition_date}}" type="date" onload=""
+                                name="trans_date" id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{fixedasset_main.id}}" />
                         </div>
@@ -48,12 +48,12 @@
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Asset ID:</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
-                                value="{{fixedasset_main.asset_id}}" required disabled>
+                                value="{{fixedasset_main.asset_id}}" required>
 
                         </div>
                         <div class="col-xs-12 col-md-6 form-group">
                             <label for="">Asset Description:</label>
-                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
+                            <input class="form-control" type="text" name="description" id="description" placeholder=""
                                 value="{{fixedasset_main.description}}" required>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group" hidden>
@@ -71,12 +71,10 @@
                         <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Depr. Method:</label>
                             <select name="depr_method" id="depr_method" class="form-control">
-                                {% for item in depreciation_acct %}
-                                <option value="{{ item.id }}"
-                                    {% if fixedasset_main.payee_id == item.id %}selected{% endif %}>
-                                    {{ item.first_name|add:" "|add:item.last_name }}
-                                </option>
-                                {% endfor %}
+                                <option value="Straight-line" selected>Straight-line</option>
+                                <option value="Double declining balance">Double declining balance</option>
+                                <option value="Sum of years">Sum of years</option>
+                                <option value="Units of production">Units of production</option>
                             </select>
 
                         </div>
@@ -97,8 +95,8 @@
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Purchase Date:</label>
-                            <input class="form-control" type="datetime-local" onload="" name="purchase_date"
-                                id="purchase_date" value="{{fixedasset_main.purchase_date}}">
+                            <input class="form-control" type="date" onload="" name="purchase_date" id="purchase_date"
+                                value="{{purchase_date}}">
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Purchase Value:</label>
@@ -107,13 +105,13 @@
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Depreciated Value:</label>
-                            <input class="form-control" type="text" name="purchase_value" id="purchase_value"
+                            <input class="form-control" type="text" name="depreciated_value" id="depreciated_value"
                                 placeholder="0.00" value="" disabled>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Net Book Value:</label>
-                            <input class="form-control" type="text" name="purchase_value" id="purchase_value"
-                                placeholder="0.00" value="" disabled>
+                            <input class="form-control" type="text" name="book_value" id="book_value" placeholder="0.00"
+                                value="" disabled>
                         </div>
                     </div>
 
@@ -121,9 +119,9 @@
                         <div class="col-xs-12 col-md-4 form-group">
                             <label for="">Asset Account</label>
                             <select name="asset_account" id="asset_account" class="form-control">
-                                {% for item in note_acct_cash %}
+                                {% for item in asset_acct %}
                                 <option value="{{ item.id }}"
-                                    {% if fixedasset_main.credit_account_id == item.id %}selected{% endif %}>
+                                    {% if fixedasset_main.asset_account_id == item.id %}selected{% endif %}>
                                     {{ item.item_name }}
                                 </option>
                                 {% endfor %}
@@ -132,10 +130,10 @@
                         <div class="col-xs-12 col-md-4 form-group">
                             <label for="">Expense Account</label>
                             <select name="expense_account" id="expense" class="form-control">
-                                {% for item in cash_acct %}
+                                {% for item in expense_acct %}
                                 <option value="{{ item.id }}"
-                                    {% if fixedasset_main.cash_account_id == item.id %}selected{% endif %}>
-                                    {{ item.sub_category_name }}
+                                    {% if fixedasset_main.expense_account_id == item.id %}selected{% endif %}>
+                                    {{ item.item_name }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -143,10 +141,10 @@
                         <div class="col-xs-12 col-md-4 form-group">
                             <label for="">Accum. Depr. Account</label>
                             <select name="depr_account" id="depr_acct" class="form-control">
-                                {% for item in cash_acct %}
+                                {% for item in depreciation_acct %}
                                 <option value="{{ item.id }}"
-                                    {% if fixedasset_main.cash_account_id == item.id %}selected{% endif %}>
-                                    {{ item.sub_category_name }}
+                                    {% if fixedasset_main.accumulated_account_id == item.id %}selected{% endif %}>
+                                    {{ item.item_name }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -215,13 +213,13 @@
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Depreciated Value:</label>
-                            <input class="form-control" type="text" name="purchase_value" id="purchase_value"
+                            <input class="form-control" type="text" name="depreciated_value" id="depreciated_value"
                                 placeholder="0.00" disabled>
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Net Book Value:</label>
-                            <input class="form-control" type="text" name="purchase_value" id="purchase_value"
-                                placeholder="0.00" disabled>
+                            <input class="form-control" type="text" name="book_value" id="book_value" placeholder="0.00"
+                                disabled>
                         </div>
                     </div>
 
@@ -406,11 +404,16 @@
             return this;
         }
 
-        $(function () {
-            // Handler for .ready() called.
-            $('input[type="datetime-local"]').setNow();
+        if ($('#main-id').val()) {
 
-        });
+        } else {
+            $(function () {
+                // Handler for .ready() called.
+                $('input[type="datetime-local"]').setNow();
+
+            });
+        }
+
 
         //DEFAULTS
         if ($('#main-id').val()) {
@@ -419,6 +422,10 @@
             asset_acct = $('#asset_account').children("option:selected").val();
             credit_acct = $('#credit_account').children("option:selected").val();
             departID = $('#depart').children("option:selected").val();
+            depr_method = $('#depr_method').children("option:selected").val();
+            depart_name = $('#depart').children("option:selected").val();
+            expense_account = $('#expense').children("option:selected").val();
+            depr_account = $('#depr_acct').children("option:selected").val();
 
         }
         else {
@@ -494,8 +501,10 @@
         console.log('Stage1');
         mainID = $('input[name="mainId"]').val().trim();
         purchase_date = $('input[name="purchase_date"]').val().trim();
-        //amountInput = $('input[name="amount"]').val().trim();
-        //totalAmount = $('input[name="total_amount"]').val().trim();
+        purchase_value = $('input[name="purchase_value"]').val().trim();
+        useful_life = $('input[name="useful_life"]').val().trim();
+        salvage_value = $('input[name="salvage_value"]').val().trim();
+
 
         console.log(trans_date);
         console.log(asset_id);
@@ -520,7 +529,10 @@
                     'depr_account': depr_account,
                     'depr_method': depr_method,
                     'mainID': mainID,
-                    'purchase_date': purchase_date
+                    'purchase_date': purchase_date,
+                    'purchase_value': purchase_value,
+                    'useful_life': useful_life,
+                    'salvage_value': salvage_value
                 },
                 dataType: 'json',
                 success: function (data) {
