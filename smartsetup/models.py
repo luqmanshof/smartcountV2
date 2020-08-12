@@ -465,6 +465,7 @@ class PurchaseMain(models.Model):
     date = models.DateTimeField(
         default=timezone.now, blank=True, verbose_name='Expense Date/Time')
     voucher_number = models.PositiveIntegerField(default=100)
+    voucher_number2 = models.CharField(max_length=256, default='', null=True)
     vendor = models.ForeignKey(
         SetupVendors, on_delete=models.SET_NULL, null=True, blank=True, default='')
     description = models.TextField(default='')

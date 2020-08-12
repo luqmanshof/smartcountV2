@@ -18,12 +18,12 @@
             <a href="{% url 'expense_list' %}"><button class="btn btn-danger form-control"
                     type="submit">EXIT</button></a>
         </div>
-        
+
         <div class="pull-right form-group col-xs-4 col-md-3 button-small">
             <button class="btn btn-primary form-control" onClick="" data-toggle="modal"
                 data-target="#journalModal">JOURNAL</button>
         </div>
-        
+
         <div class="pull-right form-group col-xs-4 col-md-3">
             <button class="btn btn-success form-control" onClick="saveMain()">SAVE</button>
 
@@ -315,7 +315,8 @@
                                             <td class="itemAmount itemData" style="text-align: right;" name="amount">
                                                 {{item.amount|floatformat:2|intcomma}}
                                             </td>
-                                            <td class="itemBudgetID itemData" name="budget" hidden>{{item.budget_dept__id}}</td>
+                                            <td class="itemBudgetID itemData" name="budget" hidden>
+                                                {{item.budget_dept__id}}</td>
                                             <td align="center">
                                                 <button class="btn btn-success form-control button-small"
                                                     onClick="editItem({{item.id}})" data-toggle="modal"
@@ -391,7 +392,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        
+
                         <div class="form-group col-md-12">
                             <label for="">Expense Account</label>
                             <select name="credit_account_edit" id="credit_account_edit" class="form-control" required
@@ -414,7 +415,7 @@
                                     {{item.sub_category__category_code__category_name}}
                                 </option>
                                 {% endfor %}
-                            </select>                        
+                            </select>
                         </div>
 
                         <div class="form-group" hidden>
@@ -536,7 +537,7 @@
             seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
 
             // formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
-            formattedDateTime = year + '/' + month + '/' + date;
+            formattedDateTime = year + '-' + month + '-' + date;
 
             if (onlyBlank === true && $(this).val()) {
                 return this;
@@ -552,7 +553,7 @@
         } else {
             $(function () {
                 // Handler for .ready() called.
-                $('input[type="datetime-local"]').setNow();
+                $('input[type="date"]').setNow();
 
             });
         }
@@ -875,14 +876,14 @@
             $.ajax({
                 url: '{% url "expense_savemain" %}',
                 data: {
-                        'trans_date': trans_date,
-                        'voucher_number': voucher_no,
-                        'voucher_number2': voucher_no2,
-                        'client_name': clientID,
-                        'bill_to': received_from,
-                        'cash_account': CategoryCode,
-                        'Debit_account': debit_acct,
-                        'mainID': mainID,
+                    'trans_date': trans_date,
+                    'voucher_number': voucher_no,
+                    'voucher_number2': voucher_no2,
+                    'client_name': clientID,
+                    'bill_to': received_from,
+                    'cash_account': CategoryCode,
+                    'Debit_account': debit_acct,
+                    'mainID': mainID,
                 },
                 dataType: 'json',
                 success: function () {

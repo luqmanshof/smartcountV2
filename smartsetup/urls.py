@@ -265,6 +265,8 @@ urlpatterns = [
          views.journalview, name='journal_view'),
 
     # Reports
+    path('report_view/(<str:type>)',
+         views.reportview, name='report_view'),
     path('financialperformance', views.financialperformance,
          name='financialperformance'),
     # path('financialperformanceprint',views.financialperformanceprint,name='financialperformanceprint'),

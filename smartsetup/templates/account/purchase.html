@@ -40,19 +40,24 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Transaction Date</label>
-                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
-                                name="trans_date" id="date" required>
+                            <input class="form-control" value="{{trans_date}}" type="date" onload="" name="trans_date"
+                                id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{expensemain.id}}" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 form-group">
-                            <label for="">Voucher Number</label>
+                            <label for="">Ref Number</label>
                             <input class="form-control" type="text" id="voucher_no" name="voucher_number"
                                 value="{{expensemain.voucher_number}}" required disabled>
 
                         </div>
-                        <div class="col-xs-12 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no2" name="voucher_number2"
+                                value="{{expensemain.voucher_number2}}" required>
+                        </div>
+                        <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Vendor / Supplier</label>
                             <select name="vendor_name" id="vendor" class="form-control">
                                 <option></option>
@@ -89,7 +94,14 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-12 col-md-4 form-group">
+
+                        <div class="col-xs-12 col-md-6 form-group">
+                            <label for="">Narrative:</label>
+                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
+                                value="{{expensemain.description}}" required>
+                        </div>
+
+                        <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Credit Account</label>
                             <select name="debit_account" id="debit_account" class="form-control">
                                 {% for item in note_acct_cash %}
@@ -112,16 +124,10 @@
                             </select>
                         </div>
 
-                        <div class="col-xs-12 col-md-6 form-group">
-                            <label for="">Narrative:</label>
-                            <input class="form-control" type="text" name="bill_to" id="bill_to" placeholder=""
-                                value="{{expensemain.description}}" required>
-                        </div>
-
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Total Amount Paid:</label>
                             <input class="form-control" type="text" name="total_amt_pd" id="total_amt_pd"
-                                placeholder="0.00" value="{{total_sum}}" required >
+                                placeholder="0.00" value="{{total_sum}}" required>
                         </div>
                     </div>
 
@@ -129,8 +135,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Transaction Date</label>
-                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
-                                required>
+                            <input class="form-control" type="date" onload="" name="trans_date" id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId" />
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
@@ -141,7 +146,11 @@
                                 <option value="Cash">Transfer</option>
                             </select>
                         </div>
-                        <div class="col-xs-6 col-md-4 form-group">
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Voucher Number</label>
+                            <input class="form-control" type="text" id="voucher_no2" name="voucher_number2">
+                        </div>
+                        <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Vendor / Supplier</label>
                             <select name="vendor_name" id="vendor" class="form-control">
                                 <option></option>
@@ -151,22 +160,28 @@
                                 {% endfor %}
                             </select>
                         </div>
-                            <div class="col-xs-6 col-md-2 form-group">
-                                <label for="">Voucher Number</label>
-                                <input class="form-control" type="text" id="voucher_no" name="voucher_number"
-                                    value="{{max_expense.max_val|add:1}}" required disabled>
-                            </div>
-                            <div class="col-xs-6 col-md-2 form-group">
-                                <label for="" style="text-align: right;">Total Amount Due:</label>
-                                <input class="form-control" type="text" name="total_amount" id="total_amt"
-                                    placeholder="0.00" required disabled>
-                            </div>
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="">Ref Number</label>
+                            <input class="form-control" type="text" id="voucher_no" name="voucher_number"
+                                value="{{max_expense.max_val|add:1}}" required disabled>
+                        </div>
+                        <div class="col-xs-6 col-md-2 form-group">
+                            <label for="" style="text-align: right;">Total Amount Due:</label>
+                            <input class="form-control" type="text" name="total_amount" id="total_amt"
+                                placeholder="0.00" required disabled>
+                        </div>
 
-                    
+
 
                     </div>
 
                     <div class="row">
+
+                        <div class="col-xs-12 col-md-6 form-group">
+                            <label for="">Narrative:</label>
+                            <input class="form-control" type="text" name="bill_to" id="bill_to"
+                                value="Purchase transaction on voucher No: {{max_expense.max_val|add:1}}" required>
+                        </div>
                         <div class="col-xs-6 col-md-4 form-group">
                             <label for="">Credit Account <b>**</b></label>
                             <select name="debit_account" id="debit_account" class="form-control">
@@ -190,17 +205,10 @@
                             </select>
                         </div>
 
-                        <div class="col-xs-6 col-md-6 form-group">
-                            <label for="">Narrative:</label>
-                            <input class="form-control" type="text" name="bill_to" id="bill_to"
-                                value="Purchase transaction on voucher No: {{max_expense.max_val|add:1}}" required
-                            >
-                        </div>
-                        
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Total Amount Paid:</label>
                             <input class="form-control" type="text" name="total_amt_pd" id="total_amt_pd"
-                                placeholder="0.00" value="{{total_sum}}" required >
+                                placeholder="0.00" value="{{total_sum}}" required>
                         </div>
 
                     </div>
@@ -228,13 +236,14 @@
                         <!-- <h3>ADD USER</h3> -->
                         <form id="receiptSub" action="">
                             <div class="form-group col-xs-6 col-md-6">
-                                <input checked="checked" type="radio" name="option" value="inventory"
-                                    id="inventory_opt"> Inventory
+                                <input class="item_option" checked="checked" type="radio" name="option"
+                                    value="inventory_opt" id="inventory_opt">
+                                <label for="inventory_opt">Inventory</label>
                             </div>
 
                             <div class="pull-right form-group col-xs-6 col-md-6">
-                                <input class="" type="radio" name="option" value="fixed_asset" id="asset_opt"> Fixed
-                                Asset
+                                <input class="item_option" type="radio" name="option" value="asset_opt" id="asset_opt">
+                                <label for="asset_opt">Fixed Asset</label>
                             </div>
                             <br>
                             <div class="form-group">
@@ -303,7 +312,7 @@
                     <div class="box-body">
                         <table id="itemTable" class="table table-striped">
                             <tr>
-                                <th>Item Purchased</th>
+                                <th>Item</th>
                                 <th>Account</th>
                                 <th>Unit Price</th>
                                 <th>Qty</th>
@@ -487,7 +496,8 @@
             minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
             seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
 
-            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+            //formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+            formattedDateTime = year + '-' + month + '-' + date;
 
             if (onlyBlank === true && $(this).val()) {
                 return this;
@@ -498,11 +508,15 @@
             return this;
         }
 
-        $(function () {
-            // Handler for .ready() called.
-            $('input[type="datetime-local"]').setNow();
+        if ($('#main-id').val()) {
 
-        });
+        } else {
+            $(function () {
+                // Handler for .ready() called.
+                $('input[type="date"]').setNow();
+
+            });
+        }
 
         //DEFAULTS
         if ($('#main-id').val()) {
@@ -516,6 +530,7 @@
         else {
             $('#vendor, #cash, #expense, #debit_acct').val('');
             $('#total_amt').val('0.00');
+            $('#total_amt_pd').val('0.00');
         }
 
     });
@@ -523,20 +538,13 @@
     optionSelect = 'inventory';
     populate_purchase_items('inventory');
 
-    $('#inventory_opt').change(function () {
+    $('input.item_option').click(function () {
         if ($('#inventory_opt').is(":checked")) {
-            console.log('Inventory option Selected');
             populate_purchase_items('inventory');
-        }
-    });
-
-    $('#asset_opt').change(function () {
-        if ($('#asset_opt').is(":checked")) {
-            console.log('Asset option Selected');
+        } else {
             populate_purchase_items('asset');
         }
-    });
-
+    })
 
     function populate_purchase_items(type) {
         optionSelect = type
@@ -547,7 +555,7 @@
             },
             dataType: 'json',
             success: function (result) {
-                console.log(result);
+                //console.log(result);
                 $("#inventory" + " option").remove();
                 $("#form-inventory" + " option").remove();
 
@@ -575,7 +583,7 @@
             },
             dataType: 'json',
             success: function (result) {
-                console.log(result);
+                //console.log(result);
                 $("#" + acctId + " option").remove();
                 for (var i = result.length - 1; i >= 0; i--) {
                     //$("#" + acctId).append('<option>' + result[i].item + '</option>');
@@ -622,8 +630,10 @@
 
                 asset_acct = data.asset_account;
                 asset_cat = data.asset_category;
+                $('#unit_price').val(data.purchase_value);
+                qty = $('input[name="qty"]').val().trim();
+                $('#amount').val(ReplaceNumberWithCommas(qty * data.purchase_value));
 
-                //alert(asset_cat);
             },
         });
 
@@ -696,7 +706,7 @@
 
     // Create Django Ajax Call
     $("#receiptSub").submit(function () {
-        alert("Stage 1...");
+        //alert("Stage 1...");
 
         trans_date = $('input[name="trans_date"]').val().trim();
         voucher_no = $('input[name="voucher_number"]').val().trim();
@@ -704,7 +714,7 @@
         mainID = $('input[name="mainId"]').val().trim();
         //inventory_item = $('input[name="inventory_item"]').val().trim();
         inventory_item = $('#inventory').children("option:selected").val();
-        alert("Stage 2...");
+        // alert("Stage 2...");
         description = $('input[name="description"]').val().trim();
         unit_price = $('input[name="unit_price"]').val().trim();
         qty = $('input[name="qty"]').val().trim();
@@ -713,7 +723,7 @@
         debit_acct = $('#debit_account').children("option:selected").val();
         CategoryCode = $('#cash').children("option:selected").val();
 
-        alert("Stage 3...");
+        // alert("Stage 3...");
 
         if (optionSelect == 'inventory') {
             credit_acct = $('#credit_account').children("option:selected").val();
@@ -726,7 +736,7 @@
         vendorID = $('#vendor').children("option:selected").val();
         pay_mode = $('#pMode').children("option:selected").val();
 
-        alert(optionSelect);
+        // alert(optionSelect);
 
         console.log(trans_date);
         console.log(voucher_no);
@@ -737,8 +747,8 @@
         console.log(debit_acct);
         console.log(credit_acct);
         console.log(pay_mode);
-        alert("Stage 5...");
-        if (trans_date && voucher_no && CategoryCode && vendorID && received_from) {
+        // alert("Stage 5...");
+        if (trans_date && voucher_no && CategoryCode && vendorID && received_from && credit_acct) {
             // Create Ajax Call
             //alert("Stage 3...");
             $.ajax({
@@ -764,6 +774,7 @@
                 },
                 dataType: 'json',
                 success: function (data) {
+                    // alert("Stage 6...");
                     if (data.purchase_main) {
                         alert('Success!!!')
                         //clearList();
@@ -771,6 +782,7 @@
                         console.log(data.purchase_main.Mainid)
                         $('#main-id').val(data.purchase_main.Mainid);
                         $('#total_amt').val(data.total_sum);
+                        $('#total_amt_pd').val(data.total_sum);
                         rec = data.purchase_sub
                         $("#itemTable > tbody:last-child").append(`
                 <tr id="item-${rec.Subid}">
@@ -825,13 +837,13 @@
     $('#unit_price').change(function () {
         unit_price = $('input[name="unit_price"]').val().trim();
         qty = $('input[name="qty"]').val().trim();
-        $('#amount').val(qty * unit_price);
+        $('#amount').val(ReplaceNumberWithCommas(qty * unit_price));
     });
 
     $('#qty').change(function () {
         unit_price = $('input[name="unit_price"]').val().trim();
         qty = $('input[name="qty"]').val().trim();
-        $('#amount').val(qty * unit_price);
+        $('#amount').val(ReplaceNumberWithCommas(qty * unit_price));
     });
 
     $(function () {
@@ -847,7 +859,7 @@
             var str = this.id;
             var res = str.split("-").pop()
             //var res = this.id.slice(5, 6);
-            console.log(res);
+            //console.log(res);
             $("#itemTable #item-" + res).remove();
 
         })
@@ -860,7 +872,7 @@
             var str = this.id;
             var res = str.split("-").pop()
             //var res = this.id.slice(5, 6);
-            console.log(res);
+            //console.log(res);
             $("#journalTable #item-" + res).remove();
 
         })
@@ -883,9 +895,10 @@
                 success: function (data) {
                     if (data.deleted) {
                         alert('Item deleted Successfully')
-                        console.log(id);
+                        //console.log(id);
                         $("#itemTable #item-" + id).remove();
                         $('#total_amt').val(data.total_sum);
+                        $('#total_amt_pd').val(data.total_sum);
                         //$("#itemTable).remove();
                     }
                     if (data.journal_list) {

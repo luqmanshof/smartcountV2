@@ -637,9 +637,9 @@ class CreateFixedAsset(View):
                     id=depr_account),
                 depreciation_method=depr_method,
                 purchase_date=purchase_date,
-                purchase_value = purchase_value,
-                useful_life = useful_life,
-                salvage_value = salvage_value
+                purchase_value=purchase_value,
+                useful_life=useful_life,
+                salvage_value=salvage_value
             )
 
         fixedasset_main = {'Mainid': obj.id, 'date': obj.acquisition_date,
@@ -2269,6 +2269,8 @@ class CreatePurchase(View):
 
         if optionSelect == 'inventory':
             print('POST INVENTORY PURCHASE DETAILS ')
+            PurchasedItem = SetupInventoryItems.objects.get(
+                id=purchase_item).inventory_name
             obj2 = PurchaseDetails.objects.create(
                 inventory_item=SetupInventoryItems.objects.get(
                     id=purchase_item),
@@ -2283,6 +2285,8 @@ class CreatePurchase(View):
             )
         else:
             print('POST ASSET PURCHASE DETAILS ')
+            PurchasedItem = SetupFixedAssets.objects.get(
+                id=purchase_item).description
             obj2 = PurchaseDetails.objects.create(
                 asset_item=SetupFixedAssets.objects.get(id=purchase_item),
                 description=description,
@@ -2317,10 +2321,12 @@ class CreatePurchase(View):
 
         purchase_main = {'Mainid': obj.id, 'date': obj.date,
                          'voucher_number': obj.voucher_number, 'bill_to': obj.description}
+        print('PURCHASE MAIN EXECUTED : ')
 
-        purchase_sub = {'Subid': obj2.id, 'inventory_item': obj2.inventory_item, 'Debit_account': obj2.Debit_account,
+        purchase_sub = {'Subid': obj2.id, 'inventory_item': PurchasedItem, 'Debit_account': DebitAccount,
                         'unit_price': obj2.unit_price, 'quantity': quantity, 'amount': obj2.amount}
 
+        print('PURCHASE SUB EXECUTED : ')
         data = {
             'purchase_main': purchase_main,
             'purchase_sub': purchase_sub,
@@ -2364,11 +2370,12 @@ def purchaseedit(request, pk=None):
         journal_list = GeneralLedger.objects.filter(
             ref_number=expense_number1, journal_type='PJ')
         # print('PURCHASE JORNAL ITEMS : ', journal_list)
+        trans_date = expensemain.date.strftime("%Y-%m-%d")
 
         args = {'expensemain': expensemain, 'expenseitems': expenseitems, 'vendor_name': vendor_name,
                 'cash_acct': cash_acct, 'expense_acct': expense_acct, 'note_acct': note_acct,
                 'note_acct_cash': note_acct_cash, 'note_acct_inventory': note_acct_inventory,
-                'total_sum': total_sum, 'journal_list': journal_list, }
+                'total_sum': total_sum, 'journal_list': journal_list, 'trans_date': trans_date}
         return render(request, 'account/purchase.html', args)
     else:
         return render(request, 'account/purchase_list.html')
@@ -2513,6 +2520,24 @@ def noteview(request, pk=None):
 
 
 # REPORTS
+@login_required
+def reportview(request, type=None):
+    if type == 'CDJ':
+        title = 'Cash Disbursement Journal'
+    elif type == 'CRJ':
+        title = 'Cash Receipt Journal'
+    elif type == 'GJ':
+        title = 'General Journal'
+    elif type == 'Period':
+        title = 'Periodic Report'
+        print('PERIODIC REPORT VIEW :', title)
+    else:
+        title = 'Journal View'
+    # args = {'title': title}
+
+    return render(request, 'account/report_view.html', {'title': title})
+
+
 @login_required
 def financialperformance(request):
     # revenues = ChartSubCategory.objects.filter(category_code_id=1)

@@ -263,7 +263,7 @@ class DeleteExpenseItem(View):
 
         ExpenseDetails.objects.get(id=id1).delete()
         GeneralLedger.objects.filter(debit=amount, description=description,
-                                  ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
+                                     ref_number=voucher_number, journal_type='CDJ', main_Trans=False).delete()
 
         # get the sum of the receipt detail values
         total_sum = ExpenseDetails.objects.filter(
@@ -521,8 +521,8 @@ class DeletePurchaseItem(View):
         amount = PurchaseDetails.objects.get(id=id1).amount
 
         PurchaseDetails.objects.get(id=id1).delete()
-        GeneralLedger.objects.get(debit=amount, description=description,
-                                  ref_number=voucher_number, journal_type='PJ', main_Trans=False).delete()
+        GeneralLedger.objects.filter(debit=amount, description=description,
+                                     ref_number=voucher_number, journal_type='PJ', main_Trans=False).delete()
 
         # get the sum of the receipt detail values
         total_sum = PurchaseDetails.objects.filter(
@@ -541,7 +541,7 @@ class DeletePurchaseItem(View):
 
         journal_list1 = GeneralLedger.objects.filter(
             ref_number=voucher_number, journal_type='PJ')
-        print('JOURNAL LIST RETRIEVED : ', journal_list1)
+        print('JOURNAL LIST RETRIEVED : ')
 
         data = {
             'deleted': True,
@@ -561,6 +561,8 @@ def get_assetaccts(request):
             id=item_code).expense_account_id
         accumulated_account = SetupFixedAssets.objects.get(
             id=item_code).accumulated_account_id
+        purchase_value = SetupFixedAssets.objects.get(
+            id=item_code).purchase_value
         asset_category = ChartNoteItems.objects.get(
             id=asset_account).sub_category_id
 
@@ -572,6 +574,7 @@ def get_assetaccts(request):
             'expense_account': expense_account,
             'accumulated_account': accumulated_account,
             'asset_category': asset_category,
+            'purchase_value': purchase_value
         }
         return JsonResponse(data)
 
