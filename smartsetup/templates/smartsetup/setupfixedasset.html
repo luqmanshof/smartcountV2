@@ -155,7 +155,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group" hidden>
                             <label for="">Acquisition Date</label>
-                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
+                            <input class="form-control" type="date" onload="" name="trans_date" id="date"
                                 required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId" />
                         </div>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Purchase Date:</label>
-                            <input class="form-control" type="datetime-local" onload="" name="purchase_date"
+                            <input class="form-control" type="date" onload="" name="purchase_date"
                                 id="purchase_date">
                         </div>
                         <div class="col-xs-6 col-md-2 form-group">
@@ -393,7 +393,8 @@
             seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
 
             //formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
-            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes;
+            //formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes;
+            formattedDateTime = year + '-' + month + '-' + date;
 
             if (onlyBlank === true && $(this).val()) {
                 return this;
@@ -409,7 +410,7 @@
         } else {
             $(function () {
                 // Handler for .ready() called.
-                $('input[type="datetime-local"]').setNow();
+                $('input[type="date"]').setNow();
 
             });
         }
@@ -493,7 +494,7 @@
 
 
     $("#saverec").click(function () {
-        // alert("Saving Record...");
+         // alert("Saving Record...");
 
         trans_date = $('input[name="trans_date"]').val().trim();
         asset_id = $('input[name="voucher_number"]').val().trim();
@@ -506,7 +507,7 @@
         salvage_value = $('input[name="salvage_value"]').val().trim();
 
 
-        console.log(trans_date);
+        console.log(purchase_date);
         console.log(asset_id);
         console.log(description);
         console.log(depr_method);
@@ -515,7 +516,7 @@
         console.log(expense_account);
         console.log(depr_account);
 
-        if (trans_date && asset_id && description && depr_method && asset_acct && expense_account && depr_account) {
+        if (purchase_date && asset_id && description && depr_method && asset_acct && expense_account && depr_account) {
             // Create Ajax Call
             console.log('Stage2');
             $.ajax({

@@ -203,3 +203,8 @@ heroku pg:backups:download
 **Restoring Dump Files from Heroku (https://coderwall.com/p/acsbpw/heroku-export-postgres-database)**
 ** C:\temp\New> **
 pg_restore -U postgres --verbose --clean --no-acl --no-owner -d smartcountdb latest.dump
+
+
+-------------------------------------------------------------
+git rm .env --cached
+git commit -m "Stopped tracking .env File"

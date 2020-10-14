@@ -322,7 +322,11 @@
                             {% if expenseitems %}
                             {% for item in expenseitems %}
                             <tr id="item-{{item.id}}">
+                                {% if item.inventory_item %}
                                 <td class="itemName itemData" name="name">{{item.inventory_item}}</td>
+                                {% else %}
+                                <td class="itemName itemData" name="name">{{item.asset_item}}</td>
+                                {% endif %}
                                 <td class="itemAccount itemData" name="description">{{item.Debit_account}}</td>
                                 <td class="itemUnitPrice itemData" name="unit_price">{{item.unit_price|floatformat:2}}
                                 </td>
@@ -379,7 +383,7 @@
                         <input class="form-control" id="form-id" type="hidden" name="formId" />
                         <div class="form-group">
                             <label for="">Item Purchased</label>
-                            <select name="forminventory_item" id="form-inventory" class="form-control" required>
+                            <select name="form-inventory" id="form-inventory" class="form-control" required>
                                 <option></option>
                                 {% for item in inventory_items %}
                                 <option value="{{ item.id }}">{{ item.inventory_name }}</option>
@@ -919,18 +923,28 @@
             quantity = $(tr_id).find(".itemQuantity").text();
             amount = $(tr_id).find(".itemAmount").text();
 
+            alert(inventoryItem);
+
             $.ajax({
                 url: '{% url "ajax_getacctID" %}',
                 data: {
                     'creditAcct': debitAcct,
-                    'type': 'PJ',
+                    'inventory': inventoryItem,
                 },
                 dataType: 'json',
                 success: function (data) {
                     alert(data.note_id);
+                    alert(data.inventory_id);
+
+                    if (data.inventory_id) {
+                        populate_purchase_items('inventory');
+                        $('#form-inventory').val(data.inventory_id);
+                    } else {
+                        populate_purchase_items('asset');
+                        $('#form-inventory').val(data.asset_id);
+                    }
 
                     $('#form-id').val(id);
-                    $('#form-inventory').val(data.inventory_item);
                     //$('#form-description').val(description);
                     $('#form-expense').val(data.cat_id);
                     $('#form-credit_account').val(data.note_id);

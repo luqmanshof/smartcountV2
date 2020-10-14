@@ -603,11 +603,13 @@ class CreateFixedAsset(View):
         salvage_value = request.GET.get('salvage_value', None)
 
         print('ASSET ACCOUNT : ', asset_account)
+        # print('ACQUIRE DATE : ', trans_date1)
+        print('PURCHASE DATE : ', purchase_date)
 
         if pkMain:
             print('UPDATE EXISTING RECORD ')
             obj = SetupFixedAssets.objects.get(id=pkMain)
-            obj.acquisition_date = trans_date1
+            # obj.acquisition_date = trans_date1
             obj.asset_id = asset_id1
             obj.description = description
             # obj.department = SetupDepartment.objects.get(id=depart_name)
@@ -627,7 +629,7 @@ class CreateFixedAsset(View):
             print('ENTERED NEW ASSET RECORD ')
 
             obj = SetupFixedAssets.objects.create(
-                acquisition_date=trans_date1,
+                # acquisition_date=trans_date1,
                 asset_id=asset_id1,
                 description=description,
                 # department=SetupDepartment.objects.get(id=depart_name),
@@ -1016,7 +1018,11 @@ class GetAcctIDs(View):
         print('GET ACCOUNT IDs AJAX VIEW ')
         creditAcct = request.GET.get('creditAcct', None)
         departAcct = request.GET.get('departAcct', None)
+        inventoryAcct = request.GET.get('inventory', None)
         budgetDepart = request.GET.get('budgetDepart', None)
+
+        inventoryAcct_id = None
+        assetAcct_id = None
 
         print('THE NOTE NAME IS : ', creditAcct)
         print('THE DEPARTMENT NAME IS : ', departAcct)
@@ -1028,10 +1034,17 @@ class GetAcctIDs(View):
         else:
             departAcct_id = "0"
 
-        # if budgetDepart:
-        #     budgetDepart_id = BudgetDetails.objects.get(budget_item=budgetDepart).id
-        # else:
-        #     budgetDepart_id = "0"
+        if inventoryAcct:
+            try:
+                inventoryAcct_id = SetupInventoryItems.objects.get(
+                    inventory_name=inventoryAcct).id
+            except SetupInventoryItems.DoesNotExist:
+                inventoryAcct_id = None
+            try:
+                assetAcct_id = SetupFixedAssets.objects.get(
+                    description=inventoryAcct).id
+            except SetupFixedAssets.DoesNotExist:
+                assetAcct_id = None
 
         note_id = ChartNoteItems.objects.get(item_name=creditAcct).id
         cat_id = ChartNoteItems.objects.get(
@@ -1045,6 +1058,8 @@ class GetAcctIDs(View):
             'note_id': note_id,
             'cat_id': cat_id,
             'dept_id': departAcct_id,
+            'inventory_id': inventoryAcct_id,
+            'asset_id': assetAcct_id,
             # 'receipt_sub': receipt_sub
         }
         return JsonResponse(data)
