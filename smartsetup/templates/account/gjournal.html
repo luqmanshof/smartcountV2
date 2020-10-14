@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Journal Date</label>
-                            <input class="form-control" value="{{expensemain.date}}" type="datetime-local" onload=""
+                            <input class="form-control" value="{{expensemain.date}}" type="date" onload=""
                                 name="trans_date" id="date" required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId"
                                 value="{{expensemain.id}}" />
@@ -75,7 +75,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-2 form-group">
                             <label for="">Journal Date</label>
-                            <input class="form-control" type="datetime-local" onload="" name="trans_date" id="date"
+                            <input class="form-control" type="date" onload="" name="trans_date" id="date"
                                 required>
                             <input class="form-control" id="main-id" type="hidden" name="mainId" />
                         </div>
@@ -377,13 +377,14 @@
                 ;
 
             year = now.getFullYear();
-            month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+            month = (now.getMonth() + 1).toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
             date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
             hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
             minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
             seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
 
-            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+            //formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+            formattedDateTime = year + '-' + month + '-' + date;
 
             if (onlyBlank === true && $(this).val()) {
                 return this;
@@ -396,7 +397,7 @@
 
         if (!$('#main-id').val()) {
             $(function () {
-                $('input[type="datetime-local"]').setNow();
+                $('input[type="date"]').setNow();
             });
         }
 
