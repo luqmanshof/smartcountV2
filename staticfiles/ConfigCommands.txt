@@ -188,7 +188,6 @@ DESCRIPTION
        # push remote DB at postgres://myhost/mydb into a Heroku DB named postgresql-swimmingly-100
        $ heroku pg:push postgres://myhost/mydb postgresql-swimmingly-100
 
-74c9f0259b63decd9fac14832c6ed6a314ce148a313b04ed9dd6a442a33b6219
 
 ----------------------------------------------------------------------------------------------
 POSTGRES
@@ -208,3 +207,6 @@ pg_restore -U postgres --verbose --clean --no-acl --no-owner -d smartcountdb lat
 -------------------------------------------------------------
 git rm .env --cached
 git commit -m "Stopped tracking .env File"
+
+git rm --cached projectname/settings.py
+git commit -m "Stopped tracking settings.py File"

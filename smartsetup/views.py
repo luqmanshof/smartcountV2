@@ -1092,7 +1092,7 @@ class ExpenseClass(ListView):
         context['expense_acct'] = ChartSubCategory.objects.filter(
             category_code_id='2')
         ids = ChartSubCategory.objects.filter(
-            category_code_id='2').values_list('id', flat=True)
+            Q(category_code_id='2') | Q(category_code_id='4')).values_list('id', flat=True)
         print('AM HERE NOW!!! :', ids)
         context['note_acct_exp'] = ChartNoteItems.objects.filter(sub_category__in=ids).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
@@ -1137,7 +1137,7 @@ def expenseedit(request, pk=None):
             sub_category__in=ids).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
         ids = ChartSubCategory.objects.filter(
-            category_code_id='2').values_list('id', flat=True)
+            Q(category_code_id='2') | Q(category_code_id='4')).values_list('id', flat=True)
         note_acct_exp = ChartNoteItems.objects.filter(sub_category__in=ids).values(
             'id', 'item_name', 'sub_category__sub_category_name', 'sub_category__category_code__category_name')
 
